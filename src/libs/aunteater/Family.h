@@ -34,6 +34,8 @@ namespace aunteater
         void removeEntity(std::shared_ptr<Entity> aEntity);
         void componentAddedToEntity(std::shared_ptr<Entity> aEntity,std::type_info * aComponent);
         void componentRemovedFromEntity(std::shared_ptr<Entity> aEntity,std::type_info * aComponent);
+        void addIfMatch(std::shared_ptr<Entity> aEntity);
+        void removeIfMatch(std::shared_ptr<Entity> aEntity);
     };
     
 } // namespace aunteater
