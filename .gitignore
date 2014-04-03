@@ -1,3 +1,13 @@
+#cmake
+build/**
+
+#os x
+.DS_Store
+
+#vim
+*.swp
+*.swo
+
 # Compiled Object files
 *.slo
 *.lo
