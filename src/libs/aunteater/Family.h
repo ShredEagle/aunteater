@@ -9,32 +9,32 @@
 namespace aunteater
 {
     class Entity;
+    class Engine;
     
     class Family
     {
     private:
-        std::list<Node> mNodes;
-        std::set<std::type_info> mComponentsTypeInfo;
-        std::set<std::shared_ptr<Entity> > mEntities;
         Engine & mEngine;
+        std::list<Node> mNodes;
+        ComponentIds mComponentsTypeInfo;
+        
+        std::set<std::shared_ptr<Entity> > mEntities; // ?
     public:
-        Family(Engine & aEngine, std::set<std::type_info> aComponentsTypeInfo):
-        mEngine(aEngine),
-        mComponentsTypeInfo(aComponentsTypeInfo)
-        {
-            
-        }
+        Family(Engine & aEngine, ComponentIds aComponentsTypeInfo);
         
         std::list<Node> & getNodes()
         {
             return mNodes;
         }
         
-        void addEntity(std::shared_ptr<Entity> aEntity);
+        void testEntityInclusion(Entity &aEntity);
+        
+    private:
+        void addIfMatch(Entity &aEntity);
+        
         void removeEntity(std::shared_ptr<Entity> aEntity);
         void componentAddedToEntity(std::shared_ptr<Entity> aEntity,std::type_info * aComponent);
         void componentRemovedFromEntity(std::shared_ptr<Entity> aEntity,std::type_info * aComponent);
-        void addIfMatch(std::shared_ptr<Entity> aEntity);
         void removeIfMatch(std::shared_ptr<Entity> aEntity);
     };
     

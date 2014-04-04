@@ -6,6 +6,8 @@ namespace aunteater
     
     class System
     {
+    public:
+        virtual void addToEngine(Engine &aEngine) =0;
         
     };
     

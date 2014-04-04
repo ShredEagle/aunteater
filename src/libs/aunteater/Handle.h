@@ -16,6 +16,18 @@ namespace aunteater
         {
             return mIndex;
         }
+       
+        // Not possible without a reference to the container instance.
+//        T & operator*()
+//        {
+//            return
+//        }
+        
+        template <class T_container>
+        T & deref(T_container &aContainer)
+        {
+            return aContainer.at(mIndex);
+        }
         
         bool operator< (const Handle &aRhs) const
         {

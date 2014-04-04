@@ -31,3 +31,12 @@ void Engine::removeEntity(Handle<Entity> aId)
     mNamedEntities.right.erase(aId);
     mEntities.erase(mEntities.begin()+aId.get());
 }
+
+
+void Engine::addedEntity(Handle<Entity> aEntity)
+{
+    for (auto & typedFamily : mTypedFamilies)
+    {
+        typedFamily.second.testEntityInclusion(aEntity.deref(mEntities));
+    }
+}
