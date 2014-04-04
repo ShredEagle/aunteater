@@ -34,6 +34,7 @@ namespace aunteater
         
     protected:
         void addedEntity(Handle<Entity> aEntity);
+        void removedEntity(Handle<Entity> aEntity);
         
     private:
         typedef boost::bimap<std::string, Handle<Entity> > NameEntityMap;

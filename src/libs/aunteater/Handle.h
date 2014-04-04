@@ -1,14 +1,19 @@
 #ifndef _IDG_AE_Handle
 #define _IDG_AE_Handle
 
+#include <vector>
+
 namespace aunteater
 {
     
-    template <class T, class T_index=size_t>
+    /// \todo This is an abomination to hardcode a default type, but the handle has to be
+    /// profoundly redesigned
+    template <class T_object, class T_container=std::vector<T_object>, class T_index=size_t>
     class Handle
     {
     public:
-        Handle(T_index aIndex):
+        Handle(T_container &aContainer, T_index aIndex):
+                mContainer(&aContainer),
                 mIndex(aIndex)
         {}
         
@@ -23,8 +28,8 @@ namespace aunteater
 //            return
 //        }
         
-        template <class T_container>
-        T & deref(T_container &aContainer)
+        template <class T_contr>
+        T_object & deref(T_contr &aContainer)
         {
             return aContainer.at(mIndex);
         }
@@ -35,8 +40,17 @@ namespace aunteater
         }
         
     private:
+        // We need the object to be assignable, cannot use reference here
+        T_container *mContainer;
         T_index mIndex;
     };
+    
+    template <class T_container, class T_index>
+    Handle<typename T_container::value_type, T_container, T_index> makeHandle(T_container &aContainer,
+                                                                              T_index aIndex)
+    {
+        Handle<typename T_container::value_type, T_container, T_index>(aContainer, aIndex);
+    }
     
 } // namespace aunteater
 

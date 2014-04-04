@@ -36,6 +36,7 @@ namespace aunteater
         
     private:
         /// \todo Same as with Entity::get() : it would be nice to avoir sharing ownership.
+        /// In the end, we probably want a better Handler type, and use Handler and Components
         std::map<const std::type_info *, std::shared_ptr<Component>> mTypedComponents;
         
     };

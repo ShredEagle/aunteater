@@ -6,7 +6,8 @@ using namespace aunteater;
 
 Handle<Entity> Engine::addEntity(const std::string & aName, Entity aEntity)
 {
-    auto insertionResult = mNamedEntities.left.insert(std::make_pair(aName, Handle<Entity>(0)));
+    auto insertionResult =
+    mNamedEntities.left.insert(std::make_pair(aName, makeHandle(mEntities, std::size_t(0))));
     if (!insertionResult.second)
     {
         throw std::invalid_argument("Named entity is already present in the engine"
@@ -23,12 +24,15 @@ Handle<Entity> Engine::addEntity(const std::string & aName, Entity aEntity)
 Handle<Entity> Engine::addEntity(Entity aEntity)
 {
     mEntities.push_back(aEntity);
-    return Handle<Entity>(mEntities.size()-1);
+    auto lastEntity(makeHandle(mEntities, mEntities.size()-1));
+    addedEntity(lastEntity);
+    return lastEntity;
 }
 
 void Engine::removeEntity(Handle<Entity> aId)
 {
     mNamedEntities.right.erase(aId);
+    removedEntity(aId);
     mEntities.erase(mEntities.begin()+aId.get());
 }
 
@@ -38,5 +42,13 @@ void Engine::addedEntity(Handle<Entity> aEntity)
     for (auto & typedFamily : mTypedFamilies)
     {
         typedFamily.second.testEntityInclusion(aEntity.deref(mEntities));
+    }
+}
+
+void Engine::removedEntity(Handle<Entity> aEntity)
+{
+    for (auto & typedFamily : mTypedFamilies)
+    {
+        typedFamily.second.removeIfPresent(aEntity);
     }
 }

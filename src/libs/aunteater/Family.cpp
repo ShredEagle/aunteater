@@ -27,6 +27,16 @@ void Family::addIfMatch(Entity &aEntity)
         mNodes.emplace_back(mComponentsTypeInfo, aEntity, Node::family_access());
     }
 }
+
+void Family::removeIfPresent(Handle<Entity> aEntity)
+{
+    auto foundIt = mEntities.find(aEntity);
+    if (foundIt != mEntities.end())
+    {
+        mNodes.erase(foundIt->second);
+        mEntities.erase(foundIt);
+    }
+}
 /*
 void Family::removeEntity(std::shared_ptr<Entity> aEntity)
 {
