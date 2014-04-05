@@ -10,11 +10,14 @@ project(nowave)
 # Helpful windows command : dir /b /oen
 set(${PROJECT_NAME}_HEADERS
     Player.h
+    App.h
 )
 
 # TODO : list .cpp files here
 set(${PROJECT_NAME}_SOURCES
     Player.cpp
+    App.cpp
+    main.cpp
 )
 
 
@@ -25,19 +28,22 @@ add_executable(${PROJECT_NAME}
 
 set(Polycode CACHE PATH "Path to Polycode")
 set(Polycode_LIBRARIES "Polycore_d.lib")
-set(Polycode_LIBRARIES_DEPENDENCIES "Polycore_d.lib;zlibd.lib;freetype_d.lib;liboggd.lib;libvorbisd.lib;libvorbisfiled.lib;OpenAL32d.lib;physfsd.lib;libpng15_staticd.lib")
+set(Polycode_LIBRARIES_DEPENDENCIES "Polycore_d.lib;zlibd.lib;freetype_d.lib;liboggd.lib;libvorbisd.lib;libvorbisfiled.lib;OpenAL32d.lib;physfsd.lib;libpng15_staticd.lib;Polycode2DPhysics_d.lib;PolycodeTUIO_d.lib;PolycodeUI_d.lib")
 set(Polycode_LIBRARIES_WIN "opengl32.lib;glu32.lib;winmm.lib;ws2_32.lib")
 
 include_directories(
     ${Polycode}Core/Include
     ${Polycode}Core/Dependencies/include
-    ${Polycode}Core/PolycodeView
+    ${Polycode}Modules/Include
+    ${Polycode}Modules/Dependencies/include
     ${Polycode}Core/Dependencies/include/AL
     ${Boost_INCLUDE_DIR}
 )
 
 target_link_libraries(${PROJECT_NAME}
     ${Polycode_LIBRARIES}
+    ${Polycode_LIBRARIES_DEPENDENCIES}
+    ${Polycode_LIBRARIES_WIN}
     ${Boost_LIBRARIES}
 )
 
