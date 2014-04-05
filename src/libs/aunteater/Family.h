@@ -6,6 +6,7 @@
 #include <set>
 #include <list>
 #include <typeinfo>
+#include <memory>
 namespace aunteater
 {
     class Entity;

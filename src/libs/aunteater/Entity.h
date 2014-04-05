@@ -2,6 +2,7 @@
 #define _IDG_AE_Entity
 
 #include <map>
+#include <memory>
 
 namespace aunteater
 {
