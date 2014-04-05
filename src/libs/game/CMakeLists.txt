@@ -1,4 +1,4 @@
-project(aunteater)
+project(game)
 
 # Configure (and thus copy) the template export file to the build dir
 # The export file will be added to the project headers list (and installed with them)
@@ -9,23 +9,10 @@ project(aunteater)
 # TODO : list .h files here. 
 # Helpful windows command : dir /b /oen
 set(${PROJECT_NAME}_HEADERS
-    Component.h
-    Engine.h
-    Entity.h
-    Family.h
-    Handle.h
-    Node.h
-    System.h
 )
 
 # TODO : list .cpp files here
 set(${PROJECT_NAME}_SOURCES
-    Component.cpp
-    Engine.cpp
-    Entity.cpp
-    Family.cpp
-    Node.cpp
-    System.cpp
 )
 
 

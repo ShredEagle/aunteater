@@ -1,1 +1,2 @@
 conditional_add_subdirectory(aunteater)
+conditional_add_subdirectory(game)
