@@ -9,15 +9,16 @@
 #ifndef __aunteater__Factories__
 #define __aunteater__Factories__
 
-#define BASE_PATH "/Users/adn/GDJ/"
+#define BASE_PATH "C:/work/aunteater/Resources/"
 
-#include "Entity.h"
+#include "aunteater\Entity.h"
+#include "Polycode.h"
 
-namespace Polycode
-{
-    class Screen;
-}
+#include <vector>
 
 aunteater::Entity createPlayer(Polycode::Screen *aScreen);
+std::vector<aunteater::Entity> createPng(Polycode::Screen *aScreen);
+std::vector<aunteater::Entity> createBackground(Polycode::Screen *aScreen);
+std::vector<aunteater::Entity> createBarriers();
 
 #endif /* defined(__aunteater__Factories__) */

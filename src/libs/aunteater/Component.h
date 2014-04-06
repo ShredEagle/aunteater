@@ -8,15 +8,12 @@ namespace aunteater
 {
     
     typedef const std::type_info * ComponentId;
-    
+
     class Component
     {
     public:
         
-        const std::type_info & getTypeInfo()
-        {
-            return typeid(*this);
-        }
+		virtual const std::type_info & getTypeInfo() =0;
     };
     
 } // namespace aunteater

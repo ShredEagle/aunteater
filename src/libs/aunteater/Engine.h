@@ -14,7 +14,8 @@
 
 namespace aunteater
 {
-    
+	class System;
+
     class Engine
     {
     public:
@@ -31,6 +32,17 @@ namespace aunteater
          */
         template <class T_derivedNode>
         std::list<Node> & getNodes();
+
+		/*
+		 * System
+		 */
+		void addSystem(System * System);
+
+		/*
+		 * Update
+		 */
+
+		void update(float time);
         
     protected:
         void addedEntity(Handle<Entity> aEntity);
@@ -43,6 +55,7 @@ namespace aunteater
         std::vector<Entity> mEntities;
         NameEntityMap mNamedEntities;
         ArchetypeFamilyMap mTypedFamilies;
+		std::vector<System*> mSystems;
     };
     
     

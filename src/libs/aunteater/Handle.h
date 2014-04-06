@@ -49,7 +49,7 @@ namespace aunteater
     Handle<typename T_container::value_type, T_container, T_index> makeHandle(T_container &aContainer,
                                                                               T_index aIndex)
     {
-        Handle<typename T_container::value_type, T_container, T_index>(aContainer, aIndex);
+        return Handle<typename T_container::value_type, T_container, T_index>(aContainer, aIndex);
     }
     
 } // namespace aunteater

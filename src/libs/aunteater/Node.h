@@ -5,6 +5,7 @@
 #include <set>
 #include <typeinfo>
 #include <map>
+#include <memory>
 
 namespace aunteater
 {

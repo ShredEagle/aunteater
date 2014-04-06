@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "System.h"
 
 #include "Component.h"
 
@@ -51,4 +52,17 @@ void Engine::removedEntity(Handle<Entity> aEntity)
     {
         typedFamily.second.removeIfPresent(aEntity);
     }
+}
+
+void Engine::addSystem(System *aSystem)
+{
+	mSystems.push_back(aSystem);
+}
+
+void Engine::update(float time)
+{
+	for (System * system : mSystems)
+	{
+		system->update(time);
+	}
 }

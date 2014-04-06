@@ -8,7 +8,9 @@
 #include <set>
 #include <list>
 #include <typeinfo>
+#include <memory>
 #include <vector>
+
 namespace aunteater
 {
     class Engine;

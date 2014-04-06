@@ -14,19 +14,24 @@
 #include <Polycode.h>
 
 #include <string>
+#include <memory>
 
 class ComponentSprite : public aunteater::Component
 {
 public:
-    ComponentSprite(const std::string &aFile, Polycode::Screen *aScreen) : aunteater::Component(),
-    image(new Polycode::ScreenImage(aFile))
+	ComponentSprite(const std::string &aFile, Number width, Number height,Number scaleX,Number scaleY) : aunteater::Component(),
+		image(new Polycode::ScreenSprite(aFile,width,height))
     {
-        aScreen->addChild(image.get());
-    }
+		image->setScale(scaleX, scaleY);
+	}
+
+	const std::type_info & getTypeInfo()
+	{
+		return typeid(*this);
+	}
     
 public:
-    std::shared_ptr<Polycode::ScreenImage> image;
-//    Polycode::ScreenImage *image;
+    std::shared_ptr<Polycode::ScreenSprite> image;
 };
 
 #endif /* defined(__aunteater__ComponentSprite__) */

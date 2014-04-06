@@ -14,6 +14,18 @@
 
 #include "Factories.h"
 
+#include "ComponentSprite.h"
+
+#include "SystemDisplay.h"
+#include "SystemMove.h"
+#include "InputSystem.h"
+#include "SystemAnimation.h"
+#include "SystemMoveAnimation.h"
+#include "SystemScaling.h"
+#include "SystemCollision.h"
+
+#include <memory>
+
 
 class HardCore
 {
@@ -25,25 +37,12 @@ public:
         
     }
     
-    void init()
-    {
-        mEngine.addEntity("player", createPlayer(mScreen));
-        
-//        for(Number i=0; i < 20; i++)
-//        {
-//            image = new Polycode::ScreenImage("/Users/adn/GDJ/sprites/imgres.png");
-//            mScreen->addChild(image);
-//            image->setPosition(160+(42*i), 230);
-//            image->setPositionMode(Polycode::ScreenEntity::POSITION_CENTER);
-//            image->setRotation(45*i);
-//            image->setScale(1.0-(0.1*i),1.0-(0.1*i));
-//        }
-    }
+	void init();
    
     bool update()
     {
         Number elapsed = mCore->getElapsed();
-  //      image->setRotation(image->getRotation()+(elapsed*100));
+		mEngine.update(elapsed);
         return mCore->updateAndRender();
     }
     

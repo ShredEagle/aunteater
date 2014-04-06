@@ -14,8 +14,17 @@
 class ComponentPosition : public aunteater::Component
 {
 public:
-    ComponentPosition() : Component()
+	ComponentPosition(float x, float y) : Component(),
+		x(x), y(y)
     {}
+
+	const std::type_info & getTypeInfo()
+	{
+		return typeid(*this);
+	}
+public:
+	float x;
+	float y;
     
 };
 
