@@ -15,7 +15,7 @@
 #include <string>
 #include <list>
 
-typedef std::list< std::pair<std::string, std::string> > TextPairList;
+typedef std::vector< std::pair<std::string, std::string> > TextPairList;
 
 class ComponentTextList : public aunteater::Component
 {

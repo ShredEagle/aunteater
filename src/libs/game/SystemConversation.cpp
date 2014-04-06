@@ -84,6 +84,8 @@ void SystemConversation::update(float time)
                 auto & nextSentence = *nextTalking->get<ComponentSentence>();
                 nextSentence.identifier = next_sentence_id;
             }
+            
+            addressee.entityName = "";
         }
     }
     
@@ -119,6 +121,8 @@ void SystemConversation::update(float time)
             }
             
             mEngine.addEntity(createTextBox(mScreen, textPairList, position.x, position.y));
+            
+            sentence.identifier = "";
         }
     }
 }
