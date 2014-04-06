@@ -9,8 +9,9 @@
 #ifndef __aunteater__SystemScaling__
 #define __aunteater__SystemScaling__
 
-#include "aunteater\System.h"
-#include "aunteater\Engine.h"
+#include <aunteater/System.h>
+#include <aunteater/Engine.h>
+#include <aunteater/Node.h>
 
 #include "ComponentSprite.h"
 #include "ComponentPosition.h"
@@ -21,7 +22,6 @@
 #define BASE_SCALE 0.45
 #define MIN_SCALE 0.35
 
-#include "aunteater\Node.h"
 
 class SystemScaling : public aunteater::System
 {

@@ -9,14 +9,13 @@
 #ifndef __aunteater__SystemMoveAnimation__
 #define __aunteater__SystemMoveAnimation__
 
-#include "aunteater\System.h"
-#include "aunteater\Engine.h"
-
+#include <aunteater/System.h>
+#include <aunteater/Engine.h>
+#include <aunteater/Node.h>
 #include "ComponentSpeed.h"
 #include "ComponentAnimationState.h"
 #include "NodeMoveAnimation.h"
 
-#include "aunteater\Node.h"
 
 class SystemMoveAnimation : public aunteater::System
 {

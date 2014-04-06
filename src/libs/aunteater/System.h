@@ -6,6 +6,8 @@
 namespace aunteater
 {
     
+    class Engine;
+    
     class System
     {
     public:

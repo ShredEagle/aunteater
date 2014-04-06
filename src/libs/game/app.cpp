@@ -1,6 +1,15 @@
 #include "app.h"
 
 #include "SystemZReorder.h"
+#include "SystemDisplay.h"
+#include "SystemMove.h"
+#include "InputSystem.h"
+#include "SystemAnimation.h"
+#include "SystemMoveAnimation.h"
+#include "SystemScaling.h"
+#include "SystemCollision.h"
+#include "SystemConversation.h"
+#include "SystemInteraction.h"
 
 using namespace aunteater;
 
@@ -17,11 +26,11 @@ void HardCore::init()
 		mEngine.addEntity(bg);
 	}
 
-	/*std::vector<Entity> pngs = createPng(mScreen);
+	std::vector<Entity> pngs = createPnj(mScreen);
 	for (Entity png : pngs)
 	{
 		mEngine.addEntity(png);
-	}*/
+	}
 
 
 	std::vector<Entity> barriers = createBarriers();
@@ -29,6 +38,12 @@ void HardCore::init()
 	{
 		mEngine.addEntity(barrier);
 	}
+
+	Entity videur = createVideur(mScreen);
+	mEngine.addEntity("videur", videur);
+
+	Entity inter = createInteractionVideur(mEngine);
+	mEngine.addEntity(inter);
 	
 	new SystemDisplay(mEngine,*mScreen);
 	new SystemMove(mEngine);
@@ -38,4 +53,8 @@ void HardCore::init()
 	new SystemScaling(mEngine);
 	new SystemCollision(mEngine);
 	new SystemZReorder(mEngine);
+    new SystemConversation(mEngine,
+                           BASE_PATH "scenarios/accroche.txt",
+                           BASE_PATH "scenarios/conversation.txt");
+	new SystemInteraction(mEngine);
 }

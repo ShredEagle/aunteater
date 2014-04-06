@@ -1,0 +1,30 @@
+{
+    "videur": {
+        "0drogue_0_0_0": [
+            "",
+            "videur_1"
+        ],
+        "piluleV_1_0_0": [
+            "",
+            "videur_2"
+        ],
+        "piluleV_1_1_0": [
+            "",
+            "videur_3"
+        ],
+        "piluleR_1_0_0": [
+            "",
+            "videur_2"
+        ],
+        "piluleR_1_1_0": [
+            "",
+            "videur_3"
+        ]
+    },
+    "meuf": {
+        "0drogue_0_0_0": [
+            "",
+            "videur_1"
+        ]
+    }
+}

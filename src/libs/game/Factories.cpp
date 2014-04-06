@@ -19,6 +19,7 @@
 #include "ComponentZord.h"
 #include "ComponentZBoundary.h"
 #include "ComponentZReorderable.h"
+#include "ComponentInteraction.h"
 
 #include <string>
 using namespace aunteater;
@@ -51,7 +52,7 @@ Entity createPlayer(Polycode::Screen * aScreen)
     return player;
 }
 
-std::vector<Entity> createPng(Polycode::Screen *aScreen)
+std::vector<Entity> createPnj(Polycode::Screen *aScreen)
 {
 	Entity femme1;
 	std::shared_ptr<ComponentSprite> sprite = std::make_shared<ComponentSprite>(std::string(BASE_PATH) + "sprites/femme_01.png", 126, 180, 0.6, 0.6);
@@ -67,6 +68,7 @@ std::vector<Entity> createPng(Polycode::Screen *aScreen)
 	aScreen->addChild(sprite->image.get());
 	femme1.addComponent(std::make_shared<ComponentPosition>(404, 612));
 	femme1.addComponent(std::make_shared<ComponentZord>(0));
+	femme1.addComponent(std::make_shared<ComponentZReorderable>());
 	femme1.addComponent(sprite);
 	femme1.addComponent(animationComp);
 	femme1.addComponent(std::make_shared<ComponentScale>());
@@ -85,6 +87,7 @@ std::vector<Entity> createPng(Polycode::Screen *aScreen)
 	aScreen->addChild(sprite2->image.get());
 	femme2.addComponent(std::make_shared<ComponentPosition>(748, 318));
 	femme2.addComponent(std::make_shared<ComponentZord>(0));
+	femme2.addComponent(std::make_shared<ComponentZReorderable>());
 	femme2.addComponent(sprite2);
 	femme2.addComponent(animationComp2);
 	femme2.addComponent(std::make_shared<ComponentScale>());
@@ -103,10 +106,31 @@ std::vector<Entity> createPng(Polycode::Screen *aScreen)
 	aScreen->addChild(sprite3->image.get());
 	femme3.addComponent(std::make_shared<ComponentPosition>(504, 264));
 	femme3.addComponent(std::make_shared<ComponentZord>(0));
+	femme3.addComponent(std::make_shared<ComponentZReorderable>());
 	femme3.addComponent(sprite3);
 	femme3.addComponent(animationComp3);
 	femme3.addComponent(std::make_shared<ComponentScale>());
 
+	Entity drummer;
+	std::shared_ptr<ComponentSprite> sprite4 = std::make_shared<ComponentSprite>(std::string(BASE_PATH) + "sprites/drummer.png", 180, 180, 0.6, 0.6);
+
+	std::shared_ptr<ComponentAnimationState> animationComp4 = std::make_shared<ComponentAnimationState>();
+	animationComp4->addAnimation("idle", "0,1,2", 0.02, *sprite4->image.get());
+	animationComp4->state = "idle";
+
+	aScreen->addChild(sprite4->image.get());
+	drummer.addComponent(std::make_shared<ComponentPosition>(686, 151));
+	drummer.addComponent(std::make_shared<ComponentZord>(0));
+	drummer.addComponent(std::make_shared<ComponentZReorderable>());
+	drummer.addComponent(sprite4);
+	drummer.addComponent(animationComp3);
+	drummer.addComponent(std::make_shared<ComponentScale>());
+
+	return{ femme1, femme2, femme3 ,drummer};
+}
+
+aunteater::Entity createVideur(Polycode::Screen *aScreen)
+{
 	Entity videur;
 	std::shared_ptr<ComponentSprite> sprite4 = std::make_shared<ComponentSprite>(std::string(BASE_PATH) + "sprites/videur_01.png", 126, 180, 0.6, 0.6);
 
@@ -115,17 +139,20 @@ std::vector<Entity> createPng(Polycode::Screen *aScreen)
 	sprite4->image->setPositionZ(1);
 
 	std::shared_ptr<ComponentAnimationState> animationComp4 = std::make_shared<ComponentAnimationState>();
-	animationComp4->addAnimation("idle", "0", 0.3, *sprite4->image.get());
+	animationComp4->addAnimation("idle", "0,1,2,3", 0.3, *sprite4->image.get());
+	animationComp4->addAnimation("red", "4,5", 0.3, *sprite4->image.get());
+	animationComp4->addAnimation("green", "8,9", 0.3, *sprite4->image.get());
 	animationComp4->state = "idle";
 
 	aScreen->addChild(sprite4->image.get());
 	videur.addComponent(std::make_shared<ComponentPosition>(290, 298));
 	videur.addComponent(std::make_shared<ComponentZord>(0));
+	videur.addComponent(std::make_shared<ComponentZReorderable>());
 	videur.addComponent(sprite4);
 	videur.addComponent(animationComp4);
 	videur.addComponent(std::make_shared<ComponentScale>());
 
-	return{ femme1, femme2, femme3, videur };
+	return videur;
 }
 
 std::vector<Entity> createBackground(Polycode::Screen *aScreen)
@@ -286,4 +313,30 @@ std::vector<Entity> createBarriers()
 	barrier.addComponent(std::make_shared<ComponentBarrier>(193.0, 277.0, 381.0, 277.0));
 	vec.push_back(barrier);
 	return vec;
+}
+
+aunteater::Entity createInteractionVideur(Engine &aEngine)
+{
+	Entity pillInteraction = Entity();
+
+	class PillInteractionHandler : public InteractionHandler
+	{
+	public:
+		PillInteractionHandler(Engine &aEngine) : InteractionHandler(),
+			mEngine(aEngine)
+		{}
+
+		void handleInteraction(ComponentInteraction & interaction)
+		{
+			Handle<Entity> videur = mEngine.getEntity("videur");
+			std::shared_ptr<ComponentAnimationState> animComp = std::dynamic_pointer_cast<ComponentAnimationState, aunteater::Component>(videur->get(&typeid(ComponentAnimationState)));
+			animComp->state = "red";
+		}
+
+		Engine & mEngine;
+	};
+
+	pillInteraction.addComponent(std::make_shared<ComponentInteraction>(new PillInteractionHandler(aEngine), 245, 297, 306, 381));
+
+	return pillInteraction;
 }

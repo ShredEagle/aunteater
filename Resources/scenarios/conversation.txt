@@ -1,0 +1,24 @@
+{
+    "videur_1": [
+        [
+            "batard",
+            "videur_3"
+        ]
+    ],
+    "videur_2": [
+        [
+            "cool",
+            ""
+        ]
+    ],
+    "videur_3": [
+        [
+            "UNSODO",
+            ""
+        ],
+        [
+            "RESODO",
+            ""
+        ]
+    ]
+}

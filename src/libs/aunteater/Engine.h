@@ -27,6 +27,11 @@ namespace aunteater
         
         void removeEntity(Handle<Entity> aId);
         
+        Handle<Entity> getEntity(const std::string & aName)
+        {
+            return mNamedEntities.left.find(aName)->second;
+        }
+        
         /*
          * Families
          */
@@ -58,6 +63,8 @@ namespace aunteater
 		std::vector<System*> mSystems;
     };
     
+    
+    typedef std::list<Node> & Nodes;
     
     template <class T_nodeArchetype>
     std::list<Node> & Engine::getNodes()
