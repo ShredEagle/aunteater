@@ -54,6 +54,7 @@ void HardCore::init()
 	new SystemCollision(mEngine);
 	new SystemZReorder(mEngine);
     new SystemConversation(mEngine,
+                           mScreen,
                            BASE_PATH "scenarios/accroche.txt",
                            BASE_PATH "scenarios/conversation.txt");
 	new SystemInteraction(mEngine);

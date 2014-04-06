@@ -52,6 +52,15 @@ Entity createPlayer(Polycode::Screen * aScreen)
     return player;
 }
 
+Entity createTextBox(Polycode::Screen *aScreen, TextPairList aTpl, float x, float y)
+{
+    Entity textBox;
+    textBox.addComponent(std::make_shared<ComponentTextList>(aScreen, aTpl));
+    textBox.addComponent(std::make_shared<ComponentPosition>(x, y));
+    
+    return textBox;
+}
+
 std::vector<Entity> createPnj(Polycode::Screen *aScreen)
 {
 	Entity femme1;

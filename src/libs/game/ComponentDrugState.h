@@ -14,6 +14,10 @@
 class ComponentDrugState : public aunteater::Component
 {
 public:
+    	const std::type_info & getTypeInfo()
+	{
+		return typeid(*this);
+	}
     std::string name;
 //    enum class drug
 //    {
