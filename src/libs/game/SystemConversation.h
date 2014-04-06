@@ -12,12 +12,14 @@
 #include <aunteater/System.h>
 #include <aunteater/Engine.h>
 
+#include <Polycode.h>
 #include <boost/property_tree/ptree.hpp>
 
 class SystemConversation : public aunteater::System
 {
 public:
     SystemConversation(aunteater::Engine &aEngine,
+                       Polycode::Screen *aScreen,
                        const std::string &aInitialDoc,
                        const std::string &aConversationDoc);
     
@@ -33,6 +35,9 @@ private:
     aunteater::Nodes mPNJs;
     
     aunteater::Engine &mEngine;
+    
+    Polycode::Screen *mScreen;
+    
     boost::property_tree::ptree mInitialTree;
     boost::property_tree::ptree mConversationTree;
 };

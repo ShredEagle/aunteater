@@ -16,6 +16,11 @@
 class ComponentSentence : public aunteater::Component
 {
 public:
+    const std::type_info & getTypeInfo()
+	{
+		return typeid(*this);
+	}
+    
     ComponentSentence() : Component()
     {}
     

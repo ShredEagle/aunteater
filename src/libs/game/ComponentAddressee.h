@@ -16,6 +16,10 @@
 class ComponentAddressee : public aunteater::Component
 {
 public:
+    	const std::type_info & getTypeInfo()
+	{
+		return typeid(*this);
+	}
     ComponentAddressee() : Component()
     {}
     

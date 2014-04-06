@@ -13,9 +13,11 @@
 #include "ComponentDrugState.h"
 #include "ComponentPosition.h"
 #include "ComponentSentence.h"
+#include "Factories.h"
 
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/foreach.hpp>
 
 using namespace aunteater;
 
@@ -39,11 +41,13 @@ const ComponentIds NodeTalkers::gComponentTypes = { &typeid(ComponentSentence),
                                                     &typeid(ComponentPosition) };
 
 SystemConversation::SystemConversation(Engine &aEngine,
+                                       Polycode::Screen *aScreen,
                                        const std::string &aInitialDoc,
                                        const std::string &aConversationDoc) :
         mPlayers(aEngine.getNodes<NodeInitiators>()),
         mPNJs (aEngine.getNodes<NodeTalkers>()),
-        mEngine(aEngine)
+        mEngine(aEngine),
+        mScreen(aScreen)
 {
     
     mEngine.addSystem(this);
@@ -59,7 +63,7 @@ std::string SystemConversation::stateKey(aunteater::Node &aInitiatorNode)
 {
     auto & drugState = aInitiatorNode.get<ComponentDrugState>();
     auto & alignment = aInitiatorNode.get<ComponentAlignment>();
-//        static_cast<ComponentDrugState &>(aInitiatorNode.get(&typeid(ComponentDrugState)));
+    
     return drugState.name + "0_0_" + alignment.sign;
 }
 
@@ -80,16 +84,41 @@ void SystemConversation::update(float time)
                 auto & nextSentence = *nextTalking->get<ComponentSentence>();
                 nextSentence.identifier = next_sentence_id;
             }
-//            mSentencesTree.get<std::stri
         }
     }
     
     for (auto & talker : mPNJs)
     {
         auto & sentence = talker.get<ComponentSentence>();
+        auto & position = talker.get<ComponentPosition>();
         if(sentence.identifier != "")
         {
-            mConversationTree.
+            TextPairList textPairList;
+            
+            std::list< std::pair<std::string, std::string> > mParams;
+            BOOST_FOREACH(boost::property_tree::ptree::value_type & value,
+                          mConversationTree.get_child(sentence.identifier))
+            {
+                int i = 0;
+                std::pair<std::string, std::string> pair;
+                BOOST_FOREACH(boost::property_tree::ptree::value_type & subvalue,
+                              value.second)
+                {
+                    if(i)
+                    {
+                        pair.first = subvalue.second.get<std::string>("");
+                    }
+                    else
+                    {
+                        pair.second = subvalue.second.get<std::string>("");
+                    }
+                    ++i;
+                }
+                
+                textPairList.push_back(pair);
+            }
+            
+            mEngine.addEntity(createTextBox(mScreen, textPairList, position.x, position.y));
         }
     }
 }

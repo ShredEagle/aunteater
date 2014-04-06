@@ -35,7 +35,9 @@ void HardCore::init()
 	{
 		mEngine.addEntity(barrier);
 	}
-	
+    
+    // test text box
+
 	new SystemDisplay(mEngine);
 	new SystemMove(mEngine);
 	new InputSystem(mEngine);
@@ -44,6 +46,7 @@ void HardCore::init()
 	new SystemScaling(mEngine);
 	new SystemCollision(mEngine);
     new SystemConversation(mEngine,
+                           mScreen,
                            BASE_PATH "scenarios/accroche.txt",
                            BASE_PATH "scenarios/conversation.txt");
 }
