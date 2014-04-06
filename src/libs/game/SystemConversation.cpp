@@ -64,7 +64,7 @@ std::string SystemConversation::stateKey(aunteater::Node &aInitiatorNode)
     auto & drugState = aInitiatorNode.get<ComponentDrugState>();
     auto & alignment = aInitiatorNode.get<ComponentAlignment>();
     
-    return drugState.name + "0_0_" + alignment.sign;
+    return drugState.name + "_0_0_" + alignment.sign;
 }
 
 void SystemConversation::update(float time)
@@ -74,16 +74,21 @@ void SystemConversation::update(float time)
         auto & addressee = static_cast<ComponentAddressee &>(initiator.get(&typeid(ComponentAddressee)));
         if (addressee.entityName != "")
         {
-            std::string next_sentence_id = mInitialTree.get<std::string>(addressee.entityName + "." + stateKey(initiator));
-            std::vector<std::string> strs;
-            boost::split(strs, next_sentence_id, boost::is_any_of("_"));
-            
-            Handle<Entity> nextTalking = mEngine.getEntity(strs.at(0));
-            if ((*nextTalking).has(&typeid(ComponentSentence)))
-            {
-                auto & nextSentence = *nextTalking->get<ComponentSentence>();
-                nextSentence.identifier = next_sentence_id;
-            }
+            //std::string next_sentence_id = mInitialTree.get<std::string>(addressee.entityName + "." + stateKey(initiator));
+			std::string next_sentence_id = "";
+			
+			BOOST_FOREACH(boost::property_tree::ptree::value_type & value,
+				mInitialTree.get_child(addressee.entityName + "." + stateKey(initiator)))
+			{
+				next_sentence_id = value.second.get<std::string>("");
+				if (next_sentence_id != "")
+				{
+					break;
+				}
+			}
+
+			std::vector<std::string> strs;
+			boost::split(strs, next_sentence_id, boost::is_any_of("_"));
         }
     }
     

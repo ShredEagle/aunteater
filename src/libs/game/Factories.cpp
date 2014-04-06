@@ -20,6 +20,9 @@
 #include "ComponentZBoundary.h"
 #include "ComponentZReorderable.h"
 #include "ComponentInteraction.h"
+#include "ComponentAddressee.h"
+#include "ComponentDrugState.h"
+#include "ComponentAlignment.h"
 
 #include <string>
 using namespace aunteater;
@@ -41,6 +44,16 @@ Entity createPlayer(Polycode::Screen * aScreen)
 	aScreen->addChild(sprite->image.get());
 	player.addComponent(std::make_shared<ComponentPosition>(100, 100));
 	player.addComponent(std::make_shared<ComponentZord>(0));
+
+	std::shared_ptr<ComponentDrugState> drugState = std::make_shared<ComponentDrugState>();
+	drugState->name = "0drogue";
+	player.addComponent(drugState);
+
+	std::shared_ptr<ComponentAlignment> alignment = std::make_shared<ComponentAlignment>();
+	alignment->sign = "0";
+	player.addComponent(alignment);
+
+	player.addComponent(std::make_shared<ComponentAddressee>());
 	player.addComponent(sprite);
 	player.addComponent(std::make_shared<ComponentKeyboard>());
 	player.addComponent(std::make_shared<ComponentSpeed>());
@@ -340,6 +353,10 @@ aunteater::Entity createInteractionVideur(Engine &aEngine)
 			Handle<Entity> videur = mEngine.getEntity("videur");
 			std::shared_ptr<ComponentAnimationState> animComp = std::dynamic_pointer_cast<ComponentAnimationState, aunteater::Component>(videur->get(&typeid(ComponentAnimationState)));
 			animComp->state = "red";
+
+			Handle<Entity> player = mEngine.getEntity("player");
+			std::shared_ptr<ComponentAddressee> dialogComp = std::dynamic_pointer_cast<ComponentAddressee, aunteater::Component>(player->get(&typeid(ComponentAddressee)));
+			dialogComp->entityName = "videur";
 		}
 
 		Engine & mEngine;
