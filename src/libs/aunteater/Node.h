@@ -33,6 +33,12 @@ namespace aunteater
         /// It is an undefined behavior to give a ComponentId that is not present in the collection
         Component & get(const std::type_info *aComponentId);
         
+        template <class T_component>
+        T_component & get()
+        {
+            return static_cast<T_component &>(get(&typeid(T_component)));
+        }
+        
         //std::set<std::type_info * > getComponentsTypeInfo();
         
     private:

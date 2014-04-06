@@ -28,6 +28,13 @@ namespace aunteater
             return mComponents.find(aComponentId)->second;
         }
         
+        template <class T_component>
+        std::shared_ptr<T_component> get()
+        {
+            return std::static_pointer_cast<T_component>
+                (mComponents.find(&typeid(T_component))->second);
+        }
+        
     private:
         std::map<const std::type_info *, std::shared_ptr<Component> > mComponents;
     };

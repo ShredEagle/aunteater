@@ -23,10 +23,15 @@ namespace aunteater
         }
        
         // Not possible without a reference to the container instance.
-//        T & operator*()
-//        {
-//            return
-//        }
+        T_object & operator*()
+        {
+            return mContainer->at(mIndex);
+        }
+        
+        T_object * operator->()
+        {
+            return &(this->operator*());
+        }
         
         template <class T_contr>
         T_object & deref(T_contr &aContainer)

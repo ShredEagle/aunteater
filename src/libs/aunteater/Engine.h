@@ -27,6 +27,11 @@ namespace aunteater
         
         void removeEntity(Handle<Entity> aId);
         
+        Handle<Entity> getEntity(const std::string & aName)
+        {
+            return mNamedEntities.left.find(aName)->second;
+        }
+        
         /*
          * Families
          */
