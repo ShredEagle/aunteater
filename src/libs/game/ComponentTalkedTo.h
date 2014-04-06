@@ -1,0 +1,14 @@
+//
+//  ComponentTalkedTo.h
+//  aunteater
+//
+//  Created by Adrien on 05/04/14.
+//
+//
+
+#ifndef aunteater_ComponentTalkedTo_h
+#define aunteater_ComponentTalkedTo_h
+
+
+
+#endif

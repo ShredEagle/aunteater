@@ -46,6 +46,8 @@ namespace aunteater
     };
     
     
+    typedef std::list<Node> & Nodes;
+    
     template <class T_nodeArchetype>
     std::list<Node> & Engine::getNodes()
     {
