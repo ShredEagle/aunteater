@@ -34,7 +34,7 @@ void Engine::removeEntity(Handle<Entity> aId)
 {
     mNamedEntities.right.erase(aId);
     removedEntity(aId);
-    mEntities.erase(mEntities.begin()+aId.get()-1);
+    mEntities.at(aId.get()) = Entity();
 }
 
 
