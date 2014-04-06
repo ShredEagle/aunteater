@@ -19,7 +19,7 @@ public:
     ComponentAddressee() : Component()
     {}
     
-    std::string addresseeEntityName;
+    std::string entityName;
     
 };
 

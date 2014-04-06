@@ -16,14 +16,6 @@
 
 #include "ComponentSprite.h"
 
-#include "SystemDisplay.h"
-#include "SystemMove.h"
-#include "InputSystem.h"
-#include "SystemAnimation.h"
-#include "SystemMoveAnimation.h"
-#include "SystemScaling.h"
-#include "SystemCollision.h"
-
 #include <memory>
 
 

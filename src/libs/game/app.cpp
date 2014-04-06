@@ -1,5 +1,14 @@
 #include "app.h"
 
+#include "SystemDisplay.h"
+#include "SystemMove.h"
+#include "InputSystem.h"
+#include "SystemAnimation.h"
+#include "SystemMoveAnimation.h"
+#include "SystemScaling.h"
+#include "SystemCollision.h"
+#include "SystemConversation.h"
+
 using namespace aunteater;
 
 void HardCore::init()
@@ -34,4 +43,7 @@ void HardCore::init()
 	new SystemMoveAnimation(mEngine);
 	new SystemScaling(mEngine);
 	new SystemCollision(mEngine);
+    new SystemConversation(mEngine,
+                           BASE_PATH "scenarios/accroche.txt",
+                           BASE_PATH "scenarios/conversation.txt");
 }

@@ -13,18 +13,28 @@
 #include <aunteater/Engine.h>
 
 #include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
 
 class SystemConversation : public aunteater::System
 {
 public:
-    void addToEngine(aunteater::Engine &aEngine);
+    SystemConversation(aunteater::Engine &aEngine,
+                       const std::string &aInitialDoc,
+                       const std::string &aConversationDoc);
     
-    void update();
+    virtual void addedToEngine(aunteater::Engine &aEngine);
+    
+    virtual void update(float time);
+    
+protected:
+    std::string stateKey(aunteater::Node &aInitiatorNode);
     
 private:
     aunteater::Nodes mPlayers;
     aunteater::Nodes mPNJs;
+    
+    aunteater::Engine &mEngine;
+    boost::property_tree::ptree mInitialTree;
+    boost::property_tree::ptree mConversationTree;
 };
 
 #endif /* defined(__aunteater__SystemConversation__) */

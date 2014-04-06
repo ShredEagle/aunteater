@@ -14,11 +14,12 @@
 class ComponentDrugState : public aunteater::Component
 {
 public:
-    enum class drug
-    {
-        COKE,
-        SPRITE
-    };
+    std::string name;
+//    enum class drug
+//    {
+//        COKE,
+//        SPRITE
+//    };
 };
 
 #endif
