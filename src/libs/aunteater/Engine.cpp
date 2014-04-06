@@ -42,7 +42,7 @@ void Engine::addedEntity(Handle<Entity> aEntity)
 {
     for (auto & typedFamily : mTypedFamilies)
     {
-        typedFamily.second.testEntityInclusion(aEntity.deref(mEntities));
+        typedFamily.second.testEntityInclusion(aEntity);
     }
 }
 

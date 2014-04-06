@@ -14,15 +14,15 @@ Family::Family(Engine & aEngine, ComponentIds aComponentsTypeInfo):
     
 }
 
-void Family::testEntityInclusion(Entity &aEntity)
+void Family::testEntityInclusion(Handle<Entity> aEntity)
 {
     addIfMatch(aEntity);
 }
 
-void Family::addIfMatch(Entity &aEntity)
+void Family::addIfMatch(Handle<Entity> aEntity)
 {
     if (std::all_of(mComponentsTypeInfo.begin(), mComponentsTypeInfo.end(),
-                    [&aEntity](const std::type_info *compId){return aEntity.has(compId);}))
+                    [&aEntity](const std::type_info *compId){return aEntity->has(compId);}))
     {
         mNodes.emplace_back(mComponentsTypeInfo, aEntity, Node::family_access());
     }
