@@ -37,10 +37,10 @@ namespace aunteater
             return mNodes;
         }
         
-        void testEntityInclusion(Entity &aEntity);
+        void testEntityInclusion(Handle<Entity> aEntity);
         void removeIfPresent(Handle<Entity> aEntity);
     private:
-        void addIfMatch(Entity &aEntity);
+        void addIfMatch(Handle<Entity> aEntity);
         
         void removeEntity(std::shared_ptr<Entity> aEntity);
         void componentAddedToEntity(std::shared_ptr<Entity> aEntity,std::type_info * aComponent);

@@ -10,6 +10,7 @@
 #include "SystemCollision.h"
 #include "SystemConversation.h"
 #include "SystemInteraction.h"
+#include "SystemDisplayDialog.h"
 
 using namespace aunteater;
 
@@ -58,4 +59,5 @@ void HardCore::init()
                            BASE_PATH "scenarios/accroche.txt",
                            BASE_PATH "scenarios/conversation.txt");
 	new SystemInteraction(mEngine);
+	new SystemDisplayDialog(mEngine);
 }

@@ -75,9 +75,12 @@ namespace aunteater
         if (insertionResult.second)
         {
             Family &familyRef = insertionResult.first->second;
-            for (Entity & entity : mEntities)
+//            for (Entity & entity : mEntities)
+            for (std::vector<Entity>::size_type index = 0;
+                 index != mEntities.size();
+                 ++index)
             {
-                familyRef.testEntityInclusion(entity);
+                familyRef.testEntityInclusion(Handle<Entity>(mEntities, index));
             }
         }
         return insertionResult.first->second.getNodes();

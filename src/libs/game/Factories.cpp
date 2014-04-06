@@ -23,6 +23,7 @@
 #include "ComponentAddressee.h"
 #include "ComponentDrugState.h"
 #include "ComponentAlignment.h"
+#include "ComponentSentence.h"
 
 #include <string>
 using namespace aunteater;
@@ -70,6 +71,8 @@ Entity createTextBox(Polycode::Screen *aScreen, TextPairList aTpl, float x, floa
     Entity textBox;
     textBox.addComponent(std::make_shared<ComponentTextList>(aScreen, aTpl));
     textBox.addComponent(std::make_shared<ComponentPosition>(x, y));
+	textBox.addComponent(std::make_shared<ComponentKeyboard>());
+	textBox.addComponent(std::make_shared<ComponentZord>(-1000));
     
     return textBox;
 }
@@ -170,6 +173,8 @@ aunteater::Entity createVideur(Polycode::Screen *aScreen)
 	videur.addComponent(std::make_shared<ComponentPosition>(290, 298));
 	videur.addComponent(std::make_shared<ComponentZord>(0));
 	videur.addComponent(std::make_shared<ComponentZReorderable>());
+	std::shared_ptr<ComponentSentence> videurConv = std::make_shared<ComponentSentence>();
+	videur.addComponent(videurConv);
 	videur.addComponent(sprite4);
 	videur.addComponent(animationComp4);
 	videur.addComponent(std::make_shared<ComponentScale>());
@@ -357,6 +362,8 @@ aunteater::Entity createInteractionVideur(Engine &aEngine)
 			Handle<Entity> player = mEngine.getEntity("player");
 			std::shared_ptr<ComponentAddressee> dialogComp = std::dynamic_pointer_cast<ComponentAddressee, aunteater::Component>(player->get(&typeid(ComponentAddressee)));
 			dialogComp->entityName = "videur";
+
+			interaction.active = true;
 		}
 
 		Engine & mEngine;

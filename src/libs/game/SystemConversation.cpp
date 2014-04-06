@@ -89,6 +89,15 @@ void SystemConversation::update(float time)
 
 			std::vector<std::string> strs;
 			boost::split(strs, next_sentence_id, boost::is_any_of("_"));
+            
+            Handle<Entity> nextTalking = mEngine.getEntity(strs.at(0));
+            if ((*nextTalking).has(&typeid(ComponentSentence)))
+            {
+                auto & nextSentence = *nextTalking->get<ComponentSentence>();
+                nextSentence.identifier = next_sentence_id;
+            }
+            
+            addressee.entityName = "";
         }
     }
     
@@ -109,7 +118,7 @@ void SystemConversation::update(float time)
                 BOOST_FOREACH(boost::property_tree::ptree::value_type & subvalue,
                               value.second)
                 {
-                    if(i)
+                    if(!i)
                     {
                         pair.first = subvalue.second.get<std::string>("");
                     }
@@ -124,6 +133,8 @@ void SystemConversation::update(float time)
             }
             
             mEngine.addEntity(createTextBox(mScreen, textPairList, position.x, position.y));
+            
+            sentence.identifier = "";
         }
     }
 }

@@ -34,7 +34,7 @@ void Engine::removeEntity(Handle<Entity> aId)
 {
     mNamedEntities.right.erase(aId);
     removedEntity(aId);
-    mEntities.erase(mEntities.begin()+aId.get());
+    mEntities.erase(mEntities.begin()+aId.get()-1);
 }
 
 
@@ -42,7 +42,7 @@ void Engine::addedEntity(Handle<Entity> aEntity)
 {
     for (auto & typedFamily : mTypedFamilies)
     {
-        typedFamily.second.testEntityInclusion(aEntity.deref(mEntities));
+        typedFamily.second.testEntityInclusion(aEntity);
     }
 }
 

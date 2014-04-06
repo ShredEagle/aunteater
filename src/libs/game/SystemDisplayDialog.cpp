@@ -8,9 +8,11 @@
 
 #include "SystemDisplayDialog.h"
 
+#include "ComponentSentence.h"
 #include "ComponentPosition.h"
 #include "ComponentTextList.h"
 #include "ComponentKeyboard.h"
+#include <boost/algorithm/string.hpp>
 
 using namespace aunteater;
 
@@ -44,13 +46,30 @@ void SystemDisplayDialog::update(float time)
         auto & textlist = dialog.get<ComponentTextList>();
         
         textlist.rectangle->setPosition(position.x, position.y);
+		textlist.screen->rootEntity.moveChildTop(textlist.rectangle);
         
         
         Polycode::CoreInput * keyboard = Polycode::CoreServices::getInstance()->getCore()->getInput();
         
-		if(keyboard->getKeyState(Polycode::KEY_KP1))
+        std::string nextSentence("");
+		if(keyboard->getKeyState(Polycode::KEY_a))
         {
+            nextSentence = textlist.list.at(0).second;
+        }
+ 		else if(keyboard->getKeyState(Polycode::KEY_z))
+        {
+            nextSentence = textlist.list.at(1).second;
+        }
+        
+        if (nextSentence != "")
+        {
+            std::vector<std::string> strs;
+            boost::split(strs, nextSentence, boost::is_any_of("_"));
             
+            auto entityHandle = mEngine.getEntity(strs.at(0));
+            entityHandle->get<ComponentSentence>()->identifier = nextSentence;
+ 
+            mEngine.removeEntity(dialog.getEntity());
         }
     }
 }
