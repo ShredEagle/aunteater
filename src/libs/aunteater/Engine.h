@@ -14,7 +14,8 @@
 
 namespace aunteater
 {
-    
+	class System;
+
     class Engine
     {
     public:
@@ -31,9 +32,21 @@ namespace aunteater
          */
         template <class T_derivedNode>
         std::list<Node> & getNodes();
+
+		/*
+		 * System
+		 */
+		void addSystem(System * System);
+
+		/*
+		 * Update
+		 */
+
+		void update(float time);
         
     protected:
         void addedEntity(Handle<Entity> aEntity);
+        void removedEntity(Handle<Entity> aEntity);
         
     private:
         typedef boost::bimap<std::string, Handle<Entity> > NameEntityMap;
@@ -42,6 +55,7 @@ namespace aunteater
         std::vector<Entity> mEntities;
         NameEntityMap mNamedEntities;
         ArchetypeFamilyMap mTypedFamilies;
+		std::vector<System*> mSystems;
     };
     
     
