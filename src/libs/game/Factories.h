@@ -9,10 +9,10 @@
 #ifndef __aunteater__Factories__
 #define __aunteater__Factories__
 
-#define BASE_PATH "C:/work/aunteater/Resources/"
+#define BASE_PATH "/Users/adn/projects/Perso/aunteater/Resources/"
 
-#include "aunteater\Entity.h"
-#include "Polycode.h"
+#include <aunteater/Entity.h>
+#include <Polycode.h>
 
 #include <vector>
 

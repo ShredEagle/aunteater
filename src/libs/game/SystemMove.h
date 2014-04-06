@@ -9,14 +9,14 @@
 #ifndef __aunteater__SytemMove__
 #define __aunteater__SytemMove__
 
-#include "aunteater\System.h"
-#include "aunteater\Engine.h"
+#include <aunteater/System.h>
+#include <aunteater/Engine.h>
+#include <aunteater/Node.h>
 
 #include "ComponentSpeed.h"
 #include "ComponentPosition.h"
 #include "NodeMove.h"
 
-#include "aunteater\Node.h"
 
 class SystemMove : public aunteater::System
 {

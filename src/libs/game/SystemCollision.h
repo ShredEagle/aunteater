@@ -11,15 +11,14 @@
 
 #include "Polycode.h"
 
-#include "aunteater\System.h"
-#include "aunteater\Engine.h"
-
+#include <aunteater/System.h>
+#include <aunteater/Engine.h>
+#include <aunteater/Node.h>
 #include "ComponentBarrier.h"
 #include "ComponentPosition.h"
 #include "NodeBarrier.h"
 #include "NodePlayerCollision.h"
 
-#include "aunteater\Node.h"
 
 #include <typeinfo>
 

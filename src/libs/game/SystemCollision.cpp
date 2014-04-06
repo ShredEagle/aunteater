@@ -25,9 +25,9 @@ void SystemCollision::update(float time)
 		Polycode::Vector2 origin = Polycode::Vector2(posBarrier.x1, posBarrier.y1);
 		Polycode::Vector2 end = Polycode::Vector2(posBarrier.x2, posBarrier.y2);
 
-		for (aunteater::Node player : mPlayerList)
+		for (aunteater::Node playerIt : mPlayerList)
 		{
-			ComponentPosition& posPlayer = (ComponentPosition&)player.get(&typeid(ComponentPosition));
+			ComponentPosition& posPlayer = (ComponentPosition&)playerIt.get(&typeid(ComponentPosition));
 			Polycode::Vector2 player = Polycode::Vector2(posPlayer.x-40, posPlayer.y+37);
 			
 			Polycode::Vector2 normal = (origin - player) - line*line.dot(origin - player);
