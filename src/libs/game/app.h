@@ -27,7 +27,7 @@ public:
     
     void init()
     {
-//        mEngine.addEntity("player", createPlayer());
+        mEngine.addEntity("player", createPlayer(mScreen));
         
 //        for(Number i=0; i < 20; i++)
 //        {
@@ -43,7 +43,7 @@ public:
     bool update()
     {
         Number elapsed = mCore->getElapsed();
-//        image->setRotation(image->getRotation()+(elapsed*100));
+  //      image->setRotation(image->getRotation()+(elapsed*100));
         return mCore->updateAndRender();
     }
     

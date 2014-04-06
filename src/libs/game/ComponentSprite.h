@@ -18,12 +18,15 @@
 class ComponentSprite : public aunteater::Component
 {
 public:
-    ComponentSprite(const std::string &aFile) : aunteater::Component(),
+    ComponentSprite(const std::string &aFile, Polycode::Screen *aScreen) : aunteater::Component(),
     image(new Polycode::ScreenImage(aFile))
-    {}
+    {
+        aScreen->addChild(image.get());
+    }
     
 public:
     std::shared_ptr<Polycode::ScreenImage> image;
+//    Polycode::ScreenImage *image;
 };
 
 #endif /* defined(__aunteater__ComponentSprite__) */

@@ -9,6 +9,15 @@
 #ifndef aunteater_ComponentTalkedTo_h
 #define aunteater_ComponentTalkedTo_h
 
+#include <aunteater/Component.h>
 
+#include <list>
+
+class ComponentTalkedTo : public aunteater::Component
+{
+public:
+    std::list<std::string> list;
+
+}
 
 #endif

@@ -9,6 +9,16 @@
 #ifndef aunteater_ComponentDrugState_h
 #define aunteater_ComponentDrugState_h
 
+#include <aunteater/Component.h>
 
+class ComponentDrugState : public aunteater::Component
+{
+public:
+    enum class drug
+    {
+        COKE,
+        SPRITE
+    };
+};
 
 #endif

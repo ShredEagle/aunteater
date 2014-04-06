@@ -13,6 +13,11 @@
 
 #include "Entity.h"
 
-aunteater::Entity createPlayer();
+namespace Polycode
+{
+    class Screen;
+}
+
+aunteater::Entity createPlayer(Polycode::Screen *aScreen);
 
 #endif /* defined(__aunteater__Factories__) */
