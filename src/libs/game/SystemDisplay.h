@@ -21,12 +21,13 @@
 class SystemDisplay : public aunteater::System
 {
 public:
-	SystemDisplay(aunteater::Engine & aEngine);
+	SystemDisplay(aunteater::Engine & aEngine,Polycode::Screen & aScreen);
 	void addedToEngine(aunteater::Engine &aEngine);
 	void update(float time);
 
 public:
 	std::list<aunteater::Node> & mNodeList;
+	Polycode::Screen & mScreen;
 };
 
 #endif /* defined(__aunteater__SytemDisplay__) */

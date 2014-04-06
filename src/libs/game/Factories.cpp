@@ -16,6 +16,9 @@
 #include "ComponentScale.h"
 #include "ComponentBarrier.h"
 #include "ComponentPlayer.h"
+#include "ComponentZord.h"
+#include "ComponentZBoundary.h"
+#include "ComponentZReorderable.h"
 
 #include <string>
 using namespace aunteater;
@@ -24,10 +27,6 @@ Entity createPlayer(Polycode::Screen * aScreen)
 {
     Entity player;
 	std::shared_ptr<ComponentSprite> sprite = std::make_shared<ComponentSprite>(std::string(BASE_PATH) + "sprites/spritesheet_hero.png",126,180,0.6,0.6);
-
-	sprite->image->depthTest = true;
-	sprite->image->depthWrite = true;
-	sprite->image->setPositionZ(1);
 
 	std::shared_ptr<ComponentAnimationState> animationComp = std::make_shared<ComponentAnimationState>();
 	animationComp->addAnimation("idle", "18,19,20,21,22,23,24,25,26", 0.3,*sprite->image.get());
@@ -40,9 +39,11 @@ Entity createPlayer(Polycode::Screen * aScreen)
 	
 	aScreen->addChild(sprite->image.get());
 	player.addComponent(std::make_shared<ComponentPosition>(100, 100));
+	player.addComponent(std::make_shared<ComponentZord>(0));
 	player.addComponent(sprite);
 	player.addComponent(std::make_shared<ComponentKeyboard>());
 	player.addComponent(std::make_shared<ComponentSpeed>());
+	player.addComponent(std::make_shared<ComponentZReorderable>());
 	player.addComponent(animationComp);
 	player.addComponent(std::make_shared<ComponentScale>());
 	player.addComponent(std::make_shared<ComponentPlayer>());
@@ -65,6 +66,7 @@ std::vector<Entity> createPng(Polycode::Screen *aScreen)
 
 	aScreen->addChild(sprite->image.get());
 	femme1.addComponent(std::make_shared<ComponentPosition>(404, 612));
+	femme1.addComponent(std::make_shared<ComponentZord>(0));
 	femme1.addComponent(sprite);
 	femme1.addComponent(animationComp);
 	femme1.addComponent(std::make_shared<ComponentScale>());
@@ -82,6 +84,7 @@ std::vector<Entity> createPng(Polycode::Screen *aScreen)
 
 	aScreen->addChild(sprite2->image.get());
 	femme2.addComponent(std::make_shared<ComponentPosition>(748, 318));
+	femme2.addComponent(std::make_shared<ComponentZord>(0));
 	femme2.addComponent(sprite2);
 	femme2.addComponent(animationComp2);
 	femme2.addComponent(std::make_shared<ComponentScale>());
@@ -99,6 +102,7 @@ std::vector<Entity> createPng(Polycode::Screen *aScreen)
 
 	aScreen->addChild(sprite3->image.get());
 	femme3.addComponent(std::make_shared<ComponentPosition>(504, 264));
+	femme3.addComponent(std::make_shared<ComponentZord>(0));
 	femme3.addComponent(sprite3);
 	femme3.addComponent(animationComp3);
 	femme3.addComponent(std::make_shared<ComponentScale>());
@@ -116,6 +120,7 @@ std::vector<Entity> createPng(Polycode::Screen *aScreen)
 
 	aScreen->addChild(sprite4->image.get());
 	videur.addComponent(std::make_shared<ComponentPosition>(290, 298));
+	videur.addComponent(std::make_shared<ComponentZord>(0));
 	videur.addComponent(sprite4);
 	videur.addComponent(animationComp4);
 	videur.addComponent(std::make_shared<ComponentScale>());
@@ -127,75 +132,71 @@ std::vector<Entity> createBackground(Polycode::Screen *aScreen)
 {
 	Entity bg;
 	std::shared_ptr<ComponentSprite> sprite = std::make_shared<ComponentSprite>(std::string(BASE_PATH) + "sprites/bg.png", 1280, 768,1,1);
-	sprite->image->depthTest = true;
-	sprite->image->depthWrite = true;
 	sprite->image->setPositionMode(Polycode::ScreenEntity::POSITION_TOPLEFT);
-	sprite->image->setPositionZ(0);
 	aScreen->addChild(sprite->image.get());
 	bg.addComponent(std::make_shared<ComponentPosition>(0, 0));
+	bg.addComponent(std::make_shared<ComponentZBoundary>(0, 20));
+	bg.addComponent(std::make_shared<ComponentZord>(20));
 	bg.addComponent(sprite);
 
-	/*Entity bg1;
+	Entity bg1;
 	std::shared_ptr<ComponentSprite> sprite1 = std::make_shared<ComponentSprite>(std::string(BASE_PATH) + "sprites/bg1.png", 1280, 768, 1, 1);
-	sprite1->image->depthTest = true;
-	sprite1->image->depthWrite = true;
-	sprite1->image->setPositionZ(0.1);
 	sprite1->image->setPositionMode(Polycode::ScreenEntity::POSITION_TOPLEFT);
 	aScreen->addChild(sprite1->image.get());
 	bg1.addComponent(std::make_shared<ComponentPosition>(0, 0));
+	bg1.addComponent(std::make_shared<ComponentZBoundary>(700, 0));
+	bg1.addComponent(std::make_shared<ComponentZord>(0));
 	bg1.addComponent(sprite1);
 
 	Entity bg2;
 	std::shared_ptr<ComponentSprite> sprite2 = std::make_shared<ComponentSprite>(std::string(BASE_PATH) + "sprites/bg2.png", 1280, 768, 1, 1);
-	sprite2->image->depthTest = true;
-	sprite2->image->depthWrite = true;
-	sprite2->image->setPositionZ(9);
 	sprite2->image->setPositionMode(Polycode::ScreenEntity::POSITION_TOPLEFT);
 	aScreen->addChild(sprite2->image.get());
 	bg2.addComponent(std::make_shared<ComponentPosition>(0, 0));
+	bg2.addComponent(std::make_shared<ComponentZBoundary>(571, 2));
+	bg2.addComponent(std::make_shared<ComponentZord>(2));
 	bg2.addComponent(sprite2);
 
 	Entity bg3;
 	std::shared_ptr<ComponentSprite> sprite3 = std::make_shared<ComponentSprite>(std::string(BASE_PATH) + "sprites/bg3.png", 1280, 768, 1, 1);
-	sprite3->image->depthTest = true;
-	sprite3->image->depthWrite = true;
-	sprite3->image->setPositionZ(8);
 	sprite3->image->setPositionMode(Polycode::ScreenEntity::POSITION_TOPLEFT);
 	aScreen->addChild(sprite3->image.get());
 	bg3.addComponent(std::make_shared<ComponentPosition>(0, 0));
+	bg3.addComponent(std::make_shared<ComponentZBoundary>(549, 4));
+	bg3.addComponent(std::make_shared<ComponentZord>(4));
 	bg3.addComponent(sprite3);
 
 	Entity bg4;
 	std::shared_ptr<ComponentSprite> sprite4 = std::make_shared<ComponentSprite>(std::string(BASE_PATH) + "sprites/bg4.png", 1280, 768, 1, 1);
-	sprite4->image->depthTest = true;
-	sprite4->image->depthWrite = true;
-	sprite4->image->setPositionZ(7);
 	sprite4->image->setPositionMode(Polycode::ScreenEntity::POSITION_TOPLEFT);
 	aScreen->addChild(sprite4->image.get());
 	bg4.addComponent(std::make_shared<ComponentPosition>(0, 0));
+	bg4.addComponent(std::make_shared<ComponentZBoundary>(433, 6));
+	bg4.addComponent(std::make_shared<ComponentZord>(6));
 	bg4.addComponent(sprite4);
 
 	Entity bg5;
 	std::shared_ptr<ComponentSprite> sprite5 = std::make_shared<ComponentSprite>(std::string(BASE_PATH) + "sprites/bg5.png", 1280, 768, 1, 1);
 	sprite5->image->depthTest = true;
 	sprite5->image->depthWrite = true;
-	sprite5->image->setPositionZ(6);
+	sprite5->image->setPositionZ(0.2f);
 	sprite5->image->setPositionMode(Polycode::ScreenEntity::POSITION_TOPLEFT);
 	aScreen->addChild(sprite5->image.get());
 	bg5.addComponent(std::make_shared<ComponentPosition>(0, 0));
+	bg5.addComponent(std::make_shared<ComponentZBoundary>(334, 8));
+	bg5.addComponent(std::make_shared<ComponentZord>(8));
 	bg5.addComponent(sprite5);
 
 	Entity bg6;
 	std::shared_ptr<ComponentSprite> sprite6 = std::make_shared<ComponentSprite>(std::string(BASE_PATH) + "sprites/bg6.png", 1280, 768, 1, 1);
-	sprite6->image->depthTest = true;
-	sprite6->image->depthWrite = true;
-	sprite6->image->setPositionZ(5);
 	sprite6->image->setPositionMode(Polycode::ScreenEntity::POSITION_TOPLEFT);
 	aScreen->addChild(sprite6->image.get());
 	bg6.addComponent(std::make_shared<ComponentPosition>(0, 0));
-	bg6.addComponent(sprite6);*/
+	bg6.addComponent(std::make_shared<ComponentZBoundary>(198, 10));
+	bg6.addComponent(std::make_shared<ComponentZord>(10));
+	bg6.addComponent(sprite6);
 
-	return {bg};
+	return {bg,bg1,bg2,bg3,bg4,bg5,bg6};
 }
 
 

@@ -21,7 +21,7 @@
 
 #include <list>
 
-#define BASE_SPEED 1.0
+#define BASE_SPEED 3.0
 
 class InputSystem : public aunteater::System
 {

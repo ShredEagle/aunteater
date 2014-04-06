@@ -8,7 +8,7 @@ using namespace aunteater;
 Handle<Entity> Engine::addEntity(const std::string & aName, Entity aEntity)
 {
     auto insertionResult =
-    mNamedEntities.left.insert(std::make_pair(aName, makeHandle(mEntities, std::size_t(0))));
+    mNamedEntities.left.insert(std::make_pair(aName, makeHandle(mEntities, std::size_t(mEntities.size()))));
     if (!insertionResult.second)
     {
         throw std::invalid_argument("Named entity is already present in the engine"
