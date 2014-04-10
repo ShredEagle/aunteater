@@ -57,3 +57,6 @@ install(TARGETS ${PROJECT_NAME}
         ARCHIVE DESTINATION ${ARCHIVE_OUTPUT_DIRECTORY}
         PUBLIC_HEADER DESTINATION include/${PROJECT_NAME}
 )
+
+# Install the Config file, making it easy for other CMake projects to depend on this one.
+install(FILES AuntEaterConfig.cmake DESTINATION ${CMAKE_INSTALL_PREFIX} )
