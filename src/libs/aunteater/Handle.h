@@ -44,6 +44,16 @@ namespace aunteater
             return mIndex < aRhs.mIndex;
         }
         
+        bool operator==(const Handle &aRhs) const
+        {
+            return (mContainer == aRhs.mContainer) && (mIndex == aRhs.mIndex);
+        }
+        
+        bool operator!=(const Handle &aRhs) const
+        {
+            return !(*this == aRhs);
+        }
+        
     private:
         // We need the object to be assignable, cannot use reference here
         T_container *mContainer;

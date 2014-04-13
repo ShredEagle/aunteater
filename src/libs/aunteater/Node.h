@@ -45,7 +45,15 @@ namespace aunteater
             return static_cast<T_component &>(get(&typeid(T_component)));
         }
         
-        //std::set<std::type_info * > getComponentsTypeInfo();
+        bool operator==(const Node &aRhs) const
+        {
+            return (mTypedComponents == aRhs.mTypedComponents) && (mEntity == aRhs.mEntity);
+        }
+        
+        bool operator!=(const Node &aRhs) const
+        {
+            return !(*this == aRhs);
+        }
         
     private:
         /// \todo Same as with Entity::get() : it would be nice to avoir sharing ownership.

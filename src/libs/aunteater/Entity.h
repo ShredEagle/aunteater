@@ -13,7 +13,17 @@ namespace aunteater
     {
     public:
         /// \brief Adds a component
+        /// \deprecated Use template addComponent instead
         void addComponent(std::shared_ptr<Component> aComponent);
+        
+        /// \todo Once the componet ownership problem is addressed
+        /// return the component
+        template <class T_component, class... Args>
+        void addComponent(Args... aArgs)
+        {
+            addComponent(std::make_shared<T_component>(aArgs...));
+        }
+        
         void removeComponent(const std::type_info & aComponentId);
         
         bool has(const std::type_info *aComponentId)
