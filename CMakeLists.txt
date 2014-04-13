@@ -129,13 +129,13 @@ find_package(Boost 1.49 COMPONENTS ${boost_binaries})
 ##
 ## Cpputest
 ##
-#
-#find_package(Cpputest)
-#if (WIN32 AND CPPUTEST_FOUND)
-#    # The Winmm.lib is required on Windows, because UtestPlatform.obj
-#    # references __imp__timeGetTime@0 in function _PlatformSpecificMemset
-#    list(APPEND Cpputest_LIBRARIES Winmm.lib)
-#endif (WIN32 AND CPPUTEST_FOUND)
+
+find_package(Cpputest)
+if (WIN32 AND CPPUTEST_FOUND)
+    # The Winmm.lib is required on Windows, because UtestPlatform.obj
+    # references __imp__timeGetTime@0 in function _PlatformSpecificMemset
+    list(APPEND Cpputest_LIBRARIES Winmm.lib)
+endif (WIN32 AND CPPUTEST_FOUND)
 
 ## #################################################################
 ## Build options

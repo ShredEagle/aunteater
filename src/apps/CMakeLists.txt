@@ -1,1 +1,1 @@
-#add_subdirectory(__)
+conditional_add_subdirectory(TestSuite DEPENDS Cpputest VERBOSE)
