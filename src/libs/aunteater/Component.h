@@ -7,7 +7,8 @@
 namespace aunteater
 {
     
-    typedef const std::type_info * ComponentId;
+    typedef const std::type_info * ComponentTypeId;
+    typedef std::set<ComponentTypeId> ArchetypeTypeSet;
 
     class Component
     {

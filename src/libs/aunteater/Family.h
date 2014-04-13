@@ -19,16 +19,7 @@ namespace aunteater
     {
     private:
         typedef std::list<Node> NodeList;
-        
-        Engine & mEngine;
-        NodeList mNodes;
-        ComponentIds mComponentsTypeInfo;
-        
-        /// \note It works to use an iterator because we use a std::list
-        /// for which operation on elements do not affect other iterators.
-        
-        // This map is usefull to test if an entity is present in the current family instance
-        std::map<Handle<Entity>, NodeList::iterator > mEntities;
+
     public:
         Family(Engine & aEngine, ComponentIds aComponentsTypeInfo);
         
@@ -39,12 +30,24 @@ namespace aunteater
         
         void testEntityInclusion(Handle<Entity> aEntity);
         void removeIfPresent(Handle<Entity> aEntity);
+        
     private:
         void addIfMatch(Handle<Entity> aEntity);
         
         void removeEntity(std::shared_ptr<Entity> aEntity);
         void componentAddedToEntity(std::shared_ptr<Entity> aEntity,std::type_info * aComponent);
         void componentRemovedFromEntity(std::shared_ptr<Entity> aEntity,std::type_info * aComponent);
+        
+    private:
+        Engine & mEngine;
+        NodeList mNodes;
+        ComponentIds mComponentsTypeInfo;
+        
+        /// \note It works to use an iterator because we use a std::list
+        /// for which operation on elements do not affect other iterators.
+        
+        // This map is usefull to test if an entity is present in the current family instance
+        std::map<Handle<Entity>, NodeList::iterator > mEntities;
     };
     
 } // namespace aunteater

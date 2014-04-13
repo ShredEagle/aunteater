@@ -9,7 +9,7 @@ using namespace aunteater;
 Node::Node(const ComponentIds & aIds, Handle<Entity> aAssignedEntity, const family_access &):
     mEntity(aAssignedEntity)
 {
-    for (ComponentId componentId : aIds)
+    for (ComponentTypeId componentId : aIds)
     {
         mTypedComponents.insert(std::make_pair(componentId, aAssignedEntity->get(componentId)));
     }
