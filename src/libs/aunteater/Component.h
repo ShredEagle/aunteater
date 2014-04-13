@@ -13,8 +13,15 @@ namespace aunteater
     class Component
     {
     public:
+        // Component class needs to be polymorphic to enable RTTI.
+        virtual ~Component()
+        {}
         
-		virtual const std::type_info & getTypeInfo() =0;
+        /// \todo Rename to loosen the logical coupling to type_info (eg. getType())
+		const std::type_info * getTypeInfo()
+        {
+            return &typeid(*this);
+        }
     };
     
 } // namespace aunteater

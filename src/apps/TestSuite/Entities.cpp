@@ -38,6 +38,17 @@ public:
 
 const ArchetypeTypeSet ArchetypeA::gComponentTypes{ &typeid(ComponentA) };
 
+TEST(Entities, ComponentType)
+{
+    Component base;
+    ComponentA compA(5);
+    
+    ComponentTypeId idBase = base.getTypeInfo(),
+                    idComponentA = compA.getTypeInfo();
+    
+    CHECK_FALSE(idBase == idComponentA)
+}
+
 TEST(Entities, Copy)
 {
     Entity entityOrigin;
