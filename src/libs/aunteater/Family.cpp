@@ -7,7 +7,7 @@
 
 using namespace aunteater;
 
-Family::Family(Engine & aEngine, ComponentIds aComponentsTypeInfo):
+Family::Family(Engine & aEngine, ArchetypeTypeSet aComponentsTypeInfo):
         mEngine(aEngine),
         mComponentsTypeInfo(aComponentsTypeInfo)
 {

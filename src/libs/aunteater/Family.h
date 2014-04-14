@@ -21,7 +21,7 @@ namespace aunteater
         typedef std::list<Node> NodeList;
 
     public:
-        Family(Engine & aEngine, ComponentIds aComponentsTypeInfo);
+        Family(Engine & aEngine, ArchetypeTypeSet aComponentsTypeInfo);
         
         std::list<Node> & getNodes()
         {
@@ -41,7 +41,7 @@ namespace aunteater
     private:
         Engine & mEngine;
         NodeList mNodes;
-        ComponentIds mComponentsTypeInfo;
+        ArchetypeTypeSet mComponentsTypeInfo;
         
         /// \note It works to use an iterator because we use a std::list
         /// for which operation on elements do not affect other iterators.

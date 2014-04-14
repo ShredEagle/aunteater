@@ -14,8 +14,6 @@ namespace aunteater
     class Entity;
     class Family;
     
-    typedef std::set<const std::type_info *> ComponentIds;
-    
     class Node
     {
     public:
@@ -34,7 +32,7 @@ namespace aunteater
         }
         
     public:
-        explicit Node(const ComponentIds & aIds, Handle<Entity> aAssignedEntity, const family_access &);
+        explicit Node(const ArchetypeTypeSet & aIds, Handle<Entity> aAssignedEntity, const family_access &);
         
         /// It is an undefined behavior to give a ComponentId that is not present in the collection
         Component & get(const std::type_info *aComponentId);
