@@ -25,6 +25,8 @@ void Family::addIfMatch(Handle<Entity> aEntity)
                     [&aEntity](const std::type_info *compId){return aEntity->has(compId);}))
     {
         mNodes.emplace_back(mComponentsTypeInfo, aEntity, Node::family_access());
+        /*auto insertionResult = */ mEntities.emplace(aEntity, --mNodes.end());
+        /// \todo Do we need to test if the handle was already present ?
     }
 }
 
