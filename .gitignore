@@ -1,6 +1,6 @@
 #cmake
 build/**
-buildbis/**
+build_*/
 
 #os x
 .DS_Store

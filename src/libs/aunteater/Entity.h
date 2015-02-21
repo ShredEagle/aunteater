@@ -15,6 +15,8 @@ namespace aunteater
         /// \brief Adds a component
         /// \deprecated Use template addComponent instead
         void addComponent(std::shared_ptr<Component> aComponent);
+
+        /// \todo MAJOR for add and remove component, update the families !
         
         /// \todo Once the componet ownership problem is addressed
         /// return the component
