@@ -5,7 +5,7 @@
 using namespace aunteater;
 
 
-void Entity::addComponent(std::shared_ptr<Component> aComponent)
+void Entity::addComponent(own_component<> aComponent)
 {
     auto insertionResult =
         mComponents.insert(std::make_pair(aComponent->getTypeInfo(), aComponent));
@@ -14,9 +14,4 @@ void Entity::addComponent(std::shared_ptr<Component> aComponent)
     {
         insertionResult.first->second = aComponent;
     }
-}
-
-void Entity::removeComponent(const std::type_info & aComponentId)
-{
-    mComponents.erase(&aComponentId);
 }

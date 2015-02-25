@@ -1,3 +1,4 @@
+#include <aunteater/Component.h>
 #include <aunteater/Engine.h>
 
 #include <CppUTest/TestHarness.h>
@@ -57,10 +58,10 @@ TEST(Entities, ComponentType)
 TEST(Entities, Copy)
 {
     Entity entityOrigin;
-    entityOrigin.addComponent(std::make_shared<ComponentA>(5));
+    entityOrigin.addComponent<ComponentA>(5);
     
     Entity entityCopy=entityOrigin;
-    std::shared_ptr<ComponentA> copyComponentA = entityCopy.get<ComponentA>();
+    weak_component<ComponentA> copyComponentA = entityCopy.get<ComponentA>();
     copyComponentA->a = 10;
     
     CHECK_EQUAL(5, entityOrigin.get<ComponentA>()->a);
@@ -74,7 +75,7 @@ TEST(Entities, AddEntities)
     CHECK(nodesA_before.size() == 0)
     
     Entity entity;
-    entity.addComponent(std::make_shared<ComponentA>(5));
+    entity.addComponent<ComponentA>(5);
     engine.addEntity(entity);
     
     Nodes nodesA_after = engine.getNodes<ArchetypeA>();

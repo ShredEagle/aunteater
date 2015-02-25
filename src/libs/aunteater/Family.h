@@ -5,11 +5,10 @@
 #include "Handle.h"
 #include "Node.h"
 
-#include <set>
+#include "globals.h"
+
+#include <map>
 #include <list>
-#include <typeinfo>
-#include <memory>
-#include <vector>
 
 namespace aunteater
 {
@@ -35,8 +34,8 @@ namespace aunteater
         void addIfMatch(Handle<Entity> aEntity);
         
         void removeEntity(std::shared_ptr<Entity> aEntity);
-        void componentAddedToEntity(std::shared_ptr<Entity> aEntity,std::type_info * aComponent);
-        void componentRemovedFromEntity(std::shared_ptr<Entity> aEntity,std::type_info * aComponent);
+        void componentAddedToEntity(std::shared_ptr<Entity> aEntity, ComponentTypeId aComponent);
+        void componentRemovedFromEntity(std::shared_ptr<Entity> aEntity, ComponentTypeId aComponent);
         
     private:
         Engine & mEngine;

@@ -5,17 +5,16 @@
 #include "Family.h"
 #include "Handle.h"
 
+#include "globals.h"
+
 #include <boost/bimap.hpp>
 
 #include <map>
 #include <string>
-#include <typeinfo>
 #include <vector>
 
 namespace aunteater
 {
-	class System;
-
     class Engine
     {
     public:
@@ -55,7 +54,7 @@ namespace aunteater
         
     private:
         typedef boost::bimap<std::string, Handle<Entity> > NameEntityMap;
-        typedef std::map<const std::type_info *, Family> ArchetypeFamilyMap;
+        typedef std::map<ArchetypeTypeId, Family> ArchetypeFamilyMap;
         
         std::vector<Entity> mEntities;
         NameEntityMap mNamedEntities;
@@ -69,6 +68,7 @@ namespace aunteater
     template <class T_nodeArchetype>
     std::list<Node> & Engine::getNodes()
     {
+        // Replace with lazy construction of the Family (emplace, try_emplace ?)
         auto insertionResult =
             mTypedFamilies.insert(std::make_pair(& typeid(T_nodeArchetype),
                                                  Family(*this, T_nodeArchetype::gComponentTypes)));

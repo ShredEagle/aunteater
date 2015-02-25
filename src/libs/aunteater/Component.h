@@ -1,15 +1,13 @@
 #ifndef _IDG_AE_Component
 #define _IDG_AE_Component
 
-#include <set>
-#include <typeinfo>
+#include "globals.h"
+
+#include "make.h"
 
 namespace aunteater
 {
     
-    typedef const std::type_info * ComponentTypeId;
-    typedef std::set<ComponentTypeId> ArchetypeTypeSet;
-
     class Component
     {
     public:
@@ -18,12 +16,12 @@ namespace aunteater
         {}
         
         /// \todo Rename to loosen the logical coupling to type_info (eg. getType())
-		const std::type_info * getTypeInfo()
+		ComponentTypeId getTypeInfo()
         {
             return &typeid(*this);
         }
     };
-    
+
 } // namespace aunteater
 
 #endif  // #ifdef

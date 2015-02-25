@@ -1,54 +1,48 @@
 #ifndef _IDG_AE_Entity
 #define _IDG_AE_Entity
 
+#include "globals.h"
+#include "make.h"
+
 #include <map>
-#include <memory>
 
 namespace aunteater
 {
-    
-    class Component;
-    
+
     class Entity
     {
     public:
         /// \brief Adds a component
         /// \deprecated Use template addComponent instead
-        void addComponent(std::shared_ptr<Component> aComponent);
+        void addComponent(own_component<> aComponent);
 
         /// \todo MAJOR for add and remove component, update the families !
         
-        /// \todo Once the componet ownership problem is addressed
-        /// return the component
         template <class T_component, class... Args>
-        void addComponent(Args... aArgs)
-        {
-            addComponent(std::make_shared<T_component>(aArgs...));
-        }
+        Entity & addComponent(Args&&... aArgs)
+        {   addComponent(make_component<T_component>(std::forward<Args>(aArgs)...)); return *this;    }
+
+        Entity & removeComponent(ComponentTypeId aComponentId)
+        {   mComponents.erase(aComponentId); return *this;  }
         
-        void removeComponent(const std::type_info & aComponentId);
-        
-        bool has(const std::type_info *aComponentId)
-        {
-            return mComponents.count(aComponentId);
-        }
-        
+        bool has(ComponentTypeId aComponentId)
+        {   return mComponents.count(aComponentId); }
+
         /// Undefined behavior if aComponentId is not a key in the map.
-        /// \todo We do not want to actually share ownership, rewrite with weak or something
-        std::shared_ptr<Component> get(const std::type_info *aComponentId)
-        {
-            return mComponents.find(aComponentId)->second;
-        }
-        
+        /// \deprecated Use template get() instead.
+        weak_component<> get(ComponentTypeId aComponentId)
+        {   return weakFromOwn(mComponents.find(aComponentId)->second);  }
+
+        /// \note It is an undefined behavior to call this if T_component is not a component of the Entity.
         template <class T_component>
-        std::shared_ptr<T_component> get()
+        weak_component<T_component> get()
         {
             return std::static_pointer_cast<T_component>
                 (mComponents.find(&typeid(T_component))->second);
         }
         
     private:
-        std::map<const std::type_info *, std::shared_ptr<Component> > mComponents;
+        std::map<ComponentTypeId, own_component<> > mComponents;
     };
     
 } // namespace aunteater

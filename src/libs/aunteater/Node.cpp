@@ -15,7 +15,7 @@ Node::Node(const ArchetypeTypeSet & aIds, Handle<Entity> aAssignedEntity, const 
     }
 }
 
-Component & Node::get(const std::type_info *aComponentId)
+Component & Node::get(ComponentTypeId aComponentId)
 {
     return *mTypedComponents.find(aComponentId)->second;
 }

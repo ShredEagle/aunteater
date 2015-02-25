@@ -16,6 +16,8 @@ set(${PROJECT_NAME}_HEADERS
     Handle.h
     Node.h
     System.h
+    globals.h
+    make.h
 )
 
 # TODO : list .cpp files here
