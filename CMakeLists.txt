@@ -147,15 +147,15 @@ include (cmc-macros)
 set(BUILD_SHARED_LIBS False)
 
 # 
-# C++11 support
+# C++14 support
 # 
-option(BUILD_WITH_C++11_SUPPORT "Set the compiler flags/options required to compile with C++11 support" true)
-if(BUILD_WITH_C++11_SUPPORT)
+option(BUILD_WITH_C++14_SUPPORT "Set the compiler flags/options required to compile with C++14 support" true)
+if(BUILD_WITH_C++14_SUPPORT)
     IF(UNIX)
         # Boost::Serialization usage exceeds the default 128 depth for template instantiation
-        LIST(APPEND CMAKE_CXX_FLAGS "-std=c++0x -ftemplate-depth=512")
+        LIST(APPEND CMAKE_CXX_FLAGS "-std=c++1y -ftemplate-depth=512")
     ENDIF(UNIX)
-endif(BUILD_WITH_C++11_SUPPORT)
+endif(BUILD_WITH_C++14_SUPPORT)
 
 if (CMAKE_GENERATOR STREQUAL "Xcode")
     SET(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
