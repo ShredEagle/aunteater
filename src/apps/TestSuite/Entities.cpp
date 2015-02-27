@@ -34,6 +34,24 @@ public:
     {}
     
     int a;
+
+private:
+    virtual own_component<> clone_impl() const override
+    {   return std::make_unique<ComponentA>(*this);  }
+};
+
+class ComponentB : public Component
+{
+public:
+    ComponentB(double aValue):
+            b(aValue)
+    {}
+    
+    double b;
+
+private:
+    virtual own_component<> clone_impl() const override
+    {   return std::make_unique<ComponentB>(*this);  }
 };
 
 class ArchetypeA
@@ -46,24 +64,73 @@ const ArchetypeTypeSet ArchetypeA::gComponentTypes{ &typeid(ComponentA) };
 
 TEST(Entities, ComponentType)
 {
-    Component base;
     ComponentA compA(5);
+    ComponentB compB(5.0), compB_2(10.);
     
-    ComponentTypeId idBase = base.getTypeInfo(),
+    ComponentTypeId idComponentB = compB.getTypeInfo(),
+                    idComponentB_2 = compB_2.getTypeInfo(),
                     idComponentA = compA.getTypeInfo();
     
-    CHECK_FALSE(idBase == idComponentA)
+    CHECK_FALSE(idComponentB == idComponentA)
+    CHECK_TRUE(idComponentB == idComponentB_2)
 }
 
-TEST(Entities, Copy)
+TEST(Entities, ComponentManagement)
+{
+    Entity entity;
+    CHECK_FALSE(entity.has<ComponentA>())
+    CHECK_FALSE(entity.has<ComponentB>())
+
+    // Adding component
+    entity.addComponent<ComponentB>(3.14);
+    CHECK_FALSE(entity.has<ComponentA>())
+    CHECK_TRUE(entity.has<ComponentB>())
+    CHECK_EQUAL(3.14, entity.get<ComponentB>()->b)
+
+    // Replacing component
+    entity.addComponent<ComponentB>(900000000.);
+    CHECK_EQUAL(900000000., entity.get<ComponentB>()->b)
+
+    // Removing component
+    entity.removeComponent<ComponentB>();
+    CHECK_FALSE(entity.has<ComponentA>())
+    CHECK_FALSE(entity.has<ComponentB>())
+}
+
+TEST(Entities, CopyControl)
 {
     Entity entityOrigin;
     entityOrigin.addComponent<ComponentA>(5);
-    
-    Entity entityCopy=entityOrigin;
-    weak_component<ComponentA> copyComponentA = entityCopy.get<ComponentA>();
-    copyComponentA->a = 10;
-    
+
+    {
+        Entity entityCopy(entityOrigin);
+        weak_component<ComponentA> copyComponentA = entityCopy.get<ComponentA>();
+        CHECK_EQUAL(5, copyComponentA->a);
+        copyComponentA->a = 1;
+        CHECK_EQUAL(1, copyComponentA->a);
+
+        CHECK_EQUAL(5, entityOrigin.get<ComponentA>()->a);
+    }
+
+    { // Probably equivalent in term un generated code as the previous case, but this is compiler-defined behavior.
+        Entity entityCopy = entityOrigin;
+        weak_component<ComponentA> copyComponentA = entityCopy.get<ComponentA>();
+        CHECK_EQUAL(5, copyComponentA->a);
+        copyComponentA->a = 10;
+        CHECK_EQUAL(10, copyComponentA->a);
+        
+        CHECK_EQUAL(5, entityOrigin.get<ComponentA>()->a);
+    }
+
+    {
+        Entity entityAssigned;
+        entityAssigned = entityOrigin;
+        weak_component<ComponentA> assignedComponentA = entityAssigned.get<ComponentA>();
+        CHECK_EQUAL(5, assignedComponentA->a);
+        assignedComponentA->a = 20;
+        CHECK_EQUAL(20, assignedComponentA->a);
+    }
+
     CHECK_EQUAL(5, entityOrigin.get<ComponentA>()->a);
 }
 
