@@ -5,7 +5,7 @@
 
 using namespace aunteater;
 
-Handle<Entity> Engine::addEntity(const std::string & aName, Entity aEntity)
+weak_entity Engine::addEntity(const std::string & aName, Entity aEntity)
 {
     auto insertionResult =
     mNamedEntities.left.insert(std::make_pair(aName, makeHandle(mEntities, std::size_t(mEntities.size()))));
@@ -22,7 +22,7 @@ Handle<Entity> Engine::addEntity(const std::string & aName, Entity aEntity)
     return id;
 }
 
-Handle<Entity> Engine::addEntity(Entity aEntity)
+weak_entity Engine::addEntity(Entity aEntity)
 {
     mEntities.push_back(aEntity);
     auto lastEntity(makeHandle(mEntities, mEntities.size()-1));
@@ -30,15 +30,16 @@ Handle<Entity> Engine::addEntity(Entity aEntity)
     return lastEntity;
 }
 
-void Engine::removeEntity(Handle<Entity> aId)
+void Engine::removeEntity(weak_entity aId)
 {
     mNamedEntities.right.erase(aId);
     removedEntity(aId);
+    /// \todo Inserting an empty entity to "fill the gap" is a cheap hack toward correct Handles management...
     mEntities.at(aId.get()) = Entity();
 }
 
 
-void Engine::addedEntity(Handle<Entity> aEntity)
+void Engine::addedEntity(weak_entity aEntity)
 {
     for (auto & typedFamily : mTypedFamilies)
     {
@@ -46,7 +47,7 @@ void Engine::addedEntity(Handle<Entity> aEntity)
     }
 }
 
-void Engine::removedEntity(Handle<Entity> aEntity)
+void Engine::removedEntity(weak_entity aEntity)
 {
     for (auto & typedFamily : mTypedFamilies)
     {

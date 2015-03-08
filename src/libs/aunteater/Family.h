@@ -17,6 +17,8 @@ namespace aunteater
     class Family
     {
     private:
+        // The implementation assumes that inserting/removing a Node from the collection does not invalidate any
+        // existing iterator into the collection.
         typedef std::list<Node> NodeList;
 
     public:
@@ -27,13 +29,12 @@ namespace aunteater
             return mNodes;
         }
         
-        void testEntityInclusion(Handle<Entity> aEntity);
-        void removeIfPresent(Handle<Entity> aEntity);
+        void testEntityInclusion(weak_entity aEntity);
+        void removeIfPresent(weak_entity aEntity);
         
     private:
-        void addIfMatch(Handle<Entity> aEntity);
+        void addIfMatch(weak_entity aEntity);
         
-        void removeEntity(std::shared_ptr<Entity> aEntity);
         void componentAddedToEntity(std::shared_ptr<Entity> aEntity, ComponentTypeId aComponent);
         void componentRemovedFromEntity(std::shared_ptr<Entity> aEntity, ComponentTypeId aComponent);
         
@@ -46,7 +47,7 @@ namespace aunteater
         /// for which operation on elements do not affect other iterators.
         
         // This map is usefull to test if an entity is present in the current family instance
-        std::map<Handle<Entity>, NodeList::iterator > mEntities;
+        std::map<weak_entity, NodeList::iterator > mEntitiesToNodes;
     };
     
 } // namespace aunteater

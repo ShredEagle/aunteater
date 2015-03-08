@@ -25,13 +25,13 @@ namespace aunteater
             family_access & operator=(const family_access &) = delete;
         };
         
-        Handle<Entity> getEntity()
+        weak_entity getEntity()
         {
             return mEntity;
         }
         
     public:
-        explicit Node(const ArchetypeTypeSet & aIds, Handle<Entity> aAssignedEntity, const family_access &);
+        explicit Node(const ArchetypeTypeSet & aIds, weak_entity aAssignedEntity, const family_access &);
         
         /// It is an undefined behavior to give a ComponentId that is not present in the collection
         /// \deprecated
@@ -57,7 +57,7 @@ namespace aunteater
         /// \todo Same as with Entity::get() : it would be nice to avoir sharing ownership.
         /// In the end, we probably want a better Handler type, and use Handler and Components
         std::map<ComponentTypeId, weak_component<> > mTypedComponents;
-        Handle<Entity> mEntity;
+        weak_entity mEntity;
         
     };
     

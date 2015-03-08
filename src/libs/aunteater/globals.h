@@ -39,6 +39,7 @@ namespace aunteater
     typedef std::set<ComponentTypeId> ArchetypeTypeSet;
     typedef const std::type_info *  ArchetypeTypeId;
 
+    #define weak_entity Handle<Entity>
 
 } // namespace aunteater
 #endif  // #ifdef

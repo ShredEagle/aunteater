@@ -157,7 +157,7 @@ TEST(Entities, RemoveEntities)
     
     Entity entity;
     entity.addComponent<ComponentA>(5);
-    Handle<Entity> firstEntity = engine.addEntity(entity);
+    weak_entity firstEntity = engine.addEntity(entity);
     
     Nodes nodesA_added = engine.getNodes<ArchetypeA>();
     CHECK(nodesA_added.size() == 1)

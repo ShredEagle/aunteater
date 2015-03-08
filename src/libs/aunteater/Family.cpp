@@ -14,31 +14,34 @@ Family::Family(Engine & aEngine, ArchetypeTypeSet aComponentsTypeInfo):
     
 }
 
-void Family::testEntityInclusion(Handle<Entity> aEntity)
+void Family::testEntityInclusion(weak_entity aEntity)
 {
     addIfMatch(aEntity);
 }
 
-void Family::addIfMatch(Handle<Entity> aEntity)
+void Family::addIfMatch(weak_entity aEntity)
 {
     if (std::all_of(mComponentsTypeInfo.begin(), mComponentsTypeInfo.end(),
                     [&aEntity](ComponentTypeId compId){return aEntity->has(compId);}))
     {
         mNodes.emplace_back(mComponentsTypeInfo, aEntity, Node::family_access());
-        /*auto insertionResult = */ mEntities.emplace(aEntity, --mNodes.end());
+        /*auto insertionResult = */ mEntitiesToNodes.emplace(aEntity, --mNodes.end());
         /// \todo Do we need to test if the handle was already present ?
     }
 }
 
-void Family::removeIfPresent(Handle<Entity> aEntity)
+void Family::removeIfPresent(weak_entity aEntity)
 {
-    auto foundIt = mEntities.find(aEntity);
-    if (foundIt != mEntities.end())
+    auto foundIt = mEntitiesToNodes.find(aEntity);
+    if (foundIt != mEntitiesToNodes.end())
     {
         mNodes.erase(foundIt->second);
-        mEntities.erase(foundIt);
+        mEntitiesToNodes.erase(foundIt);
     }
 }
+
+//void Family::componentAddedToEntity(std::shared_ptr<Entity> aEntity, ComponentTypeId aComponent);
+//void Family::componentRemovedFromEntity(std::shared_ptr<Entity> aEntity, ComponentTypeId aComponent);
 /*
 void Family::removeEntity(std::shared_ptr<Entity> aEntity)
 {
