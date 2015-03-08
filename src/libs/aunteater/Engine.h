@@ -96,8 +96,10 @@ public:
         }
     }
 protected:
-    /// \todo make const when there is a distinction between EntityId and EntityRef
-    static weak_entity entityIdFrom(EntityWrapper &aWrapper)
+    static entity_id entityIdFrom(const EntityWrapper &aWrapper)
+    {   return &(aWrapper.entity);  }
+
+    static weak_entity entityRefFrom( EntityWrapper &aWrapper)
     {   return &(aWrapper.entity);  }
 
     void addedEntity(weak_entity aEntity);
@@ -129,7 +131,7 @@ std::list<Node> & Engine::getNodes()
         Family &familyRef = insertionResult.first->second;
         for (EntityWrapper & wrapper : mEntities)
         {
-            familyRef.testEntityInclusion(entityIdFrom(wrapper));
+            familyRef.testEntityInclusion(entityRefFrom(wrapper));
         }
     }
     return insertionResult.first->second.getNodes();

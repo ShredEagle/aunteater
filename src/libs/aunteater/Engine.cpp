@@ -24,7 +24,7 @@ weak_entity Engine::addEntity(Entity aEntity)
 {
     mEntities.emplace_back(aEntity, this);
     //auto lastEntity(makeHandle(mEntities, mEntities.size()-1));
-    weak_entity lastEntity = entityIdFrom(mEntities.back());
+    weak_entity lastEntity = entityRefFrom(mEntities.back());
     addedEntity(lastEntity);
     return lastEntity;
 }
@@ -33,8 +33,7 @@ void Engine::removeEntity(weak_entity aEntity)
 {
     mNamedEntities.right.erase(aEntity);
     removedEntity(aEntity);
-    /// \todo make const when there is a distinction between EntityId and EntityRef
-    mEntities.remove_if([aEntity](/*const*/ EntityWrapper &aElem){ return entityIdFrom(aElem) == aEntity; });
+    mEntities.remove_if([aEntity](const EntityWrapper &aElem){ return entityIdFrom(aElem) == aEntity; });
 }
 
 

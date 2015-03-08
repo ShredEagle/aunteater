@@ -30,7 +30,7 @@ void Family::addIfMatch(weak_entity aEntity)
     }
 }
 
-void Family::removeIfPresent(weak_entity aEntity)
+void Family::removeIfPresent(entity_id aEntity)
 {
     auto foundIt = mEntitiesToNodes.find(aEntity);
     if (foundIt != mEntitiesToNodes.end())
@@ -48,7 +48,7 @@ void Family::componentAddedToEntity(weak_entity aEntity, ComponentTypeId aCompon
     }
 }
 
-void Family::componentRemovedFromEntity(weak_entity aEntity, ComponentTypeId aComponent)
+void Family::componentRemovedFromEntity(entity_id aEntity, ComponentTypeId aComponent)
 {
     if (includesComponent(aComponent))
     {
@@ -56,7 +56,7 @@ void Family::componentRemovedFromEntity(weak_entity aEntity, ComponentTypeId aCo
     }
 }
 
-bool Family::isPresent(weak_entity aEntity) const
+bool Family::isPresent(entity_id aEntity) const
 {
     return mEntitiesToNodes.find(aEntity) != mEntitiesToNodes.end();
 }

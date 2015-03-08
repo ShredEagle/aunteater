@@ -11,7 +11,7 @@ Node::Node(const ArchetypeTypeSet & aIds, weak_entity aAssignedEntity, const fam
 {
     for (ComponentTypeId componentId : aIds)
     {
-        mTypedComponents.insert(std::make_pair(componentId, aAssignedEntity->get(componentId)));
+        mTypedComponents.insert(std::make_pair(componentId, mEntity->get(componentId)));
     }
 }
 

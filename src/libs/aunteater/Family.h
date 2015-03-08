@@ -30,15 +30,15 @@ namespace aunteater
         }
         
         void testEntityInclusion(weak_entity aEntity);
-        void removeIfPresent(weak_entity aEntity);
+        void removeIfPresent(entity_id aEntity);
 
         void componentAddedToEntity(weak_entity aEntity, ComponentTypeId aComponent);
-        void componentRemovedFromEntity(weak_entity aEntity, ComponentTypeId aComponent);
+        void componentRemovedFromEntity(entity_id aEntity, ComponentTypeId aComponent);
 
     private:
         void addIfMatch(weak_entity aEntity);
         
-        bool isPresent(weak_entity aEntity) const;
+        bool isPresent(entity_id aEntity) const;
         bool includesComponent(ComponentTypeId aComponent) const;
         
     private:
@@ -50,7 +50,7 @@ namespace aunteater
         /// for which operation on elements do not affect other iterators.
         
         // This map is usefull to test if an entity is present in the current family instance
-        std::map<weak_entity, NodeList::iterator > mEntitiesToNodes;
+        std::map<entity_id, NodeList::iterator> mEntitiesToNodes;
     };
     
 } // namespace aunteater
