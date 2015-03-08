@@ -137,6 +137,20 @@ if (WIN32 AND CPPUTEST_FOUND)
     list(APPEND Cpputest_LIBRARIES Winmm.lib)
 endif (WIN32 AND CPPUTEST_FOUND)
 
+##
+## glfw
+##
+
+## This is recommanded by the documentation, but then there is a problem when linking to glfw
+## see: http://www.glfw.org/docs/latest/build.html#build_link_cmake_pkgconfig
+#find_package(PkgConfig REQUIRED)
+#pkg_search_module(GLFW REQUIRED glfw3)
+
+## There is also a glfwTargets.cmake distributed, but it is probably not used with this invocation.
+find_package(GLFW)
+## Find OpenGL explictily, but I suspect it is supposed to be handled by glfw if imported correclty.
+find_package(OpenGL)
+
 ## #################################################################
 ## Build options
 ## #################################################################
