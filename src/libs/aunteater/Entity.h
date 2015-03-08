@@ -59,7 +59,11 @@ namespace aunteater
         /// \brief Removes the component of type T_component from this Entity.
         template <class T_component>
         Entity & removeComponent()
-        {   mComponents.erase(type<T_component>()); return *this;   }
+        {
+            removeNotifyOwner(type<T_component>());
+            mComponents.erase(type<T_component>());
+            return *this;
+        }
 
         /// \deprecated
         bool has(ComponentTypeId aComponentId)
@@ -93,9 +97,11 @@ namespace aunteater
         type()
         {   return &typeid(T_component);    }
 
+        void removeNotifyOwner(ComponentTypeId aComponentId);
+
     private: // data members
         std::map<ComponentTypeId, own_component<> > mComponents;
-        Engine *mOwner;
+        Engine *mOwner = nullptr;
     };
     
 } // namespace aunteater

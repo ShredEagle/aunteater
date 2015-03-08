@@ -6,7 +6,6 @@
 using namespace aunteater;
 
 
-
 Node::Node(const ArchetypeTypeSet & aIds, weak_entity aAssignedEntity, const family_access &):
     mEntity(aAssignedEntity)
 {

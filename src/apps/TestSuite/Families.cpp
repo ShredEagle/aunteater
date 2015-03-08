@@ -40,6 +40,7 @@ TEST(Families, AddRemoveEntity)
 TEST(Families, UpdatesOnComponent)
 {
     Engine engine;
+    std::list<Node> &NodesOfArchetypeA = engine.getNodes<ArchetypeA>();
 
     {
         Entity entity;
@@ -47,10 +48,18 @@ TEST(Families, UpdatesOnComponent)
         engine.addEntity("aunt", std::move(entity));
     }
 
-    std::list<Node> &NodesOfArchetypeA = engine.getNodes<ArchetypeA>();
     CHECK_EQUAL(1, NodesOfArchetypeA.size());
 
     auto entity = engine.getEntity("aunt");
     entity->removeComponent<ComponentA>();
     CHECK_EQUAL(0, NodesOfArchetypeA.size());
+
+    entity->addComponent<ComponentB>(51.);
+    CHECK_EQUAL(0, NodesOfArchetypeA.size());
+
+    entity->addComponent<ComponentA>(51);
+    CHECK_EQUAL(1, NodesOfArchetypeA.size());
+
+    entity->removeComponent<ComponentB>();
+    CHECK_EQUAL(1, NodesOfArchetypeA.size());
 }

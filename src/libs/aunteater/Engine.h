@@ -21,19 +21,22 @@ struct EntityWrapper
     EntityWrapper(Entity aEntity, Engine *aEngine) : entity(aEntity)
     {
         entity.addedToEngine(aEngine);
-        //engine->addedEntity(entity);
+        //engine->addedEntity(&entity); //dangerous, if the EntityWrapper is moved the address moves along...
     }
+
+    EntityWrapper(const EntityWrapper&) = delete;
+    EntityWrapper & operator=(const EntityWrapper&) = delete;
 
     ~EntityWrapper()
     {
-        //engine.removedEntity(entity)
+        //engine.removedEntity(&entity)
         entity.addedToEngine(nullptr);
     }
 
-    operator Entity&() /// \todo Does that even make sense ?
-    {
-        return entity;
-    }
+    //operator Entity&() /// Interestingly, that syntax seems to do exactly what you'd expect ; )
+    //{
+    //    return entity;
+    //}
 
     Entity entity;
 };
@@ -56,7 +59,7 @@ public:
     weak_entity addEntity(Entity aEntity);
     weak_entity addEntity(const std::string & aName, Entity aEntity);
     
-    void removeEntity(weak_entity aId);
+    void removeEntity(weak_entity aEntity);
     void removeEntity(const std::string & aEntityName)
     {   removeEntity(getEntity(aEntityName));   }
     
@@ -93,6 +96,10 @@ public:
         }
     }
 protected:
+    /// \todo make const when there is a distinction between EntityId and EntityRef
+    static weak_entity entityIdFrom(EntityWrapper &aWrapper)
+    {   return &(aWrapper.entity);  }
+
     void addedEntity(weak_entity aEntity);
     void removedEntity(weak_entity aEntity);
     
@@ -100,8 +107,7 @@ private:
     typedef boost::bimap<std::string, weak_entity > NameEntityMap;
     typedef std::map<ArchetypeTypeId, Family> ArchetypeFamilyMap;
 
-    
-    std::vector<EntityWrapper> mEntities;
+    std::list<EntityWrapper> mEntities;
     NameEntityMap mNamedEntities;
     ArchetypeFamilyMap mTypedFamilies;
 	std::vector<System*> mSystems;
@@ -116,18 +122,14 @@ template <class T_nodeArchetype>
 std::list<Node> & Engine::getNodes()
 {
     // Replace with lazy construction of the Family (emplace, try_emplace ?)
-    auto insertionResult =
-        mTypedFamilies.insert(std::make_pair(& typeid(T_nodeArchetype),
-                                             Family(*this, T_nodeArchetype::gComponentTypes)));
+    auto insertionResult = mTypedFamilies.insert(std::make_pair(& typeid(T_nodeArchetype),
+                                                 Family(*this, T_nodeArchetype::gComponentTypes)));
     if (insertionResult.second)
     {
         Family &familyRef = insertionResult.first->second;
-        //for (Entity & entity : mEntities)
-        for (std::vector<Entity>::size_type index = 0;
-             index != mEntities.size();
-             ++index)
+        for (EntityWrapper & wrapper : mEntities)
         {
-            familyRef.testEntityInclusion(weak_entity(mEntities, index));
+            familyRef.testEntityInclusion(entityIdFrom(wrapper));
         }
     }
     return insertionResult.first->second.getNodes();

@@ -7,8 +7,7 @@ using namespace aunteater;
 
 weak_entity Engine::addEntity(const std::string & aName, Entity aEntity)
 {
-    auto insertionResult =
-    mNamedEntities.left.insert(std::make_pair(aName, makeHandle(mEntities, std::size_t(mEntities.size()))));
+    auto insertionResult = mNamedEntities.left.insert(std::make_pair(aName, nullptr));
     if (!insertionResult.second)
     {
         throw std::invalid_argument("Named entity is already present in the engine"
@@ -18,24 +17,24 @@ weak_entity Engine::addEntity(const std::string & aName, Entity aEntity)
     /// \todo Multithreading issue ahead
     auto id = addEntity(aEntity);
     mNamedEntities.left.replace_data(insertionResult.first, id);
-    
     return id;
 }
 
 weak_entity Engine::addEntity(Entity aEntity)
 {
     mEntities.emplace_back(aEntity, this);
-    auto lastEntity(makeHandle(mEntities, mEntities.size()-1));
+    //auto lastEntity(makeHandle(mEntities, mEntities.size()-1));
+    weak_entity lastEntity = entityIdFrom(mEntities.back());
     addedEntity(lastEntity);
     return lastEntity;
 }
 
-void Engine::removeEntity(weak_entity aId)
+void Engine::removeEntity(weak_entity aEntity)
 {
-    mNamedEntities.right.erase(aId);
-    removedEntity(aId);
-    /// \todo Inserting an empty entity to "fill the gap" is a cheap hack toward correct Handles management...
-    mEntities.at(aId.get()) = EntityWrapper(Entity(), this);
+    mNamedEntities.right.erase(aEntity);
+    removedEntity(aEntity);
+    /// \todo make const when there is a distinction between EntityId and EntityRef
+    mEntities.remove_if([aEntity](/*const*/ EntityWrapper &aElem){ return entityIdFrom(aElem) == aEntity; });
 }
 
 
