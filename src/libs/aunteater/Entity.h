@@ -8,6 +8,7 @@
 
 namespace aunteater
 {
+    class Engine;
 
     class Entity
     {
@@ -79,6 +80,12 @@ namespace aunteater
         weak_component<T_component> get()
         {   return static_component_cast<T_component>(mComponents.find(type<T_component>())->second);   }
 
+        /*
+         * Engine registration
+         */
+        Entity &addedToEngine(Engine *aOwner)
+        {   mOwner = aOwner; return *this;  }
+
     private:
         /// \brief A wrapper, returning the ComponentTypeId for the provided Component type (T_component)
         template <class T_component>
@@ -86,8 +93,9 @@ namespace aunteater
         type()
         {   return &typeid(T_component);    }
 
-    private:
+    private: // data members
         std::map<ComponentTypeId, own_component<> > mComponents;
+        Engine *mOwner;
     };
     
 } // namespace aunteater

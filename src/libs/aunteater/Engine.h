@@ -16,6 +16,28 @@
 namespace aunteater
 {
 
+struct EntityWrapper
+{
+    EntityWrapper(Entity aEntity, Engine *aEngine) : entity(aEntity)
+    {
+        entity.addedToEngine(aEngine);
+        //engine->addedEntity(entity);
+    }
+
+    ~EntityWrapper()
+    {
+        //engine.removedEntity(entity)
+        entity.addedToEngine(nullptr);
+    }
+
+    operator Entity&() /// \todo Does that even make sense ?
+    {
+        return entity;
+    }
+
+    Entity entity;
+};
+
 class Engine
 {
     // The engine register its address to the Entities added to it: it cannot have copy/move semantic.
@@ -58,7 +80,18 @@ public:
 	 * Update
 	 */
 	void update(float time);
-    
+
+    /*
+     * Callbacks
+     */
+    void entityCompositionChanged(std::function<void(Family &aFamily)> aFamilyFunctor)
+    {
+        //std::for_each(mTypedFamilies.begin(), mTypedFamilies.end(), aFamilyFunctor); // would require some boost adaptor to take the mapped_type
+        for (auto &typedFamily : mTypedFamilies)
+        {
+            aFamilyFunctor(typedFamily.second);
+        }
+    }
 protected:
     void addedEntity(weak_entity aEntity);
     void removedEntity(weak_entity aEntity);
@@ -67,24 +100,8 @@ private:
     typedef boost::bimap<std::string, weak_entity > NameEntityMap;
     typedef std::map<ArchetypeTypeId, Family> ArchetypeFamilyMap;
 
-    struct EntityWrapper
-    {
-        EntityWrapper(Entity aEntity, Engine *aEngine) : entity(aEntity)
-        {
-            entity.addedToEngine(aEngine);
-            //engine->addedEntity(entity);
-        }
-
-        ~EntityWrapper()
-        {
-            //engine.removedEntity(entity)
-            entity.addedToEngine(nullptr);
-        }
-
-        Entity entity;
-    };
     
-    std::vector<Entity> mEntities;
+    std::vector<EntityWrapper> mEntities;
     NameEntityMap mNamedEntities;
     ArchetypeFamilyMap mTypedFamilies;
 	std::vector<System*> mSystems;

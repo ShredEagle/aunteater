@@ -24,7 +24,7 @@ weak_entity Engine::addEntity(const std::string & aName, Entity aEntity)
 
 weak_entity Engine::addEntity(Entity aEntity)
 {
-    mEntities.push_back(aEntity);
+    mEntities.emplace_back(aEntity, this);
     auto lastEntity(makeHandle(mEntities, mEntities.size()-1));
     addedEntity(lastEntity);
     return lastEntity;
@@ -35,7 +35,7 @@ void Engine::removeEntity(weak_entity aId)
     mNamedEntities.right.erase(aId);
     removedEntity(aId);
     /// \todo Inserting an empty entity to "fill the gap" is a cheap hack toward correct Handles management...
-    mEntities.at(aId.get()) = Entity();
+    mEntities.at(aId.get()) = EntityWrapper(Entity(), this);
 }
 
 

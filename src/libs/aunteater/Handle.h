@@ -5,6 +5,7 @@
 
 namespace aunteater
 {
+    class Entity;
     
     /// \todo This is an abomination to hardcode a default type, but the handle has to be
     /// profoundly redesigned
@@ -23,20 +24,14 @@ namespace aunteater
         }
        
         // Not possible without a reference to the container instance.
-        T_object & operator*()
+        Entity & operator*()
         {
-            return mContainer->at(mIndex);
+            return mContainer->at(mIndex).entity;
         }
         
-        T_object * operator->()
+        Entity * operator->()
         {
             return &(this->operator*());
-        }
-        
-        template <class T_contr>
-        T_object & deref(T_contr &aContainer)
-        {
-            return aContainer.at(mIndex);
         }
         
         bool operator< (const Handle &aRhs) const

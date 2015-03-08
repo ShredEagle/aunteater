@@ -31,12 +31,15 @@ namespace aunteater
         
         void testEntityInclusion(weak_entity aEntity);
         void removeIfPresent(weak_entity aEntity);
-        
+
+        void componentAddedToEntity(weak_entity aEntity, ComponentTypeId aComponent);
+        void componentRemovedFromEntity(weak_entity aEntity, ComponentTypeId aComponent);
+
     private:
         void addIfMatch(weak_entity aEntity);
         
-        void componentAddedToEntity(std::shared_ptr<Entity> aEntity, ComponentTypeId aComponent);
-        void componentRemovedFromEntity(std::shared_ptr<Entity> aEntity, ComponentTypeId aComponent);
+        bool isPresent(weak_entity aEntity) const;
+        bool includesComponent(ComponentTypeId aComponent) const;
         
     private:
         Engine & mEngine;

@@ -1,6 +1,7 @@
 #include "Node.h"
 
 #include "Entity.h"
+#include "Engine.h" // for EntityWrapper
 
 using namespace aunteater;
 

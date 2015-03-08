@@ -40,6 +40,32 @@ void Family::removeIfPresent(weak_entity aEntity)
     }
 }
 
+void Family::componentAddedToEntity(weak_entity aEntity, ComponentTypeId aComponent)
+{
+    if(!isPresent(aEntity))
+    {
+        addIfMatch(aEntity);
+    }
+}
+
+void Family::componentRemovedFromEntity(weak_entity aEntity, ComponentTypeId aComponent)
+{
+    if (includesComponent(aComponent))
+    {
+        removeIfPresent(aEntity);
+    }
+}
+
+bool Family::isPresent(weak_entity aEntity) const
+{
+    return mEntitiesToNodes.find(aEntity) != mEntitiesToNodes.end();
+}
+
+bool Family::includesComponent(ComponentTypeId aComponent) const
+{
+    return mComponentsTypeInfo.count(aComponent);
+}
+
 //void Family::componentAddedToEntity(std::shared_ptr<Entity> aEntity, ComponentTypeId aComponent);
 //void Family::componentRemovedFromEntity(std::shared_ptr<Entity> aEntity, ComponentTypeId aComponent);
 /*

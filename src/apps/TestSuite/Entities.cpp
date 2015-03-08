@@ -1,9 +1,13 @@
-#include <aunteater/Component.h>
+#include "CommonComponents.h"
+
 #include <aunteater/Engine.h>
 
+/// ! MUST BE LAST ! ///
 #include <CppUTest/TestHarness.h>
 
 using namespace aunteater;
+
+const ArchetypeTypeSet ArchetypeA::gComponentTypes{ &typeid(ComponentA) };
 
 SimpleString StringFrom(Nodes)
 {
@@ -25,43 +29,6 @@ TEST_GROUP(Entities)
 //{
 //    Entity
 //}
-
-class ComponentA : public Component
-{
-public:
-    ComponentA(int aInteger):
-            a(aInteger)
-    {}
-    
-    int a;
-
-private:
-    virtual own_component<> clone_impl() const override
-    {   return std::make_unique<ComponentA>(*this);  }
-};
-
-class ComponentB : public Component
-{
-public:
-    ComponentB(double aValue):
-            b(aValue)
-    {}
-    
-    double b;
-
-private:
-    virtual own_component<> clone_impl() const override
-    {   return std::make_unique<ComponentB>(*this);  }
-};
-
-class ArchetypeA
-{
-public:
-    static const ArchetypeTypeSet gComponentTypes;
-};
-
-const ArchetypeTypeSet ArchetypeA::gComponentTypes{ &typeid(ComponentA) };
-
 TEST(Entities, ComponentType)
 {
     ComponentA compA(5);
