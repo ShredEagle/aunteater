@@ -71,6 +71,11 @@ void init()
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
 
+    // Nota: glGetAttribLocation approach (after linking) has drawbacks compared to glBindAttribLocation
+    // see: http://stackoverflow.com/a/4638906/1027706
+    GLuint position = 0;
+    glBindAttribLocation(shaderProgram, position, "position");
+
     glBindFragDataLocation(shaderProgram, 0, "color"); // not needed, this is already the default binding
 
     glLinkProgram(shaderProgram);
@@ -84,7 +89,6 @@ void init()
     glBindVertexArray(vao); // binds the vertex array object named by vao
 
     /* Make the link between vertex data and shader attributes */
-    GLint position = glGetAttribLocation(shaderProgram, "position");
     glVertexAttribPointer(position, 2, GL_FLOAT, GL_FALSE, 0, 0); // store in the current vertex array object the association
                                                                   // between the currently bound buffer object and the position attribute
     glEnableVertexAttribArray(position);
