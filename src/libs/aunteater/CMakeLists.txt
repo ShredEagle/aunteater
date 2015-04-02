@@ -36,8 +36,8 @@ add_library(${PROJECT_NAME}
     ${${PROJECT_NAME}_HEADERS}
 )
 
-include_directories(
-    ${Boost_INCLUDE_DIR}
+target_include_directories(${PROJECT_NAME}
+    PUBLIC ${Boost_INCLUDE_DIR}
 )
 
 target_link_libraries(${PROJECT_NAME}
