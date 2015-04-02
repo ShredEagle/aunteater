@@ -74,15 +74,15 @@ public:
     template <class T_derivedNode>
     std::list<Node> & getNodes();
 
-	/*
-	 * System
-	 */
-	void addSystem(System * System);
+    /*
+     * System
+     */
+    void addSystem(System * System);
 
-	/*
-	 * Update
-	 */
-	void update(float time);
+    /*
+     * Update
+     */
+    void update(float time);
 
     /*
      * Callbacks
@@ -112,7 +112,7 @@ private:
     std::list<EntityWrapper> mEntities;
     NameEntityMap mNamedEntities;
     ArchetypeFamilyMap mTypedFamilies;
-	std::vector<System*> mSystems;
+    std::vector<System*> mSystems;
 };
     
 /*

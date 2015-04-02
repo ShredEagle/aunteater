@@ -117,7 +117,7 @@ if (WIN32)
         # Is it because it finds them silently on *n*x platforms ?
         list(APPEND boost_binaries thread date_time chrono)
     else(BUILD_WITH_BOOST_STATIC_LIBS)
-	set(boost_binaries system serialization)
+    set(boost_binaries system serialization)
     endif(BUILD_WITH_BOOST_STATIC_LIBS)
 else (WIN32)
     option(BUILD_WITH_BOOST_STATIC_LIBS "Link with static Boost libraries" OFF)

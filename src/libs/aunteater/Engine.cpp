@@ -55,13 +55,13 @@ void Engine::removedEntity(weak_entity aEntity)
 
 void Engine::addSystem(System *aSystem)
 {
-	mSystems.push_back(aSystem);
+    mSystems.push_back(aSystem);
 }
 
 void Engine::update(float time)
 {
-	for (System * system : mSystems)
-	{
-		system->update(time);
-	}
+    for (System * system : mSystems)
+    {
+        system->update(time);
+    }
 }

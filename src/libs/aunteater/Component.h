@@ -18,7 +18,7 @@ namespace aunteater
         {}
         
         /// \todo Rename to loosen the logical coupling to type_info (eg. getType())
-		ComponentTypeId getTypeInfo()
+        ComponentTypeId getTypeInfo()
         {
             return &typeid(*this);
         }
