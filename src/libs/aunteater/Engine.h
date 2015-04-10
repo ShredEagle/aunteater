@@ -71,18 +71,18 @@ public:
     /*
      * Families
      */
-    template <class T_derivedNode>
+    template <class T_nodeArchetype>
     std::list<Node> & getNodes();
 
     /*
      * System
      */
-    void addSystem(System * System);
+    void addSystem(System * aSystem);
 
     /*
      * Update
      */
-    void update(float time);
+    void update(double aTime);
 
     /*
      * Callbacks
@@ -118,7 +118,7 @@ private:
 /*
  * Implementations
  */
-typedef std::list<Node> & Nodes;
+typedef std::list<Node> * Nodes;
 
 template <class T_nodeArchetype>
 std::list<Node> & Engine::getNodes()
