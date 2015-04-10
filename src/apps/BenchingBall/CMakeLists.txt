@@ -4,10 +4,17 @@ project(BenchingBall)
 # TODO : list .h files here. 
 # Helpful windows command : dir /b /oen
 set(${PROJECT_NAME}_HEADERS
+    ComponentPosition.h
+    ComponentVelocity.h
+    SystemMove.h
+    SystemRender.h
+    globals.h
 )
 
 # TODO : list .cpp files here
-set(${PROJECT_NAME}_SOURCES   
+set(${PROJECT_NAME}_SOURCES
+    SystemMove.cpp
+    SystemRender.cpp
 )
 
 add_executable(${PROJECT_NAME}

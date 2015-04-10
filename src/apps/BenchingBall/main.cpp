@@ -1,29 +1,28 @@
 #define GLFW_INCLUDE_GLCOREARB
 #include <GLFW/glfw3.h>
 
+#include "ComponentPosition.h"
+#include "ComponentVelocity.h"
+
+#include "SystemMove.h"
+#include "SystemRender.h"
+
+#include "globals.h"
+
+#include <aunteater/Engine.h>
+
 #include <string>
+#include <iomanip>
 #include <iostream>
 #include <cmath>
 #include <array>
+
+using namespace BenchingBall;
 
 #define POSITION_ATTRIB 0
 #define COLOR_ATTRIB 1 //not used
 #define TRANSFORM_ATTRIB 2
 #define next_avail 4
-
-GLfloat instance_pos[] = {
- .2, 0., 0.,
- 0., .2, 0.,
- 0.5, 0.5, 1.,
- 
- .2, 0., 0.,
- 0., .2, 0.,
- -0.5, -0.5, 1.,
- 
- .2, 0., 0.,
- 0., .2, 0.,
- 0.5, -0.5, 1.
-};
 
 template <std::size_t N_vertice>
 std::array<GLfloat, N_vertice*3> circle(GLfloat radius)
@@ -93,8 +92,6 @@ GLuint compileShader(const std::string &aSource, GLenum aShaderType)
     return shader;
 }
 
-#define SMOOTH 100
-
 void init(void)
 {
     GLuint vao;
@@ -105,7 +102,7 @@ void init(void)
     glBindVertexArray(vao);
     glEnableVertexAttribArray(POSITION_ATTRIB);
 
-    auto vertices = circle<SMOOTH>(1.);
+    auto vertices = circle<SMOOTH>(RADIUS);
     glBindBuffer(GL_ARRAY_BUFFER, bufs[0]);
     glBufferData(GL_ARRAY_BUFFER, std::tuple_size<decltype(vertices)>::value*3*sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(POSITION_ATTRIB, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -128,7 +125,8 @@ void init(void)
     GLuint transformBuffer;
     glGenBuffers(1, &transformBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, transformBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 3*9*sizeof(GLfloat), instance_pos, GL_STREAM_DRAW);
+    // Now done directly by the SystemRender instance
+    //glBufferData(GL_ARRAY_BUFFER, 3*9*sizeof(GLfloat), instance_pos, GL_STREAM_DRAW);
     for(std::size_t id : {0, 1, 2})
     {
         glEnableVertexAttribArray(TRANSFORM_ATTRIB+id);
@@ -144,7 +142,37 @@ void render(GLFWwindow *window)
     glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, SMOOTH, 3);
     glfwSwapBuffers(window);
 }
- 
+
+class FpsDisplay
+{
+public:
+    FpsDisplay(double aPeriod) :
+            mPeriod(aPeriod),
+            mCurrentPeriod(mPeriod)
+    {}
+
+    void tick(double aDeltaTime, GLFWwindow *window)
+    {
+        ++mFrameCount;
+        mCurrentPeriod -= aDeltaTime;
+
+        if(mCurrentPeriod <= 0)
+        {
+            std::ostringstream fpsCount;
+            fpsCount << "BenchingBall: " /*<< std::setw(5) << std::setfill('0') */
+                     << std::round(mFrameCount/(mPeriod-mCurrentPeriod)) << " fps";
+            glfwSetWindowTitle(window, fpsCount.str().c_str());
+
+            mCurrentPeriod = mPeriod;
+            mFrameCount = 0;
+        }
+    }
+private:
+    const double mPeriod;
+    double mCurrentPeriod;
+    unsigned int mFrameCount = 0;
+};
+
 int main(int argc, char** argv)
 {
     glfwInit();
@@ -154,14 +182,38 @@ int main(int argc, char** argv)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // OS X crashes if this line is not present...
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 800, "GLFW test", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, "GLFW test", NULL, NULL);
     glfwMakeContextCurrent(window);
 
-    init();
+    glfwSwapInterval(1);
 
+    init();
+    aunteater::Engine engine;
+    SystemMove  mover;
+    SystemRender renderer(window);
+    engine.addSystem(&mover);
+    engine.addSystem(&renderer);
+
+    engine.addEntity(aunteater::Entity().addComponent<ComponentPosition>(.5, .5)
+                                        .addComponent<ComponentVelocity>(1., .1));
+    engine.addEntity(aunteater::Entity().addComponent<ComponentPosition>(-.5, -.5)
+                                        .addComponent<ComponentVelocity>(-.3, 2.));
+    engine.addEntity(aunteater::Entity().addComponent<ComponentPosition>(-.5, .5)
+                                        .addComponent<ComponentVelocity>(.8, .8));
+    engine.addEntity(aunteater::Entity().addComponent<ComponentPosition>(.5, -.5)
+                                        .addComponent<ComponentVelocity>(.8, .8));
+
+    FpsDisplay fps(.5);
+    double lastFrame = glfwGetTime();
     while (!glfwWindowShouldClose(window))
     {
-        render(window);
+        //render(window);
+        double delta = glfwGetTime()-lastFrame;
+        lastFrame = glfwGetTime();
+        engine.update(delta);
+
+        fps.tick(delta, window);
+        glfwPollEvents();
     }
 
     glfwTerminate();
