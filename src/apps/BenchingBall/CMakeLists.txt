@@ -8,6 +8,7 @@ set(${PROJECT_NAME}_HEADERS
     ComponentVelocity.h
     SystemMove.h
     SystemRender.h
+    Vec2.h
     globals.h
 )
 

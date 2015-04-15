@@ -8,19 +8,16 @@
 #ifndef BenchingBall_ComponentPosition_h
 #define BenchingBall_ComponentPosition_h
 
+#include "Vec2.h"
+
 #include <aunteater/Component.h>
 
 namespace BenchingBall {
 
-struct ComponentPosition : public aunteater::Component
+struct ComponentPosition : public aunteater::Component, public Vec2
 {
-    ComponentPosition(double x, double y) :
-            x(x),
-            y(y)
+    ComponentPosition(double x, double y) : Vec2{x, y}
     {}
-
-    double x;
-    double y;
 
 private:
     COMP_CLONE(ComponentPosition)
