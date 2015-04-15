@@ -71,18 +71,18 @@ public:
     /*
      * Families
      */
-    template <class T_derivedNode>
+    template <class T_nodeArchetype>
     std::list<Node> & getNodes();
 
-	/*
-	 * System
-	 */
-	void addSystem(System * System);
+    /*
+     * System
+     */
+    void addSystem(System * aSystem);
 
-	/*
-	 * Update
-	 */
-	void update(float time);
+    /*
+     * Update
+     */
+    void update(double aTime);
 
     /*
      * Callbacks
@@ -112,13 +112,13 @@ private:
     std::list<EntityWrapper> mEntities;
     NameEntityMap mNamedEntities;
     ArchetypeFamilyMap mTypedFamilies;
-	std::vector<System*> mSystems;
+    std::vector<System*> mSystems;
 };
     
 /*
  * Implementations
  */
-typedef std::list<Node> & Nodes;
+typedef std::list<Node> * Nodes;
 
 template <class T_nodeArchetype>
 std::list<Node> & Engine::getNodes()

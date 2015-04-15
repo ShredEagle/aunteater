@@ -5,6 +5,10 @@
 
 #include "make.h"
 
+#define COMP_CLONE(Component)                                       \
+    virtual aunteater::own_component<> clone_impl() const override  \
+    {   return std::make_unique<Component>(*this);  }
+
 namespace aunteater
 {
     
@@ -18,7 +22,7 @@ namespace aunteater
         {}
         
         /// \todo Rename to loosen the logical coupling to type_info (eg. getType())
-		ComponentTypeId getTypeInfo()
+        ComponentTypeId getTypeInfo()
         {
             return &typeid(*this);
         }

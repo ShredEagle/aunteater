@@ -11,9 +11,8 @@ namespace aunteater
     class System
     {
     public:
-		virtual void addedToEngine(Engine &aEngine)=0;
-		virtual void update(float time)=0;
-        
+        virtual void addedToEngine(Engine &aEngine)=0;
+        virtual void update(double aTime)=0;
     };
     
 } // namespace aunteater

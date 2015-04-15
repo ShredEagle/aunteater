@@ -117,7 +117,7 @@ if (WIN32)
         # Is it because it finds them silently on *n*x platforms ?
         list(APPEND boost_binaries thread date_time chrono)
     else(BUILD_WITH_BOOST_STATIC_LIBS)
-	set(boost_binaries system serialization)
+    set(boost_binaries system serialization)
     endif(BUILD_WITH_BOOST_STATIC_LIBS)
 else (WIN32)
     option(BUILD_WITH_BOOST_STATIC_LIBS "Link with static Boost libraries" OFF)
@@ -136,6 +136,20 @@ if (WIN32 AND CPPUTEST_FOUND)
     # references __imp__timeGetTime@0 in function _PlatformSpecificMemset
     list(APPEND Cpputest_LIBRARIES Winmm.lib)
 endif (WIN32 AND CPPUTEST_FOUND)
+
+##
+## glfw
+##
+
+## This is recommanded by the documentation, but then there is a problem when linking to glfw
+## see: http://www.glfw.org/docs/latest/build.html#build_link_cmake_pkgconfig
+#find_package(PkgConfig REQUIRED)
+#pkg_search_module(GLFW REQUIRED glfw3)
+
+## There is also a glfwTargets.cmake distributed, but it is probably not used with this invocation.
+find_package(GLFW)
+## Find OpenGL explictily, but I suspect it is supposed to be handled by glfw if imported correclty.
+find_package(OpenGL)
 
 ## #################################################################
 ## Build options
