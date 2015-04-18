@@ -151,6 +151,8 @@ find_package(GLFW)
 ## Find OpenGL explictily, but I suspect it is supposed to be handled by glfw if imported correclty.
 find_package(OpenGL)
 
+find_package(JPEG)
+
 ## #################################################################
 ## Build options
 ## #################################################################
