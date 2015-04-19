@@ -74,6 +74,12 @@ public:
     template <class T_nodeArchetype>
     std::list<Node> & getNodes();
 
+    template <class T_nodeArchetype>
+    Engine & registerToNodes(FamilyObserver *aObserver);
+
+    template <class T_nodeArchetype>
+    Engine & cancelFromNodes(FamilyObserver *aObserver);
+
     /*
      * System
      */
@@ -104,7 +110,10 @@ protected:
 
     void addedEntity(weak_entity aEntity);
     void removedEntity(weak_entity aEntity);
-    
+
+    template <class T_nodeArchetype>
+    Family & getFamily();
+
 private:
     typedef boost::bimap<std::string, weak_entity > NameEntityMap;
     typedef std::map<ArchetypeTypeId, Family> ArchetypeFamilyMap;
@@ -121,7 +130,7 @@ private:
 typedef std::list<Node> * Nodes;
 
 template <class T_nodeArchetype>
-std::list<Node> & Engine::getNodes()
+Family & Engine::getFamily()
 {
     // Replace with lazy construction of the Family (emplace, try_emplace ?)
     auto insertionResult = mTypedFamilies.insert(std::make_pair(& typeid(T_nodeArchetype),
@@ -134,7 +143,27 @@ std::list<Node> & Engine::getNodes()
             familyRef.testEntityInclusion(entityRefFrom(wrapper));
         }
     }
-    return insertionResult.first->second.getNodes();
+    return insertionResult.first->second;
+}
+
+template <class T_nodeArchetype>
+std::list<Node> & Engine::getNodes()
+{
+    return getFamily<T_nodeArchetype>().getNodes();
+}
+
+template <class T_nodeArchetype>
+Engine & Engine::registerToNodes(FamilyObserver *aObserver)
+{
+    getFamily<T_nodeArchetype>().registerObserver(aObserver);
+    return *this;
+}
+
+template <class T_nodeArchetype>
+Engine & Engine::cancelFromNodes(FamilyObserver *aObserver)
+{
+    getFamily<T_nodeArchetype>().cancelObserver(aObserver);
+    return *this;
 }
     
 } // namespace aunteater

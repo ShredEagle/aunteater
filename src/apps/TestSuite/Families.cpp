@@ -63,3 +63,52 @@ TEST(Families, UpdatesOnComponent)
     entity->removeComponent<ComponentB>();
     CHECK_EQUAL(1, NodesOfArchetypeA.size());
 }
+
+TEST(Families, FamilyObservation)
+{
+    Engine engine;
+
+    struct TestObserver : public FamilyObserver
+    {
+        virtual void addedNode(Node &aNode) override
+        {
+            ++addNotificationCount;
+        }
+
+        virtual void removedNode(Node &aNode) override
+        {
+            ++removeNotificationCount;
+        }
+
+        unsigned addNotificationCount = 0;
+        unsigned removeNotificationCount = 0;
+    };
+
+    TestObserver observer;
+    engine.registerToNodes<ArchetypeA>(&observer);
+
+    CHECK_EQUAL(0, observer.addNotificationCount);
+    weak_entity fistEntity = engine.addEntity(Entity().addComponent<ComponentA>(5));
+    CHECK_EQUAL(1, observer.addNotificationCount);
+
+    weak_entity secondEntity = engine.addEntity(Entity().addComponent<ComponentA>(5).addComponent<ComponentB>(52.));
+    CHECK_EQUAL(2, observer.addNotificationCount);
+
+    secondEntity->removeComponent<ComponentB>();
+    CHECK_EQUAL(0, observer.removeNotificationCount);
+
+    secondEntity->removeComponent<ComponentA>();
+    CHECK_EQUAL(1, observer.removeNotificationCount);
+
+    engine.removeEntity(fistEntity);
+    CHECK_EQUAL(2, observer.removeNotificationCount);
+
+    CHECK_EQUAL(2, observer.addNotificationCount);
+
+    //*** Adds a second observer, that should be notified of existing nodes in the family of interest ***//
+    engine.addEntity(Entity().addComponent<ComponentA>(10));
+    TestObserver posterioriObserver;
+    engine.registerToNodes<ArchetypeA>(&posterioriObserver);
+    CHECK_EQUAL(1, posterioriObserver.addNotificationCount);
+    CHECK_EQUAL(0, posterioriObserver.removeNotificationCount);
+}
