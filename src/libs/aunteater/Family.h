@@ -13,7 +13,14 @@
 namespace aunteater
 {
     class Engine;
-    
+
+    class FamilyObserver
+    {
+    public:
+        virtual void addedNode(Node &aNode) = 0;
+        virtual void removedNode(Node &aNode) = 0;
+    };
+
     class Family
     {
     private:
@@ -35,11 +42,19 @@ namespace aunteater
         void componentAddedToEntity(weak_entity aEntity, ComponentTypeId aComponent);
         void componentRemovedFromEntity(entity_id aEntity, ComponentTypeId aComponent);
 
+        Family & registerObserver(FamilyObserver *aObserver)
+        {   mObservers.push_back(aObserver); return *this;  }
+
+        Family & cancelObserver(FamilyObserver *aObserver)
+        {   cancelObserverImpl(aObserver); return *this;  }
+
     private:
         void addIfMatch(weak_entity aEntity);
         
         bool isPresent(entity_id aEntity) const;
         bool includesComponent(ComponentTypeId aComponent) const;
+
+        void cancelObserverImpl(FamilyObserver *aObserver);
         
     private:
         Engine & mEngine;
@@ -51,6 +66,8 @@ namespace aunteater
         
         // This map is usefull to test if an entity is present in the current family instance
         std::map<entity_id, NodeList::iterator> mEntitiesToNodes;
+
+        std::vector<FamilyObserver *> mObservers;
     };
     
 } // namespace aunteater
