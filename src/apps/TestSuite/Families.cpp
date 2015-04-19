@@ -104,4 +104,11 @@ TEST(Families, FamilyObservation)
     CHECK_EQUAL(2, observer.removeNotificationCount);
 
     CHECK_EQUAL(2, observer.addNotificationCount);
+
+    //*** Adds a second observer, that should be notified of existing nodes in the family of interest ***//
+    engine.addEntity(Entity().addComponent<ComponentA>(10));
+    TestObserver posterioriObserver;
+    engine.registerToNodes<ArchetypeA>(&posterioriObserver);
+    CHECK_EQUAL(1, posterioriObserver.addNotificationCount);
+    CHECK_EQUAL(0, posterioriObserver.removeNotificationCount);
 }

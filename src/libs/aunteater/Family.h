@@ -43,7 +43,7 @@ namespace aunteater
         void componentRemovedFromEntity(entity_id aEntity, ComponentTypeId aComponent);
 
         Family & registerObserver(FamilyObserver *aObserver)
-        {   mObservers.push_back(aObserver); return *this;  }
+        {   mObservers.push_back(aObserver); notifyOfExistingNodes(aObserver); return *this;  }
 
         Family & cancelObserver(FamilyObserver *aObserver)
         {   cancelObserverImpl(aObserver); return *this;  }
@@ -54,7 +54,10 @@ namespace aunteater
         bool isPresent(entity_id aEntity) const;
         bool includesComponent(ComponentTypeId aComponent) const;
 
+        typedef void (FamilyObserver::*NotificationMethod)(Node &);
+        void broadcastNotification(NotificationMethod aTargetMethod, Node &aNode) const;
         void cancelObserverImpl(FamilyObserver *aObserver);
+        void notifyOfExistingNodes(FamilyObserver *aObserver);
         
     private:
         Engine & mEngine;
