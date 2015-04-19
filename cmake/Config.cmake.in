@@ -1,0 +1,3 @@
+# Everything that is need to use the headers / libraries of @PROJECT_NAME@ is provided
+# in the generated "export" file. This file was installed by install(EXPORT...).
+include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@Targets.cmake") 
