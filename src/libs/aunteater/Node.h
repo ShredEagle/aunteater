@@ -10,7 +10,7 @@
 namespace aunteater
 {
 
-    class EntityWrapper;
+    struct EntityWrapper;
     class Family;
     
     class Node

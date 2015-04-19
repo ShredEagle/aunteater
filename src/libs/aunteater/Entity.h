@@ -4,6 +4,10 @@
 #include "globals.h"
 #include "make.h"
 
+#ifdef WIN32
+#include "Component.h"
+#endif
+
 #include <map>
 
 namespace aunteater
@@ -97,7 +101,11 @@ namespace aunteater
     private:
         /// \brief A wrapper, returning the ComponentTypeId for the provided Component type (T_component)
         template <class T_component>
-        static constexpr typename std::enable_if<std::is_base_of<Component, T_component>::value, ComponentTypeId>::type
+		static 
+#ifndef WIN32
+			constexpr
+#endif 
+			typename std::enable_if<std::is_base_of<Component, T_component>::value, ComponentTypeId>::type
         type()
         {   return &typeid(T_component);    }
 

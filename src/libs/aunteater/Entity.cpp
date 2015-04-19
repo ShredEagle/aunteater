@@ -43,7 +43,8 @@ void Entity::addComponent(own_component<> aComponent)
     if(insertionResult.second && mOwner)
     {
         weak_component<> comp = weakFromOwn(insertionResult.first->second);
-        mOwner->entityCompositionChanged([this, compType = comp->getTypeInfo()](Family &family)
+		ComponentTypeId compType = comp->getTypeInfo();
+        mOwner->entityCompositionChanged([this, compType](Family &family)
                                             { family.componentAddedToEntity(this, compType); });
     }
 }
