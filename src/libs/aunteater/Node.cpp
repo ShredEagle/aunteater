@@ -20,6 +20,11 @@ Component & Node::get(ComponentTypeId aComponentId)
     return *mTypedComponents.find(aComponentId)->second;
 }
 
+const Component & Node::get(ComponentTypeId aComponentId) const
+{
+    return *mTypedComponents.find(aComponentId)->second;
+}
+
 /*
 std::set<std::type_info * > Node::getComponentsTypeInfo()
 {

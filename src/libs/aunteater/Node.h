@@ -36,13 +36,20 @@ namespace aunteater
         /// It is an undefined behavior to give a ComponentId that is not present in the collection
         /// \deprecated
         Component & get(ComponentTypeId aComponentId);
-        
+        const Component & get(ComponentTypeId aComponentId) const;
+
         template <class T_component>
         T_component & get()
         {
             return static_cast<T_component &>(get(&typeid(T_component)));
         }
-        
+
+        template <class T_component>
+        const T_component & get() const
+        {
+            return static_cast<const T_component &>(get(&typeid(T_component)));
+        }
+               
         bool operator==(const Node &aRhs) const
         {
             return (mTypedComponents == aRhs.mTypedComponents) && (mEntity == aRhs.mEntity);
