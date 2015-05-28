@@ -24,7 +24,7 @@ namespace aunteater
          * Copy control (based on copy-and-swap idiom: http://stackoverflow.com/a/3279550/1027706)
          */
         Entity(const Entity &aOther);
-        Entity(Entity &&aOther) = default;
+        //Entity(Entity &&aOther) = default;
         Entity & operator=(Entity aRhs);  //take the argument by value, following copy-and-swap idiom.
         //Entity & operator=(Entity &&aRhs) = default; //the potential advantage of such declaration is small (at best)
             //if it was not there, the move assignment would be disabled, falling back to copy assignment
