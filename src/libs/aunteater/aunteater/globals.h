@@ -1,5 +1,4 @@
-#ifndef _IDG_AE_globals
-#define _IDG_AE_globals
+#pragma once
 
 #include <memory>
 #include <set>
@@ -43,4 +42,3 @@ namespace aunteater
     typedef Entity* weak_entity;
 
 } // namespace aunteater
-#endif  // #ifdef

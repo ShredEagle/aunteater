@@ -1,14 +1,13 @@
-#ifndef _IDG_AE_Family
-#define _IDG_AE_Family
+#pragma once
 
 #include "Entity.h"
-#include "Handle.h"
 #include "Node.h"
 
 #include "globals.h"
 
 #include <map>
 #include <list>
+#include <vector>
 
 namespace aunteater
 {
@@ -30,12 +29,12 @@ namespace aunteater
 
     public:
         Family(Engine & aEngine, ArchetypeTypeSet aComponentsTypeInfo);
-        
+
         std::list<Node> & getNodes()
         {
             return mNodes;
         }
-        
+
         void testEntityInclusion(weak_entity aEntity);
         void removeIfPresent(entity_id aEntity);
 
@@ -50,7 +49,7 @@ namespace aunteater
 
     private:
         void addIfMatch(weak_entity aEntity);
-        
+
         bool isPresent(entity_id aEntity) const;
         bool includesComponent(ComponentTypeId aComponent) const;
 
@@ -58,21 +57,19 @@ namespace aunteater
         void broadcastNotification(NotificationMethod aTargetMethod, Node &aNode) const;
         void cancelObserverImpl(FamilyObserver *aObserver);
         void notifyOfExistingNodes(FamilyObserver *aObserver);
-        
+
     private:
         Engine & mEngine;
         NodeList mNodes;
         ArchetypeTypeSet mComponentsTypeInfo;
-        
+
         /// \note It works to use an iterator because we use a std::list
         /// for which operation on elements do not affect other iterators.
-        
+
         // This map is usefull to test if an entity is present in the current family instance
         std::map<entity_id, NodeList::iterator> mEntitiesToNodes;
 
         std::vector<FamilyObserver *> mObservers;
     };
-    
-} // namespace aunteater
 
-#endif  // #ifdef
+} // namespace aunteater

@@ -5,7 +5,6 @@ set(${PROJECT_NAME}_HEADERS
     Engine.h
     Entity.h
     Family.h
-    Handle.h
     Node.h
     System.h
 

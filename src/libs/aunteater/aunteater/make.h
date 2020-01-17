@@ -1,5 +1,4 @@
-#ifndef _IDG_AE_make
-#define _IDG_AE_make
+#pragma once
 
 #include "globals.h"
 
@@ -16,5 +15,3 @@ namespace aunteater
     }
 
 } // namespace aunteater
-
-#endif // #ifdef
