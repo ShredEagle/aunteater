@@ -20,6 +20,8 @@ namespace aunteater
         virtual void removedNode(Node &aNode) = 0;
     };
 
+    // Review note: Should probably be non-copyable,
+    // to avoid the risk of a component forgetting to take it by ref
     class Family
     {
     private:
@@ -35,7 +37,7 @@ namespace aunteater
             return mNodes;
         }
 
-        void testEntityInclusion(weak_entity aEntity);
+        void addIfMatch(weak_entity aEntity);
         void removeIfPresent(entity_id aEntity);
 
         void componentAddedToEntity(weak_entity aEntity, ComponentTypeId aComponent);
@@ -48,7 +50,6 @@ namespace aunteater
         {   cancelObserverImpl(aObserver); return *this;  }
 
     private:
-        void addIfMatch(weak_entity aEntity);
 
         bool isPresent(entity_id aEntity) const;
         bool includesComponent(ComponentTypeId aComponent) const;

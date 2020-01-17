@@ -79,13 +79,13 @@ namespace aunteater
         template <class T_component>
         weak_component<T_component> get()
         {
-            return static_component_cast<T_component>(mComponents.find(type<T_component>())->second);
+            return static_component_cast<T_component>(mComponents.at(type<T_component>()));
         }
 
         template <class T_component>
         weak_component<const T_component> get() const
         {
-            return static_component_cast<const T_component>(mComponents.find(type<T_component>())->second);
+            return static_component_cast<const T_component>(mComponents.at(type<T_component>()));
         }
 
         /*

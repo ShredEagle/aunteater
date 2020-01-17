@@ -10,6 +10,9 @@ namespace aunteater
     struct EntityWrapper;
     class Family;
 
+    // Review note: this seems like a glorified wrapper around an entity weak pointer
+    // could probably do without, as it seems not to offer any service
+    // by simply holding reference to the right subset of components.
     class Node
     {
     public:
@@ -17,7 +20,7 @@ namespace aunteater
         {
             friend class Family;
 
-            family_access() {};
+            family_access() = default;
             family_access(const family_access &) = delete;
             family_access & operator=(const family_access &) = delete;
         };
@@ -29,11 +32,6 @@ namespace aunteater
 
     public:
         explicit Node(const ArchetypeTypeSet & aIds, weak_entity aAssignedEntity, const family_access &);
-
-        /// It is an undefined behavior to give a ComponentId that is not present in the collection
-        /// \deprecated
-        Component & get(ComponentTypeId aComponentId);
-        const Component & get(ComponentTypeId aComponentId) const;
 
         template <class T_component>
         T_component & get()
@@ -56,6 +54,10 @@ namespace aunteater
         {
             return !(*this == aRhs);
         }
+
+    private:
+        Component & get(ComponentTypeId aComponentId);
+        const Component & get(ComponentTypeId aComponentId) const;
 
     private:
         /// \todo Same as with Entity::get() : it would be nice to avoir sharing ownership.

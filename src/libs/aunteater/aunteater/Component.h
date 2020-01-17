@@ -5,13 +5,10 @@
 
 #include "make.h"
 
-#define COMP_CLONE(Component)                                       \
-    virtual aunteater::own_component<> clone_impl() const override  \
-    {   return std::make_unique<Component>(*this);  }
 
 namespace aunteater
 {
-    
+
     class Component
     {
         friend own_component<> clone(const own_component<> &aComponent);
@@ -20,7 +17,7 @@ namespace aunteater
         // Component class needs to be polymorphic to enable RTTI.
         virtual ~Component()
         {}
-        
+
         /// \todo Rename to loosen the logical coupling to type_info (eg. getType())
         ComponentTypeId getTypeInfo()
         {
@@ -28,8 +25,21 @@ namespace aunteater
         }
 
     private:
-        virtual own_component<> clone_impl() const =0;
+        virtual own_component<> clone_impl() const = 0;
     };
+
+
+    template <class T_derived>
+    class ComponentBase : public Component
+    {
+
+    private:
+        virtual own_component<> clone_impl() const final override
+        {
+            return std::make_unique<T_derived>(*static_cast<const T_derived*>(this));
+        }
+    };
+
 
     /// \brief This method is to be used when client code needs a copy of a component through a pointer to the base.
     /// \note It is implemented this way to isolate the rest of the code from the actual implementation of the

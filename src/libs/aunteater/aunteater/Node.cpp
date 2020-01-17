@@ -17,23 +17,10 @@ Node::Node(const ArchetypeTypeSet & aIds, weak_entity aAssignedEntity, const fam
 
 Component & Node::get(ComponentTypeId aComponentId)
 {
-    return *mTypedComponents.find(aComponentId)->second;
+    return *mTypedComponents.at(aComponentId);
 }
 
 const Component & Node::get(ComponentTypeId aComponentId) const
 {
-    return *mTypedComponents.find(aComponentId)->second;
+    return *mTypedComponents.at(aComponentId);
 }
-
-/*
-std::set<std::type_info * > Node::getComponentsTypeInfo()
-{
-    std::set<std::type_info * > typeInfoSet;
-    for(auto pair : mComponents)
-    {
-        typeInfoSet.insert(pair.first);
-    }
-    
-    return typeInfoSet;
-}
-*/

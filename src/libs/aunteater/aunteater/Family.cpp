@@ -10,14 +10,7 @@ using namespace aunteater;
 Family::Family(Engine & aEngine, ArchetypeTypeSet aComponentsTypeInfo):
         mEngine(aEngine),
         mComponentsTypeInfo(aComponentsTypeInfo)
-{
-    
-}
-
-void Family::testEntityInclusion(weak_entity aEntity)
-{
-    addIfMatch(aEntity);
-}
+{}
 
 void Family::addIfMatch(weak_entity aEntity)
 {
@@ -25,8 +18,10 @@ void Family::addIfMatch(weak_entity aEntity)
                     [&aEntity](ComponentTypeId compId){return aEntity->has(compId);}))
     {
         mNodes.emplace_back(mComponentsTypeInfo, aEntity, Node::family_access());
-        /*auto insertionResult = */ mEntitiesToNodes.emplace(aEntity, --mNodes.end());
-        /// \todo Do we need to test if the handle was already present ?
+        if (!mEntitiesToNodes.emplace(aEntity, --mNodes.end()).second)
+        {
+            throw std::runtime_error("Entity already present in this family.");
+        }
 
         broadcastNotification(&FamilyObserver::addedNode, mNodes.back());
     }
@@ -80,6 +75,7 @@ void Family::broadcastNotification(NotificationMethod aTargetMethod, Node &aNode
 
 void Family::cancelObserverImpl(FamilyObserver *aObserver)
 {
+    /// \todo gsl::Expect prime candidate
     assert(std::find(mObservers.begin(), mObservers.end(), aObserver) != mObservers.end());
     mObservers.erase(std::find(mObservers.begin(), mObservers.end(), aObserver));
 }
@@ -102,6 +98,6 @@ void Family::removeEntity(std::shared_ptr<Entity> aEntity)
 
 void Family::componentAddedToEntity(std::shared_ptr<Entity> aEntity, <#std::type_info *aComponent#>)
 {
-    
+
 }
 */

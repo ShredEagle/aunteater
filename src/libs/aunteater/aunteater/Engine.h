@@ -14,6 +14,9 @@
 namespace aunteater
 {
 
+// Review note: Could this maybe be augment to be a LiveEntity
+// i.e. a type that correspond to an entity that is added to an Engine, and which could have the "alive" bit
+// (notably taking "owner" out of entity)
 struct EntityWrapper
 {
     EntityWrapper(Entity aEntity, Engine *aEngine) :
@@ -104,7 +107,7 @@ protected:
     static entity_id entityIdFrom(const EntityWrapper &aWrapper)
     {   return &(aWrapper.entity);  }
 
-    static weak_entity entityRefFrom( EntityWrapper &aWrapper)
+    static weak_entity entityRefFrom(EntityWrapper &aWrapper)
     {   return &(aWrapper.entity);  }
 
     void addedEntity(weak_entity aEntity);
@@ -139,7 +142,7 @@ Family & Engine::getFamily()
         Family &familyRef = insertionResult.first->second;
         for (EntityWrapper & wrapper : mEntities)
         {
-            familyRef.testEntityInclusion(entityRefFrom(wrapper));
+            familyRef.addIfMatch(entityRefFrom(wrapper));
         }
     }
     return insertionResult.first->second;

@@ -41,7 +41,7 @@ void Engine::addedEntity(weak_entity aEntity)
 {
     for (auto & typedFamily : mTypedFamilies)
     {
-        typedFamily.second.testEntityInclusion(aEntity);
+        typedFamily.second.addIfMatch(aEntity);
     }
 }
 
