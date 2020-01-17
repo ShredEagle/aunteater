@@ -1,8 +1,5 @@
-project(BenchingBall)
+project(BenchingBall VERSION "${CMAKE_PROJECT_VERSION}")
 
-
-# TODO : list .h files here. 
-# Helpful windows command : dir /b /oen
 set(${PROJECT_NAME}_HEADERS
     ComponentPosition.h
     ComponentVelocity.h
@@ -12,28 +9,33 @@ set(${PROJECT_NAME}_HEADERS
     globals.h
 )
 
-# TODO : list .cpp files here
 set(${PROJECT_NAME}_SOURCES
     SystemMove.cpp
     SystemRender.cpp
 )
 
+find_package(glfw3 3.3 REQUIRED)
+find_package(OpenGL REQUIRED)
+
 add_executable(${PROJECT_NAME}
     main.cpp
     ${${PROJECT_NAME}_SOURCES}
     ${${PROJECT_NAME}_HEADERS})
- 
-target_include_directories(${PROJECT_NAME} PUBLIC ${GLFW_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME}
-    aunteater
-    ${GLFW_LIBRARY} ${OPENGL_LIBRARIES})
 
-######################################################################
-## Installation stuff - common to all projects
-######################################################################
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+        ad::aunteater
+        glfw
+        OpenGL::GL
+)
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
-        VERSION "${VERSION}"
-        SOVERSION "${SOVERSION}"
+                      VERSION "${${PROJECT_NAME}_VERSION}"
 )
 
 
+##
+## Install
+##
+
+install(TARGETS ${PROJECT_NAME})
