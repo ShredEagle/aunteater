@@ -22,17 +22,6 @@ Entity & Entity::operator=(Entity aRhs)
 Entity::~Entity()
 {}
 
-//Entity & Entity::removeComponent(ComponentTypeId aComponentId)
-//{
-//    mComponents.erase(aComponentId);
-//    if(mOwner)
-//    {
-//        mOwner->entityCompositionChanged([this, compType = aComponent->getTypeInfo()](Family &family)
-//                                            { family.componentRemovedFromEntity(this, compType); });
-//    }
-//    return *this;
-//}
-
 void Entity::addComponent(own_component<> aComponent)
 {
     // This is a custom implementation of map::insert_or_assign()
@@ -43,9 +32,11 @@ void Entity::addComponent(own_component<> aComponent)
     if(insertionResult.second && mOwner)
     {
         weak_component<> comp = weakFromOwn(insertionResult.first->second);
-		ComponentTypeId compType = comp->getTypeInfo();
+        ComponentTypeId compType = comp->getTypeInfo();
         mOwner->entityCompositionChanged([this, compType](Family &family)
-                                            { family.componentAddedToEntity(this, compType); });
+                                         {
+                                            family.componentAddedToEntity(this, compType);
+                                         });
     }
 }
 

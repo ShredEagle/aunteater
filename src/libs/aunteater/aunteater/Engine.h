@@ -1,5 +1,4 @@
-#ifndef _IDG_AE_Engine
-#define _IDG_AE_Engine
+#pragma once
 
 #include "Entity.h"
 #include "Family.h"
@@ -18,7 +17,8 @@ namespace aunteater
 
 struct EntityWrapper
 {
-    EntityWrapper(Entity aEntity, Engine *aEngine) : entity(aEntity)
+    EntityWrapper(Entity aEntity, Engine *aEngine) :
+        entity(std::move(aEntity))
     {
         entity.addedToEngine(aEngine);
         //engine->addedEntity(&entity); //dangerous, if the EntityWrapper is moved the address moves along...
@@ -52,22 +52,22 @@ public:
      * Construction
      */
     Engine() = default;
-    
+
     /*
      * Entities manipulation
      */
     weak_entity addEntity(Entity aEntity);
     weak_entity addEntity(const std::string & aName, Entity aEntity);
-    
+
     void removeEntity(weak_entity aEntity);
     void removeEntity(const std::string & aEntityName)
     {   removeEntity(getEntity(aEntityName));   }
-    
+
     weak_entity getEntity(const std::string & aEntityName)
     {
         return mNamedEntities.left.find(aEntityName)->second;
     }
-    
+
     /*
      * Families
      */
@@ -83,7 +83,7 @@ public:
     /*
      * System
      */
-    void addSystem(System * aSystem);
+    void addSystem(std::shared_ptr<System> aSystem);
 
     /*
      * Update
@@ -121,9 +121,9 @@ private:
     std::list<EntityWrapper> mEntities;
     NameEntityMap mNamedEntities;
     ArchetypeFamilyMap mTypedFamilies;
-    std::vector<System*> mSystems;
+    std::vector<std::shared_ptr<System>> mSystems;
 };
-    
+
 /*
  * Implementations
  */
@@ -165,7 +165,5 @@ Engine & Engine::cancelFromNodes(FamilyObserver *aObserver)
     getFamily<T_nodeArchetype>().cancelObserver(aObserver);
     return *this;
 }
-    
-} // namespace aunteater
 
-#endif  // #ifdef
+} // namespace aunteater

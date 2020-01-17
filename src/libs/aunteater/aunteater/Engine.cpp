@@ -53,15 +53,15 @@ void Engine::removedEntity(weak_entity aEntity)
     }
 }
 
-void Engine::addSystem(System *aSystem)
+void Engine::addSystem(std::shared_ptr<System> aSystem)
 {
     aSystem->addedToEngine(*this);
-    mSystems.push_back(aSystem);
+    mSystems.push_back(std::move(aSystem));
 }
 
 void Engine::update(double time)
 {
-    for (System * system : mSystems)
+    for (auto & system : mSystems)
     {
         system->update(time);
     }

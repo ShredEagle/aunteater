@@ -1,12 +1,7 @@
-#ifndef _IDG_AE_Entity
-#define _IDG_AE_Entity
+#pragma once
 
 #include "globals.h"
 #include "make.h"
-
-#ifdef WIN32
-#include "Component.h"
-#endif
 
 #include <map>
 
@@ -45,20 +40,15 @@ namespace aunteater
         /*
          * Components management
          */
-        /// \brief Adds a component
-        /// \deprecated Use template addComponent instead
-        void addComponent(own_component<> aComponent);
-
         /// \todo MAJOR for add and remove component, update the families !
 
         /// \brief Adds a component of type T_component, by constructing it forwarding all the provided arguments.
         template <class T_component, class... Args>
         Entity & addComponent(Args&&... aArgs)
-        {   addComponent(make_component<T_component>(std::forward<Args>(aArgs)...)); return *this;    }
-
-        // Nota: Is not inlined, because unique_ptr<Component> are erased by this impl, and Component is incomplete.
-        /// \deprecated
-        Entity & removeComponent(ComponentTypeId aComponentId);
+        {
+            addComponent(make_component<T_component>(std::forward<Args>(aArgs)...));
+            return *this;
+        }
 
         /// \brief Removes the component of type T_component from this Entity.
         template <class T_component>
@@ -69,45 +59,54 @@ namespace aunteater
             return *this;
         }
 
-        /// \deprecated
-        bool has(ComponentTypeId aComponentId)
-        {   return mComponents.count(aComponentId); }
-
         /// \return true if this Entity has Component of type T_component.
+        bool has(ComponentTypeId aId)
+        {
+            return mComponents.count(aId);
+        }
+
         template <class T_component>
         bool has()
-        {   return mComponents.count(type<T_component>());    }
+        {
+            return mComponents.count(type<T_component>());
+        }
 
-        /// \note Undefined behavior if aComponentId is not a key in the map.
-        /// \deprecated Use template get() instead.
-        weak_component<> get(ComponentTypeId aComponentId)
-        {   return weakFromOwn(mComponents.find(aComponentId)->second);  }
+        weak_component<> get(ComponentTypeId aId)
+        {
+            return weakFromOwn(mComponents.find(aId)->second);
+        }
 
-        /// \note It is an undefined behavior to call this if T_component is not a component of the Entity.
         template <class T_component>
         weak_component<T_component> get()
-        {   return static_component_cast<T_component>(mComponents.find(type<T_component>())->second);   }
+        {
+            return static_component_cast<T_component>(mComponents.find(type<T_component>())->second);
+        }
 
         template <class T_component>
         weak_component<const T_component> get() const
-        {   return static_component_cast<const T_component>(mComponents.find(type<T_component>())->second);   }
+        {
+            return static_component_cast<const T_component>(mComponents.find(type<T_component>())->second);
+        }
 
         /*
          * Engine registration
          */
         Entity &addedToEngine(Engine *aOwner)
-        {   mOwner = aOwner; return *this;  }
+        {
+            mOwner = aOwner; return *this;
+        }
 
     private:
+        void addComponent(own_component<> aComponent);
+
         /// \brief A wrapper, returning the ComponentTypeId for the provided Component type (T_component)
         template <class T_component>
-		static 
-#ifndef WIN32
-			constexpr
-#endif 
-			typename std::enable_if<std::is_base_of<Component, T_component>::value, ComponentTypeId>::type
+        static typename std::enable_if_t<std::is_base_of<Component, T_component>::value,
+                                         ComponentTypeId>
         type()
-        {   return &typeid(T_component);    }
+        {
+            return &typeid(T_component);
+        }
 
         void removeNotifyOwner(ComponentTypeId aComponentId);
 
@@ -115,7 +114,6 @@ namespace aunteater
         std::map<ComponentTypeId, own_component<> > mComponents;
         Engine *mOwner = nullptr;
     };
-    
-} // namespace aunteater
 
-#endif  // #ifdef
+
+} // namespace aunteater
