@@ -6,4 +6,3 @@ if(BUILD_tests)
     #conditional_add_subdirectory(BenchingBall DEPENDS GLFW OpenGL VERBOSE)
     #conditional_add_subdirectory(OpenGL DEPENDS GLFW OpenGL JPEG VERBOSE)
 endif()
-
