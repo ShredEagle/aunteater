@@ -1,3 +1,1 @@
-add_subdirectory(libs)
-#add_subdirectory(plugins)
-add_subdirectory(apps)
+add_subdirectory(libs/aunteater/aunteater)
