@@ -30,7 +30,7 @@ namespace aunteater
         typedef std::list<Node> NodeList;
 
     public:
-        Family(Engine & aEngine, ArchetypeTypeSet aComponentsTypeInfo);
+        Family(ArchetypeTypeSet aComponentsTypeInfo);
 
         std::list<Node> & getNodes()
         {
@@ -60,7 +60,6 @@ namespace aunteater
         void notifyOfExistingNodes(FamilyObserver *aObserver);
 
     private:
-        Engine & mEngine;
         NodeList mNodes;
         ArchetypeTypeSet mComponentsTypeInfo;
 

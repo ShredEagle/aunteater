@@ -73,13 +73,14 @@ public:
     /*
      * Families
      */
-    template <class T_nodeArchetype>
+    template <class T_archetype>
     std::list<Node> & getNodes();
 
-    template <class T_nodeArchetype>
+    // NOTE: For users, not used as an internal mechanism
+    template <class T_archetype>
     Engine & registerToNodes(FamilyObserver *aObserver);
 
-    template <class T_nodeArchetype>
+    template <class T_archetype>
     Engine & cancelFromNodes(FamilyObserver *aObserver);
 
     /*
@@ -113,7 +114,7 @@ protected:
     void addedEntity(weak_entity aEntity);
     void removedEntity(weak_entity aEntity);
 
-    template <class T_nodeArchetype>
+    template <class T_archetype>
     Family & getFamily();
 
 private:
@@ -131,12 +132,11 @@ private:
  */
 typedef std::list<Node> * Nodes;
 
-template <class T_nodeArchetype>
+template <class T_archetype>
 Family & Engine::getFamily()
 {
-    // Replace with lazy construction of the Family (emplace, try_emplace ?)
-    auto insertionResult = mTypedFamilies.insert(std::make_pair(& typeid(T_nodeArchetype),
-                                                 Family(*this, T_nodeArchetype::gComponentTypes)));
+    auto insertionResult = mTypedFamilies.emplace(archetypeTypeId<T_archetype>(),
+                                                  Family(T_archetype::gComponentTypes));
     if (insertionResult.second)
     {
         Family &familyRef = insertionResult.first->second;
@@ -148,23 +148,23 @@ Family & Engine::getFamily()
     return insertionResult.first->second;
 }
 
-template <class T_nodeArchetype>
+template <class T_archetype>
 std::list<Node> & Engine::getNodes()
 {
-    return getFamily<T_nodeArchetype>().getNodes();
+    return getFamily<T_archetype>().getNodes();
 }
 
-template <class T_nodeArchetype>
+template <class T_archetype>
 Engine & Engine::registerToNodes(FamilyObserver *aObserver)
 {
-    getFamily<T_nodeArchetype>().registerObserver(aObserver);
+    getFamily<T_archetype>().registerObserver(aObserver);
     return *this;
 }
 
-template <class T_nodeArchetype>
+template <class T_archetype>
 Engine & Engine::cancelFromNodes(FamilyObserver *aObserver)
 {
-    getFamily<T_nodeArchetype>().cancelObserver(aObserver);
+    getFamily<T_archetype>().cancelObserver(aObserver);
     return *this;
 }
 

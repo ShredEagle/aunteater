@@ -36,7 +36,13 @@ namespace aunteater
     }
 
     typedef std::set<ComponentTypeId> ArchetypeTypeSet;
+
     typedef const std::type_info *  ArchetypeTypeId;
+    template <class T_Archetype>
+    constexpr ArchetypeTypeId archetypeTypeId()
+    {
+        return & typeid(T_Archetype);
+    }
 
     typedef const Entity* entity_id; // Could alternatively be a const void*: should never be used to invoke methods.
     typedef Entity* weak_entity;
