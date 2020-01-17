@@ -40,8 +40,6 @@ namespace aunteater
         /*
          * Components management
          */
-        /// \todo MAJOR for add and remove component, update the families !
-
         /// \brief Adds a component of type T_component, by constructing it forwarding all the provided arguments.
         template <class T_component, class... Args>
         Entity & addComponent(Args&&... aArgs)

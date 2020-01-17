@@ -17,7 +17,7 @@ weak_entity Engine::addEntity(const std::string & aName, Entity aEntity)
     /// \todo Multithreading issue ahead
     // Note: cannot be done directly at insert, because addEntity has side effects which should
     //       not take place if the name was already present
-    auto id = addEntity(aEntity);
+    auto id = addEntity(std::move(aEntity));
     mNamedEntities.left.replace_data(insertionResult.first, id);
     return id;
 }
@@ -25,7 +25,7 @@ weak_entity Engine::addEntity(const std::string & aName, Entity aEntity)
 weak_entity Engine::addEntity(Entity aEntity)
 {
     // Note: cannot emplace_back, before C++17, it returns void
-    weak_entity lastEntity = entityRefFrom(*mEntities.emplace(mEntities.end(), aEntity, this));
+    weak_entity lastEntity = entityRefFrom(*mEntities.emplace(mEntities.end(), std::move(aEntity), this));
     addedEntity(lastEntity);
     return lastEntity;
 }
