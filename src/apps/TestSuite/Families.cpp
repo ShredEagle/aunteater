@@ -1,114 +1,147 @@
 #include "CommonComponents.h"
 
-#include <aunteater/Engine.h>
+#include "catch.hpp"
 
-/// ! MUST BE LAST ! ///
-#include <CppUTest/TestHarness.h>
+#include <aunteater/Engine.h>
 
 using namespace aunteater;
 
-TEST_GROUP(Families)
-{};
 
-TEST(Families, AddRemoveEntity)
+SCENARIO("Family management on entities addition/removal")
 {
-    Engine engine;
-    std::list<Node> &NodesOfArchetypeA = engine.getNodes<ArchetypeA>();
-    CHECK_EQUAL(0, NodesOfArchetypeA.size());
-
+    GIVEN("An Engine and an Archetype")
     {
-        Entity entity;
-        entity.addComponent<ComponentB>(5);
-        engine.addEntity("entity_componentB", std::move(entity));
+        Engine engine;
+        std::list<Node> & NodesOfArchetypeA = engine.getNodes<ArchetypeA>();
+        REQUIRE(0 == NodesOfArchetypeA.size());
+
+        SECTION("Entities addition/removal")
+        {
+            {
+                Entity entity;
+                entity.addComponent<ComponentB>(5);
+                engine.addEntity("entity_componentB", std::move(entity));
+                REQUIRE(0 == NodesOfArchetypeA.size());
+            }
+
+            {
+                Entity entity;
+                entity.addComponent<ComponentA>(5);
+                engine.addEntity("entity_componentA", std::move(entity));
+            }
+            REQUIRE(1 == NodesOfArchetypeA.size());
+
+            engine.removeEntity("entity_componentB");
+            REQUIRE(1 == NodesOfArchetypeA.size());
+
+            engine.removeEntity("entity_componentA");
+            REQUIRE(0 == NodesOfArchetypeA.size());
+        }
     }
-    CHECK_EQUAL(0, NodesOfArchetypeA.size());
-
-    {
-        Entity entity;
-        entity.addComponent<ComponentA>(5);
-        engine.addEntity("entity_componentA", std::move(entity));
-    }
-    CHECK_EQUAL(1, NodesOfArchetypeA.size());
-
-    engine.removeEntity("entity_componentB");
-    CHECK_EQUAL(1, NodesOfArchetypeA.size());
-
-    engine.removeEntity("entity_componentA");
-    CHECK_EQUAL(0, NodesOfArchetypeA.size());
 }
 
-TEST(Families, UpdatesOnComponent)
+
+SCENARIO("Family management on components update")
 {
-    Engine engine;
-    std::list<Node> &NodesOfArchetypeA = engine.getNodes<ArchetypeA>();
-
+    GIVEN("An Engine and an Archetype")
     {
-        Entity entity;
-        entity.addComponent<ComponentA>(5);
-        engine.addEntity("aunt", std::move(entity));
+        Engine engine;
+        std::list<Node> &NodesOfArchetypeA = engine.getNodes<ArchetypeA>();
+
+        THEN("Manipulating and Entity's Components updates the Family")
+        {
+            {
+                Entity entity;
+                entity.addComponent<ComponentA>(5);
+                engine.addEntity("aunt", std::move(entity));
+            }
+
+            REQUIRE(1 == NodesOfArchetypeA.size());
+
+            auto entity = engine.getEntity("aunt");
+            entity->removeComponent<ComponentA>();
+            REQUIRE(0 == NodesOfArchetypeA.size());
+
+            entity->addComponent<ComponentB>(51.);
+            REQUIRE(0 == NodesOfArchetypeA.size());
+
+            entity->addComponent<ComponentA>(51);
+            REQUIRE(1 == NodesOfArchetypeA.size());
+
+            entity->removeComponent<ComponentB>();
+            REQUIRE(1 == NodesOfArchetypeA.size());
+        }
     }
-
-    CHECK_EQUAL(1, NodesOfArchetypeA.size());
-
-    auto entity = engine.getEntity("aunt");
-    entity->removeComponent<ComponentA>();
-    CHECK_EQUAL(0, NodesOfArchetypeA.size());
-
-    entity->addComponent<ComponentB>(51.);
-    CHECK_EQUAL(0, NodesOfArchetypeA.size());
-
-    entity->addComponent<ComponentA>(51);
-    CHECK_EQUAL(1, NodesOfArchetypeA.size());
-
-    entity->removeComponent<ComponentB>();
-    CHECK_EQUAL(1, NodesOfArchetypeA.size());
 }
 
-TEST(Families, FamilyObservation)
+SCENARIO("Family observation")
 {
-    Engine engine;
-
-    struct TestObserver : public FamilyObserver
+    GIVEN("An Engine, an Observer and an Archetype")
     {
-        virtual void addedNode(Node &aNode) override
+        Engine engine;
+
+        struct TestObserver : public FamilyObserver
         {
-            ++addNotificationCount;
+            virtual void addedNode(Node &aNode) override
+            {
+                ++addNotificationCount;
+            }
+
+            virtual void removedNode(Node &aNode) override
+            {
+                ++removeNotificationCount;
+            }
+
+            unsigned addNotificationCount = 0;
+            unsigned removeNotificationCount = 0;
+        };
+
+        TestObserver observer;
+        engine.registerToNodes<ArchetypeA>(&observer);
+
+        THEN("The observer is not notified while there are no Nodes")
+        {
+            REQUIRE(0 == observer.addNotificationCount);
         }
 
-        virtual void removedNode(Node &aNode) override
+
+        THEN("Addition removal of Entities matching the Archetype triggers notifications")
         {
-            ++removeNotificationCount;
+            weak_entity firstEntity = engine.addEntity(Entity().addComponent<ComponentA>(5));
+            REQUIRE(1 == observer.addNotificationCount);
+
+            weak_entity secondEntity = engine.addEntity(Entity().addComponent<ComponentA>(5).addComponent<ComponentB>(52.));
+            REQUIRE(2 == observer.addNotificationCount);
+
+            THEN("Removing components from Entities triggers notifications")
+            {
+                secondEntity->removeComponent<ComponentB>();
+                REQUIRE(0 == observer.removeNotificationCount);
+
+                secondEntity->removeComponent<ComponentA>();
+                REQUIRE(1 == observer.removeNotificationCount);
+            }
+
+            THEN("Removing Entities triggers notifications")
+            {
+                engine.removeEntity(firstEntity);
+                REQUIRE(1 == observer.removeNotificationCount);
+
+                REQUIRE(2 == observer.addNotificationCount);
+            }
         }
 
-        unsigned addNotificationCount = 0;
-        unsigned removeNotificationCount = 0;
-    };
+        GIVEN("A second observer")
+        {
+            engine.addEntity(Entity().addComponent<ComponentA>(10));
+            TestObserver posterioriObserver;
+            engine.registerToNodes<ArchetypeA>(&posterioriObserver);
 
-    TestObserver observer;
-    engine.registerToNodes<ArchetypeA>(&observer);
-
-    CHECK_EQUAL(0, observer.addNotificationCount);
-    weak_entity fistEntity = engine.addEntity(Entity().addComponent<ComponentA>(5));
-    CHECK_EQUAL(1, observer.addNotificationCount);
-
-    weak_entity secondEntity = engine.addEntity(Entity().addComponent<ComponentA>(5).addComponent<ComponentB>(52.));
-    CHECK_EQUAL(2, observer.addNotificationCount);
-
-    secondEntity->removeComponent<ComponentB>();
-    CHECK_EQUAL(0, observer.removeNotificationCount);
-
-    secondEntity->removeComponent<ComponentA>();
-    CHECK_EQUAL(1, observer.removeNotificationCount);
-
-    engine.removeEntity(fistEntity);
-    CHECK_EQUAL(2, observer.removeNotificationCount);
-
-    CHECK_EQUAL(2, observer.addNotificationCount);
-
-    //*** Adds a second observer, that should be notified of existing nodes in the family of interest ***//
-    engine.addEntity(Entity().addComponent<ComponentA>(10));
-    TestObserver posterioriObserver;
-    engine.registerToNodes<ArchetypeA>(&posterioriObserver);
-    CHECK_EQUAL(1, posterioriObserver.addNotificationCount);
-    CHECK_EQUAL(0, posterioriObserver.removeNotificationCount);
+            THEN("It should be notified of existing nodes in the family of interest.")
+            {
+                REQUIRE(1 == posterioriObserver.addNotificationCount);
+                REQUIRE(0 == posterioriObserver.removeNotificationCount);
+            }
+        }
+    }
 }
