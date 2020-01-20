@@ -18,22 +18,17 @@ namespace aunteater
         Entity() = default; // An empty map is exactly what a default Entity needs.
 
         /*
-         * Copy control (based on copy-and-swap idiom: http://stackoverflow.com/a/3279550/1027706)
+         * Copy and move control
+         * (based on copy-and-swap idiom: http://stackoverflow.com/a/3279550/1027706)
          */
         Entity(const Entity &aOther);
-        //Entity(Entity &&aOther) = default;
+        Entity(Entity &&aOther);
         Entity & operator=(Entity aRhs);  //take the argument by value, following copy-and-swap idiom.
-        //Entity & operator=(Entity &&aRhs) = default; //the potential advantage of such declaration is small (at best)
-            //if it was not there, the move assignment would be disabled, falling back to copy assignment
-            //which would be calling the move-ctor (argument being an rvalue) and then swapping.
-            // In fact, it introduces a call ambiguity when operator= is invoked on an rvalue.
 
-        // Nota: no need for custom deletion, it is correctly handled by the smart pointer.
-        // yet, since we have a unique_ptr in the data members, and the pointed type is only fully defined in the .cpp
-        // this class dtor should be defined in the .cpp.
+        // To be default implemented in the .cpp because unique_ptr to incomplete type
         ~Entity();
 
-        friend void swap(Entity &aLhs, Entity &aRhs)
+        void swap(Entity &aLhs, Entity &aRhs)
         {
             using std::swap; //enables ADL, offers no benefits in the case of swaping the map.
             swap(aLhs.mComponents, aRhs.mComponents);

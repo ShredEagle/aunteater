@@ -13,6 +13,10 @@ Entity::Entity(const Entity &aOther)
                   });
 }
 
+Entity::Entity(Entity &&aOther) :
+    mComponents(std::move(aOther.mComponents))
+{}
+
 Entity & Entity::operator=(Entity aRhs)
 {
     swap(*this, aRhs);
