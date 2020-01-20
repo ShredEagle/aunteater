@@ -14,7 +14,10 @@ Family::Family(ArchetypeTypeSet aComponentsTypeInfo):
 void Family::addIfMatch(weak_entity aEntity)
 {
     if (std::all_of(mComponentsTypeInfo.begin(), mComponentsTypeInfo.end(),
-                    [&aEntity](ComponentTypeId compId){return aEntity->has(compId);}))
+                    [&aEntity](ComponentTypeId compId)
+                    {
+                        return aEntity->has(compId);
+                    }))
     {
         mNodes.emplace_back(mComponentsTypeInfo, aEntity, Node::family_access());
         if (!mEntitiesToNodes.emplace(aEntity, --mNodes.end()).second)

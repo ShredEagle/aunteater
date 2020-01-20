@@ -14,33 +14,78 @@
 namespace aunteater
 {
 
-// Review note: Could this maybe be augment to be a LiveEntity
-// i.e. a type that correspond to an entity that is added to an Engine, and which could have the "alive" bit
-// (notably taking "owner" out of entity)
-struct EntityWrapper
+
+struct EngineTag
 {
-    EntityWrapper(Entity aEntity, Engine *aEngine) :
-        entity(std::move(aEntity))
+private:
+    friend class Engine;
+    EngineTag() = default;
+};
+
+/// \brief LiveEntity class
+class LiveEntity
+{
+    friend class Family;
+
+    // Non-copiable, non-movable
+    LiveEntity(const LiveEntity&) = delete;
+    LiveEntity & operator=(const LiveEntity&) = delete;
+
+public:
+    // Note: Only constructible by Engine
+    LiveEntity(Entity aEntity, Engine & aEngine, EngineTag) :
+        mEntity(std::move(aEntity)),
+        mEngine(aEngine)
+    {}
+
+    /// \brief Return an Entity value by copying the wrapped entity
+    operator Entity()
     {
-        entity.addedToEngine(aEngine);
-        //engine->addedEntity(&entity); //dangerous, if the EntityWrapper is moved the address moves along...
+        return mEntity;
     }
 
-    EntityWrapper(const EntityWrapper&) = delete;
-    EntityWrapper & operator=(const EntityWrapper&) = delete;
+    template <class T_component, class... Args>
+    LiveEntity & addComponent(Args&&... aArgs);
 
-    ~EntityWrapper()
+    /// \brief Removes the component of type T_component from this Entity.
+    template <class T_component>
+    LiveEntity & removeComponent();
+
+    template <class T_component>
+    bool has()
     {
-        //engine.removedEntity(&entity)
-        entity.addedToEngine(nullptr);
+        return mEntity.has<T_component>();
     }
 
-    //operator Entity&() /// Interestingly, that syntax seems to do exactly what you'd expect ; )
-    //{
-    //    return entity;
-    //}
+    template <class T_component>
+    weak_component<T_component> get()
+    {
+        return mEntity.get<T_component>();
+    }
 
-    Entity entity;
+    /// TODO remove!
+    weak_component<> get(ComponentTypeId aId)
+    {
+        return mEntity.get(aId);
+    }
+
+    template <class T_component>
+    weak_component<const T_component> get() const
+    {
+        return mEntity.get<T_component>();
+    }
+
+private:
+
+    /// \deprecated Currently required for Family inclusion test
+    bool has(ComponentTypeId aId)
+    {
+        return mEntity.has(aId);
+    }
+
+private:
+    Entity mEntity;
+    Engine &mEngine;
 };
 
 class Engine
@@ -105,11 +150,15 @@ public:
         }
     }
 protected:
-    static entity_id entityIdFrom(const EntityWrapper &aWrapper)
-    {   return &(aWrapper.entity);  }
+    static entity_id entityIdFrom(const LiveEntity &aWrapper)
+    {
+        return &aWrapper;
+    }
 
-    static weak_entity entityRefFrom(EntityWrapper &aWrapper)
-    {   return &(aWrapper.entity);  }
+    static weak_entity entityRefFrom(LiveEntity &aWrapper)
+    {
+        return &aWrapper;
+    }
 
     void addedEntity(weak_entity aEntity);
     void removedEntity(weak_entity aEntity);
@@ -121,7 +170,7 @@ private:
     typedef boost::bimap<std::string, weak_entity > NameEntityMap;
     typedef std::map<ArchetypeTypeId, Family> ArchetypeFamilyMap;
 
-    std::list<EntityWrapper> mEntities;
+    std::list<LiveEntity> mEntities;
     NameEntityMap mNamedEntities;
     ArchetypeFamilyMap mTypedFamilies;
     std::vector<std::shared_ptr<System>> mSystems;
@@ -130,6 +179,33 @@ private:
 /*
  * Implementations
  */
+
+template <class T_component, class... Args>
+LiveEntity & LiveEntity::addComponent(Args&&... aArgs)
+{
+    if(mEntity.addComponent(make_component<T_component>(std::forward<Args>(aArgs)...)))
+    {
+        mEngine.entityCompositionChanged([this](Family &family)
+        {
+           family.componentAddedToEntity(this, type<T_component>());
+        });
+    }
+    return *this;
+}
+
+/// \brief Removes the component of type T_component from this Entity.
+template <class T_component>
+LiveEntity & LiveEntity::removeComponent()
+{
+    mEngine.entityCompositionChanged([this](Family &family)
+    {
+      family.componentRemovedFromEntity(this, type<T_component>());
+    });
+    mEntity.removeComponent<T_component>();
+    return *this;
+}
+
+
 typedef std::list<Node> * Nodes;
 
 template <class T_archetype>
@@ -140,7 +216,7 @@ Family & Engine::getFamily()
     if (insertionResult.second)
     {
         Family &familyRef = insertionResult.first->second;
-        for (EntityWrapper & wrapper : mEntities)
+        for (LiveEntity & wrapper : mEntities)
         {
             familyRef.addIfMatch(entityRefFrom(wrapper));
         }

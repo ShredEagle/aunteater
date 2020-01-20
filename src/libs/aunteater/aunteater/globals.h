@@ -6,11 +6,21 @@
 
 namespace aunteater
 {
-    class Entity;
     class Component;
+    class LiveEntity;
     class System;
 
     typedef const std::type_info * ComponentTypeId;
+
+
+    /// \brief Returns the ComponentTypeId for the provided Component type (T_component)
+    template <class T_component>
+    static typename std::enable_if_t<std::is_base_of<Component, T_component>::value,
+                                     ComponentTypeId>
+    type()
+    {
+        return &typeid(T_component);
+    }
 
     /// \todo We do not want to share ownership : Entity is semantically owning its components,
     /// other objects are refering to them.
@@ -44,7 +54,7 @@ namespace aunteater
         return & typeid(T_Archetype);
     }
 
-    typedef const Entity* entity_id; // Could alternatively be a const void*: should never be used to invoke methods.
-    typedef Entity* weak_entity;
+    typedef const LiveEntity* entity_id; // Could alternatively be a const void*: should never be used to invoke methods.
+    typedef LiveEntity* weak_entity;
 
 } // namespace aunteater

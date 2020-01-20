@@ -9,10 +9,12 @@ namespace aunteater
 {
     class Engine;
 
+    /// \brief Entity class
     class Entity
     {
-    public:
+        friend class LiveEntity;
 
+    public:
         Entity() = default; // An empty map is exactly what a default Entity needs.
 
         /*
@@ -52,7 +54,6 @@ namespace aunteater
         template <class T_component>
         Entity & removeComponent()
         {
-            removeNotifyOwner(type<T_component>());
             mComponents.erase(type<T_component>());
             return *this;
         }
@@ -86,32 +87,11 @@ namespace aunteater
             return static_component_cast<const T_component>(mComponents.at(type<T_component>()));
         }
 
-        /*
-         * Engine registration
-         */
-        Entity &addedToEngine(Engine *aOwner)
-        {
-            mOwner = aOwner; return *this;
-        }
-
     private:
-        void addComponent(own_component<> aComponent);
-
-        /// \brief A wrapper, returning the ComponentTypeId for the provided Component type (T_component)
-        template <class T_component>
-        static typename std::enable_if_t<std::is_base_of<Component, T_component>::value,
-                                         ComponentTypeId>
-        type()
-        {
-            return &typeid(T_component);
-        }
-
-        void removeNotifyOwner(ComponentTypeId aComponentId);
+        bool addComponent(own_component<> aComponent);
 
     private: // data members
         std::map<ComponentTypeId, own_component<> > mComponents;
-        Engine *mOwner = nullptr;
     };
-
 
 } // namespace aunteater
