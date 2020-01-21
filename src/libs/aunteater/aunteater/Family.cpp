@@ -8,7 +8,7 @@
 using namespace aunteater;
 
 Family::Family(ArchetypeTypeSet aComponentsTypeInfo):
-        mComponentsTypeInfo(aComponentsTypeInfo)
+        mComponentsTypeInfo(std::move(aComponentsTypeInfo))
 {}
 
 void Family::addIfMatch(weak_entity aEntity)
@@ -19,29 +19,27 @@ void Family::addIfMatch(weak_entity aEntity)
                         return aEntity->has(compId);
                     }))
     {
-        mNodes.emplace_back(mComponentsTypeInfo, aEntity, Node::family_access());
-        if (!mEntitiesToNodes.emplace(aEntity, --mNodes.end()).second)
+        auto insertedIt = mEntities.insert(mEntities.end(), aEntity);
+        if (!mEntitiesPositions.emplace(entityIdFrom(*aEntity), insertedIt).second)
         {
-            throw std::runtime_error("Entity already present in this family.");
+            throw std::logic_error("Entity already present in this family.");
         }
-
-        broadcastNotification(&FamilyObserver::addedNode, mNodes.back());
+        broadcastNotification(&FamilyObserver::addedEntity, **insertedIt);
     }
 }
 
 void Family::removeIfPresent(entity_id aEntity)
 {
-    auto foundIt = mEntitiesToNodes.find(aEntity);
-    if (foundIt != mEntitiesToNodes.end())
+    auto foundIt = mEntitiesPositions.find(entityIdFrom(*aEntity));
+    if (foundIt != mEntitiesPositions.end())
     {
-        broadcastNotification(&FamilyObserver::removedNode, *(foundIt->second));
-
-        mNodes.erase(foundIt->second);
-        mEntitiesToNodes.erase(foundIt);
+        broadcastNotification(&FamilyObserver::removedEntity, **(foundIt->second));
+        mEntities.erase(foundIt->second);
+        mEntitiesPositions.erase(foundIt);
     }
 }
 
-void Family::componentAddedToEntity(weak_entity aEntity, ComponentTypeId aComponent)
+void Family::componentAddedToEntity(weak_entity aEntity, ComponentTypeId /*aComponent*/)
 {
     if(!isPresent(aEntity))
     {
@@ -59,7 +57,7 @@ void Family::componentRemovedFromEntity(entity_id aEntity, ComponentTypeId aComp
 
 bool Family::isPresent(entity_id aEntity) const
 {
-    return mEntitiesToNodes.find(aEntity) != mEntitiesToNodes.end();
+    return mEntitiesPositions.find(aEntity) != mEntitiesPositions.end();
 }
 
 bool Family::includesComponent(ComponentTypeId aComponent) const
@@ -67,11 +65,11 @@ bool Family::includesComponent(ComponentTypeId aComponent) const
     return mComponentsTypeInfo.count(aComponent);
 }
 
-void Family::broadcastNotification(NotificationMethod aTargetMethod, Node &aNode) const
+void Family::broadcastNotification(NotificationMethod aTargetMethod, LiveEntity &aEntity) const
 {
     for(auto observer : mObservers)
     {
-        (observer->*aTargetMethod)(aNode);
+        (observer->*aTargetMethod)(aEntity);
     }
 }
 
@@ -82,12 +80,25 @@ void Family::cancelObserverImpl(FamilyObserver *aObserver)
     mObservers.erase(std::find(mObservers.begin(), mObservers.end(), aObserver));
 }
 
-void Family::notifyOfExistingNodes(FamilyObserver *aObserver)
+void Family::notifyOfExistingEntities(FamilyObserver *aObserver)
 {
-    for(Node &node : mNodes)
+    for(weak_entity entity : mEntities)
     {
-        broadcastNotification(&FamilyObserver::addedNode, node);
+        broadcastNotification(&FamilyObserver::addedEntity, *entity);
     };
+}
+
+Family & Family::registerObserver(FamilyObserver *aObserver)
+{
+    mObservers.push_back(aObserver);
+    notifyOfExistingEntities(aObserver);
+    return *this;
+}
+
+Family & Family::cancelObserver(FamilyObserver *aObserver)
+{
+    cancelObserverImpl(aObserver);
+    return *this;
 }
 
 //void Family::componentAddedToEntity(std::shared_ptr<Entity> aEntity, ComponentTypeId aComponent);

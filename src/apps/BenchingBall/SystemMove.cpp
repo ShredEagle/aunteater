@@ -26,7 +26,7 @@ typedef ComponentVelocity Velocity;
 
 void SystemMove::addedToEngine(aunteater::Engine &aEngine)
 {
-    mMoveables = &aEngine.getNodes<NodeMoveable>();
+    mMoveables = & aEngine.getEntities<NodeMoveable>();
 }
 
 double impulse(const Vec2 &aNormal, const Vec2 &aSpeedA, const Vec2 &aSpeedB, double aMass)
@@ -36,18 +36,18 @@ double impulse(const Vec2 &aNormal, const Vec2 &aSpeedA, const Vec2 &aSpeedB, do
     return -(1+eps) * vr.dot(aNormal) / (1/aMass + 1/aMass);
 }
 
-void collision(Node &A, Node &B)
+void collision(LiveEntity & A, LiveEntity & B)
 {
-    Vec2 normal = (B.get<Position>() - A.get<Position>()).normalize();
+    Vec2 normal = (*B.get<Position>() - *A.get<Position>()).normalize();
     double mass = 0.1;
-    double J = impulse(normal, A.get<Velocity>(), B.get<Velocity>(), mass);
+    double J = impulse(normal, *A.get<Velocity>(), *B.get<Velocity>(), mass);
 
-    static_cast<Vec2 &>(A.get<Velocity>()) = A.get<ComponentVelocity>() - normal * (J/mass);
-    static_cast<Vec2 &>(B.get<Velocity>()) = B.get<ComponentVelocity>() + normal * (J/mass);
+    static_cast<Vec2 &>(*A.get<Velocity>()) = *A.get<ComponentVelocity>() - normal * (J/mass);
+    static_cast<Vec2 &>(*B.get<Velocity>()) = *B.get<ComponentVelocity>() + normal * (J/mass);
 
-    double penetration = 2*RADIUS - distance(A.get<Position>(), B.get<Position>());
-    static_cast<Vec2 &>(A.get<Position>()) -= normal*(penetration/2.);
-    static_cast<Vec2 &>(B.get<Position>()) += normal*(penetration/2.);
+    double penetration = 2*RADIUS - distance(*A.get<Position>(), *B.get<Position>());
+    static_cast<Vec2 &>(*A.get<Position>()) -= normal*(penetration/2.);
+    static_cast<Vec2 &>(*B.get<Position>()) += normal*(penetration/2.);
 }
 
 void move(double aTime, double &aPosition, double &aVelocity, double aRadius)
@@ -68,8 +68,8 @@ void SystemMove::update(double time)
          nodeIt != mMoveables->end();
          ++nodeIt)
     {
-        move(time, nodeIt->get<ComponentPosition>().x, nodeIt->get<ComponentVelocity>().x, RADIUS);
-        move(time, nodeIt->get<ComponentPosition>().y, nodeIt->get<ComponentVelocity>().y, RADIUS);
+        move(time, (*nodeIt)->get<ComponentPosition>()->x, (*nodeIt)->get<ComponentVelocity>()->x, RADIUS);
+        move(time, (*nodeIt)->get<ComponentPosition>()->y, (*nodeIt)->get<ComponentVelocity>()->y, RADIUS);
     }
 
 
@@ -81,9 +81,9 @@ void SystemMove::update(double time)
              nodeItB != mMoveables->end();
              ++nodeItB)
         {
-            if (distance(nodeIt->get<ComponentPosition>(), nodeItB->get<ComponentPosition>()) < 2*RADIUS)
+            if (distance(*(*nodeIt)->get<ComponentPosition>(), *(*nodeItB)->get<ComponentPosition>()) < 2*RADIUS)
             {
-                collision(*nodeIt, *nodeItB);
+                collision(**nodeIt, **nodeItB);
             }
         }
     }

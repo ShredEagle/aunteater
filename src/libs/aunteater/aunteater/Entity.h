@@ -65,6 +65,7 @@ namespace aunteater
             return mComponents.count(type<T_component>());
         }
 
+        // TODO Should it return a reference instead?
         weak_component<> get(ComponentTypeId aId)
         {
             return weakFromOwn(mComponents.find(aId)->second);

@@ -179,8 +179,8 @@ SCENARIO("Adding entities")
     {
         Engine engine;
 
-        Nodes nodesA_before = &engine.getNodes<ArchetypeA>();
-        REQUIRE(nodesA_before->size() == 0);
+        EntityList & nodesA_before = engine.getEntities<ArchetypeA>();
+        REQUIRE(nodesA_before.size() == 0);
 
         WHEN("An Entity matching this Archetype is added to the Manager")
         {
@@ -190,8 +190,8 @@ SCENARIO("Adding entities")
 
             THEN("The Nodes for the Archetype grows by one")
             {
-                Nodes nodesA_after = &engine.getNodes<ArchetypeA>();
-                REQUIRE(nodesA_after->size() == 1);
+                EntityList & nodesA_after = engine.getEntities<ArchetypeA>();
+                REQUIRE(nodesA_after.size() == 1);
 
                 THEN("Nodes type have reference semantic")
                 {
@@ -213,8 +213,8 @@ SCENARIO("Removing entities")
         entity.addComponent<ComponentA>(5);
         weak_entity firstEntity = engine.addEntity(entity);
 
-        Nodes nodesA = &engine.getNodes<ArchetypeA>();
-        REQUIRE(nodesA->size() == 1);
+        EntityList & nodesA = engine.getEntities<ArchetypeA>();
+        REQUIRE(nodesA.size() == 1);
 
         WHEN("The Entity is removed")
         {
@@ -222,7 +222,7 @@ SCENARIO("Removing entities")
 
             THEN("The entity is not accessible in the Nodes anymore")
             {
-                REQUIRE(nodesA->size() == 0);
+                REQUIRE(nodesA.size() == 0);
             }
         }
     }

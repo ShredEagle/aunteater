@@ -22,7 +22,7 @@ const ArchetypeTypeSet NodeRenderable::gComponentTypes = { &typeid(ComponentPosi
 
 void SystemRender::addedToEngine(aunteater::Engine &aEngine)
 {
-    mRenderables = &aEngine.getNodes<NodeRenderable>();
+    mRenderables = & aEngine.getEntities<NodeRenderable>();
 }
 
 void SystemRender::update(double time)
@@ -45,8 +45,8 @@ void SystemRender::streamPositions()
          nodeIt != mRenderables->end();
          ++nodeIt, ++ballId)
     {
-        transforms[ballId*9 + 6] = nodeIt->get<ComponentPosition>().x;
-        transforms[ballId*9 + 7] = nodeIt->get<ComponentPosition>().y;
+        transforms[ballId*9 + 6] = (*nodeIt)->get<ComponentPosition>()->x;
+        transforms[ballId*9 + 7] = (*nodeIt)->get<ComponentPosition>()->y;
     }
     glUnmapBuffer(GL_ARRAY_BUFFER);
 }

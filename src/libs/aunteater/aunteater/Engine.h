@@ -39,7 +39,7 @@ public:
     {}
 
     /// \brief Return an Entity value by copying the wrapped entity
-    operator Entity()
+    explicit operator Entity()
     {
         return mEntity;
     }
@@ -119,14 +119,13 @@ public:
      * Families
      */
     template <class T_archetype>
-    std::list<Node> & getNodes();
+    EntityList & getEntities();
 
-    // NOTE: For users, not used as an internal mechanism
+    /// \brief Inteded for downtream use, not used as an internal mechanism
     template <class T_archetype>
-    Engine & registerToNodes(FamilyObserver *aObserver);
-
+    Engine & registerToFamily(FamilyObserver *aObserver);
     template <class T_archetype>
-    Engine & cancelFromNodes(FamilyObserver *aObserver);
+    Engine & cancelFromFamily(FamilyObserver *aObserver);
 
     /*
      * System
@@ -143,23 +142,13 @@ public:
      */
     void entityCompositionChanged(std::function<void(Family &aFamily)> aFamilyFunctor)
     {
-        //std::for_each(mTypedFamilies.begin(), mTypedFamilies.end(), aFamilyFunctor); // would require some boost adaptor to take the mapped_type
         for (auto &typedFamily : mTypedFamilies)
         {
             aFamilyFunctor(typedFamily.second);
         }
     }
+
 protected:
-    static entity_id entityIdFrom(const LiveEntity &aWrapper)
-    {
-        return &aWrapper;
-    }
-
-    static weak_entity entityRefFrom(LiveEntity &aWrapper)
-    {
-        return &aWrapper;
-    }
-
     void addedEntity(weak_entity aEntity);
     void removedEntity(weak_entity aEntity);
 
@@ -183,13 +172,15 @@ private:
 template <class T_component, class... Args>
 LiveEntity & LiveEntity::addComponent(Args&&... aArgs)
 {
-    if(mEntity.addComponent(make_component<T_component>(std::forward<Args>(aArgs)...)))
+    mEntity.addComponent(make_component<T_component>(std::forward<Args>(aArgs)...));
+
+    // Note: does not test if insertion actually took place (return value from addComponent())
+    //       It is expected to be rare to replace a component this way, so avoid branching
+    //       (i.e. always iterate all families, not necessary in the rare replace situation)
+    mEngine.entityCompositionChanged([this](Family &family)
     {
-        mEngine.entityCompositionChanged([this](Family &family)
-        {
-           family.componentAddedToEntity(this, type<T_component>());
-        });
-    }
+       family.componentAddedToEntity(this, type<T_component>());
+    });
     return *this;
 }
 
@@ -206,13 +197,11 @@ LiveEntity & LiveEntity::removeComponent()
 }
 
 
-typedef std::list<Node> * Nodes;
-
 template <class T_archetype>
 Family & Engine::getFamily()
 {
     auto insertionResult = mTypedFamilies.emplace(archetypeTypeId<T_archetype>(),
-                                                  Family(T_archetype::gComponentTypes));
+                                                  T_archetype::gComponentTypes);
     if (insertionResult.second)
     {
         Family &familyRef = insertionResult.first->second;
@@ -225,20 +214,20 @@ Family & Engine::getFamily()
 }
 
 template <class T_archetype>
-std::list<Node> & Engine::getNodes()
+EntityList & Engine::getEntities()
 {
-    return getFamily<T_archetype>().getNodes();
+    return getFamily<T_archetype>().getEntities();
 }
 
 template <class T_archetype>
-Engine & Engine::registerToNodes(FamilyObserver *aObserver)
+Engine & Engine::registerToFamily(FamilyObserver *aObserver)
 {
     getFamily<T_archetype>().registerObserver(aObserver);
     return *this;
 }
 
 template <class T_archetype>
-Engine & Engine::cancelFromNodes(FamilyObserver *aObserver)
+Engine & Engine::cancelFromFamily(FamilyObserver *aObserver)
 {
     getFamily<T_archetype>().cancelObserver(aObserver);
     return *this;

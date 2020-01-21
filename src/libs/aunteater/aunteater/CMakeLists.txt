@@ -5,7 +5,6 @@ set(${PROJECT_NAME}_HEADERS
     Engine.h
     Entity.h
     Family.h
-    Node.h
     System.h
 
     globals.h
@@ -17,7 +16,6 @@ set(${PROJECT_NAME}_SOURCES
     Engine.cpp
     Entity.cpp
     Family.cpp
-    Node.cpp
     System.cpp
 )
 
