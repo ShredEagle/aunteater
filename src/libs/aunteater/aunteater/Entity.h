@@ -65,22 +65,21 @@ namespace aunteater
             return mComponents.count(type<T_component>());
         }
 
-        // TODO Should it return a reference instead?
-        weak_component<> get(ComponentTypeId aId)
+        Component & get(ComponentTypeId aId)
         {
-            return weakFromOwn(mComponents.find(aId)->second);
+            return *mComponents.at(aId);
         }
 
         template <class T_component>
-        weak_component<T_component> get()
+        T_component & get()
         {
-            return static_component_cast<T_component>(mComponents.at(type<T_component>()));
+            return static_cast<T_component &>(get(type<T_component>()));
         }
 
         template <class T_component>
-        weak_component<const T_component> get() const
+        const T_component & get() const
         {
-            return static_component_cast<const T_component>(mComponents.at(type<T_component>()));
+            return static_cast<const T_component &>(get(type<T_component>()));
         }
 
     private:

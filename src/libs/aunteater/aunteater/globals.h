@@ -27,21 +27,6 @@ namespace aunteater
     template <class T_component = Component>
     using own_component = std::unique_ptr<T_component>;
 
-    template <class T_component = Component>
-    using weak_component = T_component*;
-
-    template <class T_component = Component>
-    weak_component<T_component> weakFromOwn(const own_component<> &aOwnComponent)
-    {
-        return aOwnComponent.get();
-    }
-
-    template <class T_destComponent, class T_sourceComponent>
-    weak_component<T_destComponent> static_component_cast(const own_component<T_sourceComponent> &aOwnComponent)
-    {
-        return static_cast<weak_component<T_destComponent>>(weakFromOwn(aOwnComponent));
-    }
-
     typedef std::set<ComponentTypeId> ArchetypeTypeSet;
 
     typedef const std::type_info *  ArchetypeTypeId;

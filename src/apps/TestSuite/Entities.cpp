@@ -48,7 +48,7 @@ SCENARIO("Component management")
             {
                 REQUIRE_FALSE(entity.has<ComponentA>());
                 REQUIRE(entity.has<ComponentB>());
-                REQUIRE(3.14 == entity.get<ComponentB>()->b);
+                REQUIRE(3.14 == entity.get<ComponentB>().b);
             }
 
             WHEN("Adding the same component")
@@ -56,7 +56,7 @@ SCENARIO("Component management")
                 entity.addComponent<ComponentB>(900000000.);
                 THEN("The Component is replaced")
                 {
-                    REQUIRE(900000000. == entity.get<ComponentB>()->b);
+                    REQUIRE(900000000. == entity.get<ComponentB>().b);
                 }
             }
 
@@ -73,43 +73,6 @@ SCENARIO("Component management")
     }
 }
 
-//TEST(Entities, CopyControl)
-//{
-//    Entity entityOrigin;
-//    entityOrigin.addComponent<ComponentA>(5);
-//
-//    {
-//        Entity entityCopy(entityOrigin);
-//        weak_component<ComponentA> copyComponentA = entityCopy.get<ComponentA>();
-//        CHECK_EQUAL(5, copyComponentA->a);
-//        copyComponentA->a = 1;
-//        CHECK_EQUAL(1, copyComponentA->a);
-//
-//        CHECK_EQUAL(5, entityOrigin.get<ComponentA>()->a);
-//    }
-//
-//    { // Probably equivalent in term un generated code as the previous case, but this is compiler-defined behavior.
-//        Entity entityCopy = entityOrigin;
-//        weak_component<ComponentA> copyComponentA = entityCopy.get<ComponentA>();
-//        CHECK_EQUAL(5, copyComponentA->a);
-//        copyComponentA->a = 10;
-//        CHECK_EQUAL(10, copyComponentA->a);
-//
-//        CHECK_EQUAL(5, entityOrigin.get<ComponentA>()->a);
-//    }
-//
-//    {
-//        Entity entityAssigned;
-//        entityAssigned = entityOrigin;
-//        weak_component<ComponentA> assignedComponentA = entityAssigned.get<ComponentA>();
-//        CHECK_EQUAL(5, assignedComponentA->a);
-//        assignedComponentA->a = 20;
-//        CHECK_EQUAL(20, assignedComponentA->a);
-//    }
-//
-//    CHECK_EQUAL(5, entityOrigin.get<ComponentA>()->a);
-//}
-//
 SCENARIO("Entities copy control")
 {
     GIVEN("An entity with a component")
@@ -117,21 +80,21 @@ SCENARIO("Entities copy control")
         Entity entityOrigin;
         entityOrigin.addComponent<ComponentA>(5);
 
-        REQUIRE(entityOrigin.get<ComponentA>()->a == 5);
+        REQUIRE(entityOrigin.get<ComponentA>().a == 5);
 
         GIVEN("A copy-construction of this entity")
         {
             Entity entityCopy(entityOrigin);
-            REQUIRE(entityCopy.get<ComponentA>()->a == 5);
+            REQUIRE(entityCopy.get<ComponentA>().a == 5);
 
             WHEN("The copy's component is modified")
             {
-                entityCopy.get<ComponentA>()->a =10;
-                REQUIRE(entityCopy.get<ComponentA>()->a == 10);
+                entityCopy.get<ComponentA>().a =10;
+                REQUIRE(entityCopy.get<ComponentA>().a == 10);
 
                 THEN("The source's component is not modified")
                 {
-                    REQUIRE(entityOrigin.get<ComponentA>()->a == 5);
+                    REQUIRE(entityOrigin.get<ComponentA>().a == 5);
                 }
             }
         }
@@ -139,16 +102,16 @@ SCENARIO("Entities copy control")
         GIVEN("A copy of this entity")
         {
             Entity entityCopy=entityOrigin;
-            REQUIRE(entityCopy.get<ComponentA>()->a == 5);
+            REQUIRE(entityCopy.get<ComponentA>().a == 5);
 
             WHEN("The copy's component is modified")
             {
-                entityCopy.get<ComponentA>()->a =20;
-                REQUIRE(entityCopy.get<ComponentA>()->a == 20);
+                entityCopy.get<ComponentA>().a =20;
+                REQUIRE(entityCopy.get<ComponentA>().a == 20);
 
                 THEN("The source's component is not modified")
                 {
-                    REQUIRE(entityOrigin.get<ComponentA>()->a == 5);
+                    REQUIRE(entityOrigin.get<ComponentA>().a == 5);
                 }
             }
         }
@@ -157,16 +120,16 @@ SCENARIO("Entities copy control")
         {
             Entity entityCopy;
             entityCopy=entityOrigin;
-            REQUIRE(entityCopy.get<ComponentA>()->a == 5);
+            REQUIRE(entityCopy.get<ComponentA>().a == 5);
 
             WHEN("The copy's component is modified")
             {
-                entityCopy.get<ComponentA>()->a =30;
-                REQUIRE(entityCopy.get<ComponentA>()->a == 30);
+                entityCopy.get<ComponentA>().a =30;
+                REQUIRE(entityCopy.get<ComponentA>().a == 30);
 
                 THEN("The source's component is not modified")
                 {
-                    REQUIRE(entityOrigin.get<ComponentA>()->a == 5);
+                    REQUIRE(entityOrigin.get<ComponentA>().a == 5);
                 }
             }
         }

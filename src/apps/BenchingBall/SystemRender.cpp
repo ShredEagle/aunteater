@@ -45,8 +45,8 @@ void SystemRender::streamPositions()
          nodeIt != mRenderables->end();
          ++nodeIt, ++ballId)
     {
-        transforms[ballId*9 + 6] = (*nodeIt)->get<ComponentPosition>()->x;
-        transforms[ballId*9 + 7] = (*nodeIt)->get<ComponentPosition>()->y;
+        transforms[ballId*9 + 6] = (*nodeIt)->get<ComponentPosition>().x;
+        transforms[ballId*9 + 7] = (*nodeIt)->get<ComponentPosition>().y;
     }
     glUnmapBuffer(GL_ARRAY_BUFFER);
 }

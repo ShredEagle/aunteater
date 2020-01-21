@@ -58,19 +58,19 @@ public:
     }
 
     template <class T_component>
-    weak_component<T_component> get()
+    T_component & get()
     {
         return mEntity.get<T_component>();
     }
 
     /// TODO remove!
-    weak_component<> get(ComponentTypeId aId)
+    Component & get(ComponentTypeId aId)
     {
         return mEntity.get(aId);
     }
 
     template <class T_component>
-    weak_component<const T_component> get() const
+    const T_component & get() const
     {
         return mEntity.get<T_component>();
     }
