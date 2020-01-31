@@ -12,7 +12,7 @@ SCENARIO("Family management on entities addition/removal")
     GIVEN("An Engine and an Archetype")
     {
         Engine engine;
-        std::list<Node> & NodesOfArchetypeA = engine.getNodes<ArchetypeA>();
+        Family & NodesOfArchetypeA = engine.getFamily<ArchetypeA>();
         REQUIRE(0 == NodesOfArchetypeA.size());
 
         SECTION("Entities addition/removal")
@@ -46,7 +46,7 @@ SCENARIO("Family management on components update")
     GIVEN("An Engine and an Archetype")
     {
         Engine engine;
-        std::list<Node> &NodesOfArchetypeA = engine.getNodes<ArchetypeA>();
+        Family & NodesOfArchetypeA = engine.getFamily<ArchetypeA>();
 
         THEN("Manipulating and Entity's Components updates the Family")
         {
@@ -82,12 +82,12 @@ SCENARIO("Family observation")
 
         struct TestObserver : public FamilyObserver
         {
-            virtual void addedNode(Node &aNode) override
+            virtual void addedEntity(LiveEntity &aEntity) override
             {
                 ++addNotificationCount;
             }
 
-            virtual void removedNode(Node &aNode) override
+            virtual void removedEntity(LiveEntity &aEntity) override
             {
                 ++removeNotificationCount;
             }
@@ -97,7 +97,7 @@ SCENARIO("Family observation")
         };
 
         TestObserver observer;
-        engine.registerToNodes<ArchetypeA>(&observer);
+        engine.getFamily<ArchetypeA>().registerObserver(&observer);
 
         THEN("The observer is not notified while there are no Nodes")
         {
@@ -135,7 +135,7 @@ SCENARIO("Family observation")
         {
             engine.addEntity(Entity().addComponent<ComponentA>(10));
             TestObserver posterioriObserver;
-            engine.registerToNodes<ArchetypeA>(&posterioriObserver);
+            engine.getFamily<ArchetypeA>().registerObserver(&posterioriObserver);
 
             THEN("It should be notified of existing nodes in the family of interest.")
             {

@@ -57,7 +57,7 @@ const char* vert_shader = R"#(
         gl_Position = vec4(instance_trans * position, 1.0);
     }
 )#";
- 
+
 const char* frag_shader = R"#(
     #version 150
 
@@ -98,7 +98,7 @@ void init(void)
     GLuint bufs[2];
     glGenVertexArrays(1, &vao);
     glGenBuffers(2, bufs);
-   
+
     glBindVertexArray(vao);
     glEnableVertexAttribArray(POSITION_ATTRIB);
 
@@ -115,10 +115,10 @@ void init(void)
 
     glAttachShader(prog, vert);
     glAttachShader(prog, frag);
-   
+
     glBindAttribLocation(prog, POSITION_ATTRIB, "position");
     glBindAttribLocation(prog, TRANSFORM_ATTRIB, "instance_trans");
-   
+
     glLinkProgram(prog);
     glUseProgram(prog);
 
@@ -135,7 +135,7 @@ void init(void)
     }
 
 }
- 
+
 void render(GLFWwindow *window)
 {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -189,10 +189,8 @@ int main(int argc, char** argv)
 
     init();
     aunteater::Engine engine;
-    SystemMove  mover;
-    SystemRender renderer(window);
-    engine.addSystem(&mover);
-    engine.addSystem(&renderer);
+    engine.addSystem(std::make_shared<SystemMove>());
+    engine.addSystem(std::make_shared<SystemRender>(window));
 
     engine.addEntity(aunteater::Entity().addComponent<ComponentPosition>(.5, .5)
                                         .addComponent<ComponentVelocity>(1., .1));

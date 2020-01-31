@@ -14,13 +14,10 @@
 
 namespace BenchingBall {
 
-struct ComponentVelocity : public aunteater::Component, public Vec2
+struct ComponentVelocity : public aunteater::ComponentBase<ComponentVelocity>, public Vec2
 {
     ComponentVelocity(double x, double y) : Vec2{x, y}
     {}
-
-private:
-    COMP_CLONE(ComponentVelocity)
 };
 
 } // namespace BenchingBall

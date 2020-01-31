@@ -1,14 +1,12 @@
-#ifndef _IDG_AE_Family
-#define _IDG_AE_Family
+#pragma once
 
 #include "Entity.h"
-#include "Handle.h"
-#include "Node.h"
 
 #include "globals.h"
 
 #include <map>
 #include <list>
+#include <vector>
 
 namespace aunteater
 {
@@ -17,62 +15,116 @@ namespace aunteater
     class FamilyObserver
     {
     public:
-        virtual void addedNode(Node &aNode) = 0;
-        virtual void removedNode(Node &aNode) = 0;
+        virtual void addedEntity(LiveEntity &aEntity) = 0;
+        virtual void removedEntity(LiveEntity &aEntity) = 0;
+
+        virtual ~FamilyObserver() = default;
     };
 
+
+    // The implementation assumes that inserting/removing an Entity from the collection
+    // does not invalidate any existing iterator into the collection.
+    typedef std::list<weak_entity> EntityList;
+
+    // Review note: Should probably be non-copyable,
     class Family
     {
-    private:
-        // The implementation assumes that inserting/removing a Node from the collection does not invalidate any
-        // existing iterator into the collection.
-        typedef std::list<Node> NodeList;
+        // Needs to call addIfMatch
+        friend class Engine;
+        // Needs to call componentAddedTo(RemovedFrom)Entity
+        friend class LiveEntity;
 
     public:
-        Family(Engine & aEngine, ArchetypeTypeSet aComponentsTypeInfo);
-        
-        std::list<Node> & getNodes()
-        {
-            return mNodes;
-        }
-        
-        void testEntityInclusion(weak_entity aEntity);
+        explicit Family(ArchetypeTypeSet aComponentsTypeInfo);
+
+        // Non-copyable, to avoid the risk of a component forgetting to take it by ref
+        //
+        // Implementer's note: aOther is *const* reference, otherwise it cannot be used in a pair
+        // see https://stackoverflow.com/q/22357887/1027706
+        // Yes, C++ requires you to delete the right signature
+        Family(const Family & aOther) = delete;
+        Family & operator=(Family & aOther) = delete;
+
+        /// \brief Inteded for downtream use, not used as an internal mechanism
+        Family & registerObserver(FamilyObserver *aObserver);
+        Family & cancelObserver(FamilyObserver *aObserver);
+
+        std::size_t size() const noexcept;
+
+        auto begin() noexcept;
+        auto begin() const noexcept;
+        auto cbegin() const noexcept;
+
+        auto end() noexcept;
+        auto end() const noexcept;
+        auto cend() const noexcept;
+
+    private:
+        bool isPresent(entity_id aEntity) const;
+        bool includesComponent(ComponentTypeId aComponent) const;
+
+        void addIfMatch(weak_entity aEntity);
         void removeIfPresent(entity_id aEntity);
 
         void componentAddedToEntity(weak_entity aEntity, ComponentTypeId aComponent);
         void componentRemovedFromEntity(entity_id aEntity, ComponentTypeId aComponent);
 
-        Family & registerObserver(FamilyObserver *aObserver)
-        {   mObservers.push_back(aObserver); notifyOfExistingNodes(aObserver); return *this;  }
-
-        Family & cancelObserver(FamilyObserver *aObserver)
-        {   cancelObserverImpl(aObserver); return *this;  }
-
-    private:
-        void addIfMatch(weak_entity aEntity);
-        
-        bool isPresent(entity_id aEntity) const;
-        bool includesComponent(ComponentTypeId aComponent) const;
-
-        typedef void (FamilyObserver::*NotificationMethod)(Node &);
-        void broadcastNotification(NotificationMethod aTargetMethod, Node &aNode) const;
+        typedef void (FamilyObserver::*NotificationMethod)(LiveEntity &);
+        void broadcastNotification(NotificationMethod aTargetMethod, LiveEntity & aEntity) const;
         void cancelObserverImpl(FamilyObserver *aObserver);
-        void notifyOfExistingNodes(FamilyObserver *aObserver);
-        
-    private:
-        Engine & mEngine;
-        NodeList mNodes;
-        ArchetypeTypeSet mComponentsTypeInfo;
-        
-        /// \note It works to use an iterator because we use a std::list
-        /// for which operation on elements do not affect other iterators.
-        
-        // This map is usefull to test if an entity is present in the current family instance
-        std::map<entity_id, NodeList::iterator> mEntitiesToNodes;
+        void notifyOfExistingEntities(FamilyObserver *aObserver);
 
+    private:
+        EntityList mEntities;
+        ArchetypeTypeSet mComponentsTypeInfo;
+
+        // Note: This map is usefull to test if an entity is present in the current family instance
+        //       It works to use an iterator because for an std::list
+        //       operations on an element do not affect other iterators.
+        std::map<entity_id, EntityList::iterator> mEntitiesPositions;
+
+        // TODO This is unsafe, if an observer expires without removing itself
+        // Refactor with shared and weak ptrs ?
         std::vector<FamilyObserver *> mObservers;
     };
-    
-} // namespace aunteater
 
-#endif  // #ifdef
+
+    /***
+     * Implementations
+     ***/
+    inline std::size_t Family::size() const noexcept
+    {
+        return mEntities.size();
+    }
+
+    inline auto Family::begin() noexcept
+    {
+        return mEntities.begin();
+    }
+
+    inline auto Family::begin() const noexcept
+    {
+        return mEntities.cbegin();
+    }
+
+    inline auto Family::cbegin() const noexcept
+    {
+        return mEntities.cbegin();
+    }
+
+    inline auto Family::end() noexcept
+    {
+        return mEntities.end();
+    }
+
+    inline auto Family::end() const noexcept
+    {
+        return mEntities.cend();
+    }
+
+    inline auto Family::cend() const noexcept
+    {
+        return mEntities.cend();
+    }
+
+} // namespace aunteater

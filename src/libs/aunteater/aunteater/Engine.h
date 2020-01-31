@@ -1,9 +1,7 @@
-#ifndef _IDG_AE_Engine
-#define _IDG_AE_Engine
+#pragma once
 
 #include "Entity.h"
 #include "Family.h"
-#include "Handle.h"
 
 #include "globals.h"
 
@@ -16,29 +14,72 @@
 namespace aunteater
 {
 
-struct EntityWrapper
+
+struct EngineTag
 {
-    EntityWrapper(Entity aEntity, Engine *aEngine) : entity(aEntity)
+private:
+    friend class Engine;
+    EngineTag() = default;
+};
+
+/// \brief LiveEntity class
+class LiveEntity
+{
+    friend class Family;
+
+    // Non-copiable, non-movable
+    LiveEntity(const LiveEntity&) = delete;
+    LiveEntity & operator=(const LiveEntity&) = delete;
+
+public:
+    // Note: Only constructible by Engine
+    LiveEntity(Entity aEntity, Engine & aEngine, EngineTag) :
+        mEntity(std::move(aEntity)),
+        mEngine(aEngine)
+    {}
+
+    /// \brief Return an Entity value by copying the wrapped entity
+    explicit operator Entity()
     {
-        entity.addedToEngine(aEngine);
-        //engine->addedEntity(&entity); //dangerous, if the EntityWrapper is moved the address moves along...
+        return mEntity;
     }
 
-    EntityWrapper(const EntityWrapper&) = delete;
-    EntityWrapper & operator=(const EntityWrapper&) = delete;
+    template <class T_component, class... Args>
+    LiveEntity & addComponent(Args&&... aArgs);
 
-    ~EntityWrapper()
+    /// \brief Removes the component of type T_component from this Entity.
+    template <class T_component>
+    LiveEntity & removeComponent();
+
+    template <class T_component>
+    bool has()
     {
-        //engine.removedEntity(&entity)
-        entity.addedToEngine(nullptr);
+        return mEntity.has<T_component>();
     }
 
-    //operator Entity&() /// Interestingly, that syntax seems to do exactly what you'd expect ; )
-    //{
-    //    return entity;
-    //}
+    template <class T_component>
+    T_component & get()
+    {
+        return mEntity.get<T_component>();
+    }
 
-    Entity entity;
+    template <class T_component>
+    const T_component & get() const
+    {
+        return mEntity.get<T_component>();
+    }
+
+private:
+
+    /// \deprecated Currently required for Family inclusion test
+    bool has(ComponentTypeId aId)
+    {
+        return mEntity.has(aId);
+    }
+
+private:
+    Entity mEntity;
+    Engine &mEngine;
 };
 
 class Engine
@@ -52,120 +93,108 @@ public:
      * Construction
      */
     Engine() = default;
-    
+
     /*
      * Entities manipulation
      */
     weak_entity addEntity(Entity aEntity);
     weak_entity addEntity(const std::string & aName, Entity aEntity);
-    
+
     void removeEntity(weak_entity aEntity);
     void removeEntity(const std::string & aEntityName)
-    {   removeEntity(getEntity(aEntityName));   }
-    
+    {
+        removeEntity(getEntity(aEntityName));
+    }
+
     weak_entity getEntity(const std::string & aEntityName)
     {
         return mNamedEntities.left.find(aEntityName)->second;
     }
-    
+
     /*
      * Families
      */
-    template <class T_nodeArchetype>
-    std::list<Node> & getNodes();
-
-    template <class T_nodeArchetype>
-    Engine & registerToNodes(FamilyObserver *aObserver);
-
-    template <class T_nodeArchetype>
-    Engine & cancelFromNodes(FamilyObserver *aObserver);
+    template <class T_archetype>
+    Family & getFamily();
 
     /*
      * System
      */
-    void addSystem(System * aSystem);
+    void addSystem(std::shared_ptr<System> aSystem);
 
     /*
      * Update
      */
     void update(double aTime);
 
-    /*
-     * Callbacks
-     */
-    void entityCompositionChanged(std::function<void(Family &aFamily)> aFamilyFunctor)
+    void forEachFamily(std::function<void(Family &aFamily)> aFamilyFunctor)
     {
-        //std::for_each(mTypedFamilies.begin(), mTypedFamilies.end(), aFamilyFunctor); // would require some boost adaptor to take the mapped_type
         for (auto &typedFamily : mTypedFamilies)
         {
             aFamilyFunctor(typedFamily.second);
         }
     }
+
 protected:
-    static entity_id entityIdFrom(const EntityWrapper &aWrapper)
-    {   return &(aWrapper.entity);  }
-
-    static weak_entity entityRefFrom( EntityWrapper &aWrapper)
-    {   return &(aWrapper.entity);  }
-
     void addedEntity(weak_entity aEntity);
     void removedEntity(weak_entity aEntity);
-
-    template <class T_nodeArchetype>
-    Family & getFamily();
 
 private:
     typedef boost::bimap<std::string, weak_entity > NameEntityMap;
     typedef std::map<ArchetypeTypeId, Family> ArchetypeFamilyMap;
 
-    std::list<EntityWrapper> mEntities;
+    std::list<LiveEntity> mEntities;
     NameEntityMap mNamedEntities;
     ArchetypeFamilyMap mTypedFamilies;
-    std::vector<System*> mSystems;
+    std::vector<std::shared_ptr<System>> mSystems;
 };
-    
+
 /*
  * Implementations
  */
-typedef std::list<Node> * Nodes;
 
-template <class T_nodeArchetype>
+template <class T_component, class... Args>
+LiveEntity & LiveEntity::addComponent(Args&&... aArgs)
+{
+    mEntity.addComponent(make_component<T_component>(std::forward<Args>(aArgs)...));
+
+    // Note: does not test if insertion actually took place (return value from addComponent())
+    //       It is expected to be rare to replace a component this way, so avoid branching
+    //       (i.e. always iterate all families, not necessary in the rare replace situation)
+    mEngine.forEachFamily([this](Family &family)
+    {
+       family.componentAddedToEntity(this, type<T_component>());
+    });
+    return *this;
+}
+
+/// \brief Removes the component of type T_component from this Entity.
+template <class T_component>
+LiveEntity & LiveEntity::removeComponent()
+{
+    mEngine.forEachFamily([this](Family &family)
+    {
+      family.componentRemovedFromEntity(entityIdFrom(*this), type<T_component>());
+    });
+    mEntity.removeComponent<T_component>();
+    return *this;
+}
+
+
+template <class T_archetype>
 Family & Engine::getFamily()
 {
-    // Replace with lazy construction of the Family (emplace, try_emplace ?)
-    auto insertionResult = mTypedFamilies.insert(std::make_pair(& typeid(T_nodeArchetype),
-                                                 Family(*this, T_nodeArchetype::gComponentTypes)));
+    auto insertionResult = mTypedFamilies.emplace(archetypeTypeId<T_archetype>(),
+                                                  T_archetype::gComponentTypes);
     if (insertionResult.second)
     {
         Family &familyRef = insertionResult.first->second;
-        for (EntityWrapper & wrapper : mEntities)
+        for (LiveEntity & entity : mEntities)
         {
-            familyRef.testEntityInclusion(entityRefFrom(wrapper));
+            familyRef.addIfMatch(entityRefFrom(entity));
         }
     }
     return insertionResult.first->second;
 }
 
-template <class T_nodeArchetype>
-std::list<Node> & Engine::getNodes()
-{
-    return getFamily<T_nodeArchetype>().getNodes();
-}
-
-template <class T_nodeArchetype>
-Engine & Engine::registerToNodes(FamilyObserver *aObserver)
-{
-    getFamily<T_nodeArchetype>().registerObserver(aObserver);
-    return *this;
-}
-
-template <class T_nodeArchetype>
-Engine & Engine::cancelFromNodes(FamilyObserver *aObserver)
-{
-    getFamily<T_nodeArchetype>().cancelObserver(aObserver);
-    return *this;
-}
-    
 } // namespace aunteater
-
-#endif  // #ifdef

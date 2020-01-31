@@ -15,25 +15,31 @@ weak_entity Engine::addEntity(const std::string & aName, Entity aEntity)
     }
 
     /// \todo Multithreading issue ahead
-    auto id = addEntity(aEntity);
+    // Note: cannot be done directly at insert, because addEntity has side effects which should
+    //       not take place if the name was already present
+    auto id = addEntity(std::move(aEntity));
     mNamedEntities.left.replace_data(insertionResult.first, id);
     return id;
 }
 
 weak_entity Engine::addEntity(Entity aEntity)
 {
-    mEntities.emplace_back(aEntity, this);
-    //auto lastEntity(makeHandle(mEntities, mEntities.size()-1));
-    weak_entity lastEntity = entityRefFrom(mEntities.back());
+    // Note: cannot emplace_back, before C++17 it returns void
+    weak_entity lastEntity =
+        entityRefFrom(*mEntities.emplace(mEntities.end(), std::move(aEntity), *this, EngineTag{}));
     addedEntity(lastEntity);
     return lastEntity;
 }
 
+/// \todo revisit, it compares an EntityId to a weak_entity
 void Engine::removeEntity(weak_entity aEntity)
 {
     mNamedEntities.right.erase(aEntity);
     removedEntity(aEntity);
-    mEntities.remove_if([aEntity](const EntityWrapper &aElem){ return entityIdFrom(aElem) == aEntity; });
+    mEntities.remove_if([aEntity](const LiveEntity &aElem)
+    {
+        return entityIdFrom(aElem) == aEntity;
+    });
 }
 
 
@@ -41,7 +47,7 @@ void Engine::addedEntity(weak_entity aEntity)
 {
     for (auto & typedFamily : mTypedFamilies)
     {
-        typedFamily.second.testEntityInclusion(aEntity);
+        typedFamily.second.addIfMatch(aEntity);
     }
 }
 
@@ -53,15 +59,15 @@ void Engine::removedEntity(weak_entity aEntity)
     }
 }
 
-void Engine::addSystem(System *aSystem)
+void Engine::addSystem(std::shared_ptr<System> aSystem)
 {
     aSystem->addedToEngine(*this);
-    mSystems.push_back(aSystem);
+    mSystems.push_back(std::move(aSystem));
 }
 
 void Engine::update(double time)
 {
-    for (System * system : mSystems)
+    for (auto & system : mSystems)
     {
         system->update(time);
     }
