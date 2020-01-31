@@ -34,9 +34,9 @@ class AunteaterConan(ConanFile):
         "build_tests": False,
     }
 
-    requires = ("boost/1.67@ag/stable",)
+    requires = ("boost/1.71.0@conan/stable",)
 
-    build_requires = ("cmake_installer/3.15.4@conan/stable",)
+    build_requires = ("cmake_installer/[>=3.16]@conan/stable",)
 
     build_policy = "missing"
     generators = "cmake_paths", "cmake"
@@ -53,6 +53,7 @@ class AunteaterConan(ConanFile):
     def requirements(self):
         if self.options.build_tests:
            self.requires("glfw/3.3@bincrafters/stable")
+           self.requires("libjpeg/9c@bincrafters/stable")
 
 
     def _configure_cmake(self):
