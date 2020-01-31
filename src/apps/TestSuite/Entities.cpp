@@ -8,6 +8,7 @@ using namespace aunteater;
 
 const ArchetypeTypeSet ArchetypeA::gComponentTypes{ &typeid(ComponentA) };
 
+
 SCENARIO("Component identifiers")
 {
     GIVEN("Three components, one being distinct")
@@ -73,6 +74,7 @@ SCENARIO("Component management")
     }
 }
 
+
 SCENARIO("Entities copy control")
 {
     GIVEN("An entity with a component")
@@ -136,13 +138,14 @@ SCENARIO("Entities copy control")
     }
 }
 
+
 SCENARIO("Adding entities")
 {
     GIVEN("A default constructed Manager and an Archetype")
     {
         Engine engine;
 
-        EntityList & nodesA_before = engine.getEntities<ArchetypeA>();
+        Family & nodesA_before = engine.getFamily<ArchetypeA>();
         REQUIRE(nodesA_before.size() == 0);
 
         WHEN("An Entity matching this Archetype is added to the Manager")
@@ -153,12 +156,13 @@ SCENARIO("Adding entities")
 
             THEN("The Nodes for the Archetype grows by one")
             {
-                EntityList & nodesA_after = engine.getEntities<ArchetypeA>();
+                Family & nodesA_after = engine.getFamily<ArchetypeA>();
                 REQUIRE(nodesA_after.size() == 1);
 
-                THEN("Nodes type have reference semantic")
+                THEN("Families have reference semantic")
                 {
-                    REQUIRE(nodesA_before == nodesA_after);
+                    REQUIRE(std::equal(nodesA_before.begin(), nodesA_before.end(),
+                                       nodesA_after.begin(), nodesA_after.end()));
                 }
             }
         }
@@ -176,7 +180,7 @@ SCENARIO("Removing entities")
         entity.addComponent<ComponentA>(5);
         weak_entity firstEntity = engine.addEntity(entity);
 
-        EntityList & nodesA = engine.getEntities<ArchetypeA>();
+        Family & nodesA = engine.getFamily<ArchetypeA>();
         REQUIRE(nodesA.size() == 1);
 
         WHEN("The Entity is removed")

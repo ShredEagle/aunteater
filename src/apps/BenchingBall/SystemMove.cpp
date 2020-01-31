@@ -26,7 +26,7 @@ typedef ComponentVelocity Velocity;
 
 void SystemMove::addedToEngine(aunteater::Engine &aEngine)
 {
-    mMoveables = & aEngine.getEntities<NodeMoveable>();
+    mMoveables = & aEngine.getFamily<NodeMoveable>();
 }
 
 double impulse(const Vec2 &aNormal, const Vec2 &aSpeedA, const Vec2 &aSpeedB, double aMass)
@@ -42,8 +42,8 @@ void collision(LiveEntity & A, LiveEntity & B)
     double mass = 0.1;
     double J = impulse(normal, A.get<Velocity>(), B.get<Velocity>(), mass);
 
-    static_cast<Vec2 &>(A.get<Velocity>()) = A.get<ComponentVelocity>() - normal * (J/mass);
-    static_cast<Vec2 &>(B.get<Velocity>()) = B.get<ComponentVelocity>() + normal * (J/mass);
+    static_cast<Vec2 &>(A.get<Velocity>()) = A.get<Velocity>() - normal * (J/mass);
+    static_cast<Vec2 &>(B.get<Velocity>()) = B.get<Velocity>() + normal * (J/mass);
 
     double penetration = 2*RADIUS - distance(A.get<Position>(), B.get<Position>());
     static_cast<Vec2 &>(A.get<Position>()) -= normal*(penetration/2.);

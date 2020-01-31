@@ -17,6 +17,8 @@ namespace aunteater
     public:
         virtual void addedEntity(LiveEntity &aEntity) = 0;
         virtual void removedEntity(LiveEntity &aEntity) = 0;
+
+        virtual ~FamilyObserver() = default;
     };
 
 
@@ -27,6 +29,11 @@ namespace aunteater
     // Review note: Should probably be non-copyable,
     class Family
     {
+        // Needs to call addIfMatch
+        friend class Engine;
+        // Needs to call componentAddedTo(RemovedFrom)Entity
+        friend class LiveEntity;
+
     public:
         explicit Family(ArchetypeTypeSet aComponentsTypeInfo);
 
@@ -38,27 +45,29 @@ namespace aunteater
         Family(const Family & aOther) = delete;
         Family & operator=(Family & aOther) = delete;
 
-        // TODO delete
-        //  When doing so, the systems should  then directly keep a reference to the family
-        //  Work has to be done so it is more convenient to consume Families from Systems
-        EntityList & getEntities()
-        {
-            return mEntities;
-        }
+        /// \brief Inteded for downtream use, not used as an internal mechanism
+        Family & registerObserver(FamilyObserver *aObserver);
+        Family & cancelObserver(FamilyObserver *aObserver);
+
+        std::size_t size() const noexcept;
+
+        auto begin() noexcept;
+        auto begin() const noexcept;
+        auto cbegin() const noexcept;
+
+        auto end() noexcept;
+        auto end() const noexcept;
+        auto cend() const noexcept;
+
+    private:
+        bool isPresent(entity_id aEntity) const;
+        bool includesComponent(ComponentTypeId aComponent) const;
 
         void addIfMatch(weak_entity aEntity);
         void removeIfPresent(entity_id aEntity);
 
         void componentAddedToEntity(weak_entity aEntity, ComponentTypeId aComponent);
         void componentRemovedFromEntity(entity_id aEntity, ComponentTypeId aComponent);
-
-        Family & registerObserver(FamilyObserver *aObserver);
-        Family & cancelObserver(FamilyObserver *aObserver);
-
-    private:
-
-        bool isPresent(entity_id aEntity) const;
-        bool includesComponent(ComponentTypeId aComponent) const;
 
         typedef void (FamilyObserver::*NotificationMethod)(LiveEntity &);
         void broadcastNotification(NotificationMethod aTargetMethod, LiveEntity & aEntity) const;
@@ -75,7 +84,47 @@ namespace aunteater
         std::map<entity_id, EntityList::iterator> mEntitiesPositions;
 
         // TODO This is unsafe, if an observer expires without removing itself
+        // Refactor with shared and weak ptrs ?
         std::vector<FamilyObserver *> mObservers;
     };
+
+
+    /***
+     * Implementations
+     ***/
+    inline std::size_t Family::size() const noexcept
+    {
+        return mEntities.size();
+    }
+
+    inline auto Family::begin() noexcept
+    {
+        return mEntities.begin();
+    }
+
+    inline auto Family::begin() const noexcept
+    {
+        return mEntities.cbegin();
+    }
+
+    inline auto Family::cbegin() const noexcept
+    {
+        return mEntities.cbegin();
+    }
+
+    inline auto Family::end() noexcept
+    {
+        return mEntities.end();
+    }
+
+    inline auto Family::end() const noexcept
+    {
+        return mEntities.cend();
+    }
+
+    inline auto Family::cend() const noexcept
+    {
+        return mEntities.cend();
+    }
 
 } // namespace aunteater

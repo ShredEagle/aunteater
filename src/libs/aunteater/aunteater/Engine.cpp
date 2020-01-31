@@ -24,7 +24,7 @@ weak_entity Engine::addEntity(const std::string & aName, Entity aEntity)
 
 weak_entity Engine::addEntity(Entity aEntity)
 {
-    // Note: cannot emplace_back, before C++17, it returns void
+    // Note: cannot emplace_back, before C++17 it returns void
     weak_entity lastEntity =
         entityRefFrom(*mEntities.emplace(mEntities.end(), std::move(aEntity), *this, EngineTag{}));
     addedEntity(lastEntity);

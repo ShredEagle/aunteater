@@ -22,7 +22,7 @@ const ArchetypeTypeSet NodeRenderable::gComponentTypes = { &typeid(ComponentPosi
 
 void SystemRender::addedToEngine(aunteater::Engine &aEngine)
 {
-    mRenderables = & aEngine.getEntities<NodeRenderable>();
+    mRenderables = & aEngine.getFamily<NodeRenderable>();
 }
 
 void SystemRender::update(double time)

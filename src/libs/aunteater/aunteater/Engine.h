@@ -63,12 +63,6 @@ public:
         return mEntity.get<T_component>();
     }
 
-    /// TODO remove!
-    Component & get(ComponentTypeId aId)
-    {
-        return mEntity.get(aId);
-    }
-
     template <class T_component>
     const T_component & get() const
     {
@@ -108,7 +102,9 @@ public:
 
     void removeEntity(weak_entity aEntity);
     void removeEntity(const std::string & aEntityName)
-    {   removeEntity(getEntity(aEntityName));   }
+    {
+        removeEntity(getEntity(aEntityName));
+    }
 
     weak_entity getEntity(const std::string & aEntityName)
     {
@@ -119,13 +115,7 @@ public:
      * Families
      */
     template <class T_archetype>
-    EntityList & getEntities();
-
-    /// \brief Inteded for downtream use, not used as an internal mechanism
-    template <class T_archetype>
-    Engine & registerToFamily(FamilyObserver *aObserver);
-    template <class T_archetype>
-    Engine & cancelFromFamily(FamilyObserver *aObserver);
+    Family & getFamily();
 
     /*
      * System
@@ -137,10 +127,7 @@ public:
      */
     void update(double aTime);
 
-    /*
-     * Callbacks
-     */
-    void entityCompositionChanged(std::function<void(Family &aFamily)> aFamilyFunctor)
+    void forEachFamily(std::function<void(Family &aFamily)> aFamilyFunctor)
     {
         for (auto &typedFamily : mTypedFamilies)
         {
@@ -151,9 +138,6 @@ public:
 protected:
     void addedEntity(weak_entity aEntity);
     void removedEntity(weak_entity aEntity);
-
-    template <class T_archetype>
-    Family & getFamily();
 
 private:
     typedef boost::bimap<std::string, weak_entity > NameEntityMap;
@@ -177,7 +161,7 @@ LiveEntity & LiveEntity::addComponent(Args&&... aArgs)
     // Note: does not test if insertion actually took place (return value from addComponent())
     //       It is expected to be rare to replace a component this way, so avoid branching
     //       (i.e. always iterate all families, not necessary in the rare replace situation)
-    mEngine.entityCompositionChanged([this](Family &family)
+    mEngine.forEachFamily([this](Family &family)
     {
        family.componentAddedToEntity(this, type<T_component>());
     });
@@ -188,9 +172,9 @@ LiveEntity & LiveEntity::addComponent(Args&&... aArgs)
 template <class T_component>
 LiveEntity & LiveEntity::removeComponent()
 {
-    mEngine.entityCompositionChanged([this](Family &family)
+    mEngine.forEachFamily([this](Family &family)
     {
-      family.componentRemovedFromEntity(this, type<T_component>());
+      family.componentRemovedFromEntity(entityIdFrom(*this), type<T_component>());
     });
     mEntity.removeComponent<T_component>();
     return *this;
@@ -205,32 +189,12 @@ Family & Engine::getFamily()
     if (insertionResult.second)
     {
         Family &familyRef = insertionResult.first->second;
-        for (LiveEntity & wrapper : mEntities)
+        for (LiveEntity & entity : mEntities)
         {
-            familyRef.addIfMatch(entityRefFrom(wrapper));
+            familyRef.addIfMatch(entityRefFrom(entity));
         }
     }
     return insertionResult.first->second;
-}
-
-template <class T_archetype>
-EntityList & Engine::getEntities()
-{
-    return getFamily<T_archetype>().getEntities();
-}
-
-template <class T_archetype>
-Engine & Engine::registerToFamily(FamilyObserver *aObserver)
-{
-    getFamily<T_archetype>().registerObserver(aObserver);
-    return *this;
-}
-
-template <class T_archetype>
-Engine & Engine::cancelFromFamily(FamilyObserver *aObserver)
-{
-    getFamily<T_archetype>().cancelObserver(aObserver);
-    return *this;
 }
 
 } // namespace aunteater

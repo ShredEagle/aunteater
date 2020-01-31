@@ -12,11 +12,9 @@ set(${PROJECT_NAME}_HEADERS
 )
 
 set(${PROJECT_NAME}_SOURCES
-    Component.cpp
     Engine.cpp
     Entity.cpp
     Family.cpp
-    System.cpp
 )
 
 cmc_find_dependencies()

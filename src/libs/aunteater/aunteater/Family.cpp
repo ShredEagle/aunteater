@@ -100,17 +100,3 @@ Family & Family::cancelObserver(FamilyObserver *aObserver)
     cancelObserverImpl(aObserver);
     return *this;
 }
-
-//void Family::componentAddedToEntity(std::shared_ptr<Entity> aEntity, ComponentTypeId aComponent);
-//void Family::componentRemovedFromEntity(std::shared_ptr<Entity> aEntity, ComponentTypeId aComponent);
-/*
-void Family::removeEntity(std::shared_ptr<Entity> aEntity)
-{
-    removeIfMatch(aEntity);
-}
-
-void Family::componentAddedToEntity(std::shared_ptr<Entity> aEntity, <#std::type_info *aComponent#>)
-{
-
-}
-*/

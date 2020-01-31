@@ -22,7 +22,7 @@ public:
 private:
     /// \todo make it easier to get those nodelist
     /// \todo should get rid of the useless pre-init state where the pointer is null
-    aunteater::EntityList * mMoveables{nullptr};
+    aunteater::Family * mMoveables{nullptr};
 };
 
 } // namespace BenchingBall

@@ -32,7 +32,7 @@ protected:
 
 private:
     /// \todo make it easier to get those nodelist
-    aunteater::EntityList * mRenderables;
+    aunteater::Family * mRenderables;
 
     GLFWwindow *mWindow;
     std::size_t mTransformBufferSize = 0;
