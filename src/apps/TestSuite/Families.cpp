@@ -19,14 +19,14 @@ SCENARIO("Family management on entities addition/removal")
         {
             {
                 Entity entity;
-                entity.addComponent<ComponentB>(5);
+                entity.add<ComponentB>(5);
                 engine.addEntity("entity_componentB", std::move(entity));
                 REQUIRE(0 == NodesOfArchetypeA.size());
             }
 
             {
                 Entity entity;
-                entity.addComponent<ComponentA>(5);
+                entity.add<ComponentA>(5);
                 engine.addEntity("entity_componentA", std::move(entity));
             }
             REQUIRE(1 == NodesOfArchetypeA.size());
@@ -52,7 +52,7 @@ SCENARIO("Family management on components update")
         {
             {
                 Entity entity;
-                entity.addComponent<ComponentA>(5);
+                entity.add<ComponentA>(5);
                 engine.addEntity("aunt", std::move(entity));
             }
 
@@ -62,10 +62,10 @@ SCENARIO("Family management on components update")
             entity->removeComponent<ComponentA>();
             REQUIRE(0 == NodesOfArchetypeA.size());
 
-            entity->addComponent<ComponentB>(51.);
+            entity->add<ComponentB>(51.);
             REQUIRE(0 == NodesOfArchetypeA.size());
 
-            entity->addComponent<ComponentA>(51);
+            entity->add<ComponentA>(51);
             REQUIRE(1 == NodesOfArchetypeA.size());
 
             entity->removeComponent<ComponentB>();
@@ -107,10 +107,10 @@ SCENARIO("Family observation")
 
         THEN("Addition removal of Entities matching the Archetype triggers notifications")
         {
-            weak_entity firstEntity = engine.addEntity(Entity().addComponent<ComponentA>(5));
+            weak_entity firstEntity = engine.addEntity(Entity().add<ComponentA>(5));
             REQUIRE(1 == observer.addNotificationCount);
 
-            weak_entity secondEntity = engine.addEntity(Entity().addComponent<ComponentA>(5).addComponent<ComponentB>(52.));
+            weak_entity secondEntity = engine.addEntity(Entity().add<ComponentA>(5).add<ComponentB>(52.));
             REQUIRE(2 == observer.addNotificationCount);
 
             THEN("Removing components from Entities triggers notifications")
@@ -133,7 +133,7 @@ SCENARIO("Family observation")
 
         GIVEN("A second observer")
         {
-            engine.addEntity(Entity().addComponent<ComponentA>(10));
+            engine.addEntity(Entity().add<ComponentA>(10));
             TestObserver posterioriObserver;
             engine.getFamily<ArchetypeA>().registerObserver(&posterioriObserver);
 

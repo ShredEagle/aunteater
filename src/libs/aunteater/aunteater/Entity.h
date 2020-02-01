@@ -39,7 +39,7 @@ namespace aunteater
          */
         /// \brief Adds a component of type T_component, by constructing it forwarding all the provided arguments.
         template <class T_component, class... Args>
-        Entity & addComponent(Args&&... aArgs)
+        Entity & add(Args&&... aArgs)
         {
             addComponent(make_component<T_component>(std::forward<Args>(aArgs)...));
             return *this;
@@ -47,7 +47,7 @@ namespace aunteater
 
         /// \brief Removes the component of type T_component from this Entity.
         template <class T_component>
-        Entity & removeComponent()
+        Entity & remove()
         {
             mComponents.erase(type<T_component>());
             return *this;

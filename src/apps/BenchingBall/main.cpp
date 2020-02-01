@@ -192,14 +192,14 @@ int main(int argc, char** argv)
     engine.addSystem(std::make_shared<SystemMove>());
     engine.addSystem(std::make_shared<SystemRender>(window));
 
-    engine.addEntity(aunteater::Entity().addComponent<ComponentPosition>(.5, .5)
-                                        .addComponent<ComponentVelocity>(1., .1));
-    engine.addEntity(aunteater::Entity().addComponent<ComponentPosition>(-.5, -.5)
-                                        .addComponent<ComponentVelocity>(-.3, 2.));
-    engine.addEntity(aunteater::Entity().addComponent<ComponentPosition>(-.5, .5)
-                                        .addComponent<ComponentVelocity>(.8, .8));
-    engine.addEntity(aunteater::Entity().addComponent<ComponentPosition>(.5, -.5)
-                                        .addComponent<ComponentVelocity>(.8, .8));
+    engine.addEntity(aunteater::Entity().add<ComponentPosition>(.5, .5)
+                                        .add<ComponentVelocity>(1., .1));
+    engine.addEntity(aunteater::Entity().add<ComponentPosition>(-.5, -.5)
+                                        .add<ComponentVelocity>(-.3, 2.));
+    engine.addEntity(aunteater::Entity().add<ComponentPosition>(-.5, .5)
+                                        .add<ComponentVelocity>(.8, .8));
+    engine.addEntity(aunteater::Entity().add<ComponentPosition>(.5, -.5)
+                                        .add<ComponentVelocity>(.8, .8));
 
     FpsDisplay fps(.5);
     double lastFrame = glfwGetTime();

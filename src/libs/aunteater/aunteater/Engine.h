@@ -45,7 +45,7 @@ public:
     }
 
     template <class T_component, class... Args>
-    LiveEntity & addComponent(Args&&... aArgs);
+    LiveEntity & add(Args&&... aArgs);
 
     /// \brief Removes the component of type T_component from this Entity.
     template <class T_component>
@@ -154,9 +154,9 @@ private:
  */
 
 template <class T_component, class... Args>
-LiveEntity & LiveEntity::addComponent(Args&&... aArgs)
+LiveEntity & LiveEntity::add(Args&&... aArgs)
 {
-    mEntity.addComponent(make_component<T_component>(std::forward<Args>(aArgs)...));
+    mEntity.add<T_component>(std::forward<Args>(aArgs)...);
 
     // Note: does not test if insertion actually took place (return value from addComponent())
     //       It is expected to be rare to replace a component this way, so avoid branching
@@ -176,7 +176,7 @@ LiveEntity & LiveEntity::removeComponent()
     {
       family.componentRemovedFromEntity(entityIdFrom(*this), type<T_component>());
     });
-    mEntity.removeComponent<T_component>();
+    mEntity.remove<T_component>();
     return *this;
 }
 

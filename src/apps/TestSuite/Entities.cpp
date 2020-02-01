@@ -41,7 +41,7 @@ SCENARIO("Component management")
         WHEN("Adding a component to the Entity")
         {
             // Adding component
-            entity.addComponent<ComponentB>(3.14);
+            entity.add<ComponentB>(3.14);
             THEN("It contains the component, but not another")
             {
                 REQUIRE_FALSE(entity.has<ComponentA>());
@@ -51,7 +51,7 @@ SCENARIO("Component management")
 
             WHEN("Adding the same component")
             {
-                entity.addComponent<ComponentB>(900000000.);
+                entity.add<ComponentB>(900000000.);
                 THEN("The Component is replaced")
                 {
                     REQUIRE(900000000. == entity.get<ComponentB>().b);
@@ -60,7 +60,7 @@ SCENARIO("Component management")
 
             WHEN("Removing the Component from the Entity")
             {
-                entity.removeComponent<ComponentB>();
+                entity.remove<ComponentB>();
                 THEN("It does not contain any component anymore")
                 {
                     REQUIRE_FALSE(entity.has<ComponentA>());
@@ -77,7 +77,7 @@ SCENARIO("Entities copy control")
     GIVEN("An entity with a component")
     {
         Entity entityOrigin;
-        entityOrigin.addComponent<ComponentA>(5);
+        entityOrigin.add<ComponentA>(5);
 
         REQUIRE(entityOrigin.get<ComponentA>().a == 5);
 
@@ -148,7 +148,7 @@ SCENARIO("Adding entities")
         WHEN("An Entity matching this Archetype is added to the Manager")
         {
             Entity entity;
-            entity.addComponent<ComponentA>(5);
+            entity.add<ComponentA>(5);
             engine.addEntity(entity);
 
             THEN("The Nodes for the Archetype grows by one")
@@ -174,7 +174,7 @@ SCENARIO("Removing entities")
         Engine engine;
 
         Entity entity;
-        entity.addComponent<ComponentA>(5);
+        entity.add<ComponentA>(5);
         weak_entity firstEntity = engine.addEntity(entity);
 
         Family & nodesA = engine.getFamily<ArchetypeA>();
