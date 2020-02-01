@@ -10,15 +10,7 @@
 using namespace BenchingBall;
 using namespace aunteater;
 
-class NodeMoveable
-{
-public:
-    static const ArchetypeTypeSet gComponentTypes;
-};
-
-const ArchetypeTypeSet NodeMoveable::gComponentTypes = { &typeid(ComponentPosition),
-                                                         &typeid(ComponentVelocity) };
-
+typedef Archetype<ComponentPosition, ComponentVelocity> NodeMoveable;
 
 
 typedef ComponentPosition Position;

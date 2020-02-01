@@ -185,7 +185,7 @@ template <class T_archetype>
 Family & Engine::getFamily()
 {
     auto insertionResult = mTypedFamilies.emplace(archetypeTypeId<T_archetype>(),
-                                                  T_archetype::gComponentTypes);
+                                                  T_archetype::TypeSet());
     if (insertionResult.second)
     {
         Family &familyRef = insertionResult.first->second;

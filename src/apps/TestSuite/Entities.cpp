@@ -6,9 +6,6 @@
 
 using namespace aunteater;
 
-const ArchetypeTypeSet ArchetypeA::gComponentTypes{ &typeid(ComponentA) };
-
-
 SCENARIO("Component identifiers")
 {
     GIVEN("Three components, one being distinct")

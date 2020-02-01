@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Archetype.h"
 #include "Entity.h"
 
 #include "globals.h"
@@ -35,6 +36,7 @@ namespace aunteater
         friend class LiveEntity;
 
     public:
+        // Note: must be accessible to pair forwarded constructor (cannot be private)
         explicit Family(ArchetypeTypeSet aComponentsTypeInfo);
 
         // Non-copyable, to avoid the risk of a component forgetting to take it by ref

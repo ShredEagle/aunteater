@@ -1,6 +1,7 @@
 project(aunteater VERSION "${CMAKE_PROJECT_VERSION}")
 
 set(${PROJECT_NAME}_HEADERS
+    Archetype.h
     Component.h
     Engine.h
     Entity.h

@@ -1,6 +1,7 @@
 #ifndef _IDG_AE_CommonComponents
 #define _IDG_AE_CommonComponents
 
+#include <aunteater/Archetype.h>
 #include <aunteater/Component.h>
 
 class ComponentA : public aunteater::Component
@@ -9,7 +10,7 @@ public:
     ComponentA(int aInteger):
             a(aInteger)
     {}
-    
+
     int a;
 
 private:
@@ -23,7 +24,7 @@ public:
     ComponentB(double aValue):
             b(aValue)
     {}
-    
+
     double b;
 
 private:
@@ -31,14 +32,6 @@ private:
     {   return std::make_unique<ComponentB>(*this);  }
 };
 
-class ArchetypeA
-{
-public:
-    // defined in Entities.cpp
-    static const aunteater::ArchetypeTypeSet gComponentTypes;
-};
+typedef aunteater::Archetype<ComponentA> ArchetypeA;
 
-// defined in Entities.cpp
-static const aunteater::ArchetypeTypeSet gArchetypeB{ &typeid(ComponentB) };
-static const aunteater::ArchetypeTypeSet gArchetypeAnB{ &typeid(ComponentA), &typeid(ComponentB) };
 #endif // #ifdef

@@ -12,13 +12,7 @@
 using namespace BenchingBall;
 using namespace aunteater;
 
-class NodeRenderable
-{
-public:
-    static const ArchetypeTypeSet gComponentTypes;
-};
-
-const ArchetypeTypeSet NodeRenderable::gComponentTypes = { &typeid(ComponentPosition) };
+typedef Archetype<ComponentPosition> NodeRenderable;
 
 void SystemRender::addedToEngine(aunteater::Engine &aEngine)
 {

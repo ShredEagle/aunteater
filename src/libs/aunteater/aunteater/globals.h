@@ -27,8 +27,6 @@ namespace aunteater
     template <class T_component = Component>
     using own_component = std::unique_ptr<T_component>;
 
-    typedef std::set<ComponentTypeId> ArchetypeTypeSet;
-
     typedef const std::type_info *  ArchetypeTypeId;
     template <class T_Archetype>
     constexpr ArchetypeTypeId archetypeTypeId()
