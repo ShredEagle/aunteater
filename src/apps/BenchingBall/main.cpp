@@ -189,8 +189,10 @@ int main(int argc, char** argv)
 
     init();
     aunteater::Engine engine;
-    engine.addSystem(std::make_shared<SystemMove>());
-    engine.addSystem(std::make_shared<SystemRender>(window));
+    // System can be added already instantiated
+    engine.addSystem(std::make_shared<SystemMove>(engine));
+    // Or can be instantiated by add(), implicitly providing engine as first argument to ctor
+    engine.addSystem<SystemRender>(window);
 
     engine.addEntity(aunteater::Entity().add<ComponentPosition>(.5, .5)
                                         .add<ComponentVelocity>(1., .1));

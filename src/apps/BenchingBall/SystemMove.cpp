@@ -16,10 +16,9 @@ typedef Archetype<ComponentPosition, ComponentVelocity> NodeMoveable;
 typedef ComponentPosition Position;
 typedef ComponentVelocity Velocity;
 
-void SystemMove::addedToEngine(aunteater::Engine &aEngine)
-{
-    mMoveables = & aEngine.getFamily<NodeMoveable>();
-}
+SystemMove::SystemMove(aunteater::Engine &aEngine) :
+    mMoveables(aEngine.getFamily<NodeMoveable>())
+{}
 
 double impulse(const Vec2 &aNormal, const Vec2 &aSpeedA, const Vec2 &aSpeedB, double aMass)
 {
@@ -56,8 +55,8 @@ void move(double aTime, double &aPosition, double &aVelocity, double aRadius)
 
 void SystemMove::update(double time)
 {
-    for (auto nodeIt = mMoveables->begin();
-         nodeIt != mMoveables->end();
+    for (auto nodeIt = mMoveables.begin();
+         nodeIt != mMoveables.end();
          ++nodeIt)
     {
         move(time, (*nodeIt)->get<ComponentPosition>().x, (*nodeIt)->get<ComponentVelocity>().x, RADIUS);
@@ -65,12 +64,12 @@ void SystemMove::update(double time)
     }
 
 
-    for (auto nodeIt = mMoveables->begin();
-         nodeIt != mMoveables->end();
+    for (auto nodeIt = mMoveables.begin();
+         nodeIt != mMoveables.end();
          ++nodeIt)
     {
         for (auto nodeItB = ++decltype(nodeIt)(nodeIt);
-             nodeItB != mMoveables->end();
+             nodeItB != mMoveables.end();
              ++nodeItB)
         {
             if (distance((*nodeIt)->get<ComponentPosition>(), (*nodeItB)->get<ComponentPosition>()) < 2*RADIUS)

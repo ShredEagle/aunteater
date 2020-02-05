@@ -120,6 +120,12 @@ public:
     /*
      * System
      */
+    /// \brief Instantiate and add a system of class T_system.
+    ///
+    ///  Provides engine reference as 1st ctor argument, forwards aArgs as following arguments.
+    template <class T_system, class... VT_ctorArgs>
+    void addSystem(VT_ctorArgs &&... aArgs);
+
     void addSystem(std::shared_ptr<System> aSystem);
 
     /*
@@ -180,6 +186,11 @@ LiveEntity & LiveEntity::removeComponent()
     return *this;
 }
 
+template <class T_system, class... VT_ctorArgs>
+void Engine::addSystem(VT_ctorArgs &&... aArgs)
+{
+    addSystem(std::make_shared<T_system>(*this, std::forward<VT_ctorArgs>(aArgs)...));
+}
 
 template <class T_archetype>
 Family & Engine::getFamily()

@@ -44,6 +44,8 @@ class Section
 public:
     virtual void init() = 0;
     virtual void render(GLFWwindow *) = 0;
+
+    virtual ~Section() = default;
 };
 
 } // namespace tutorial

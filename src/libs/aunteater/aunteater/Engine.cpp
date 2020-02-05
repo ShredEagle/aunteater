@@ -61,7 +61,6 @@ void Engine::removedEntity(weak_entity aEntity)
 
 void Engine::addSystem(std::shared_ptr<System> aSystem)
 {
-    aSystem->addedToEngine(*this);
     mSystems.push_back(std::move(aSystem));
 }
 

@@ -12,13 +12,6 @@
 using namespace BenchingBall;
 using namespace aunteater;
 
-typedef Archetype<ComponentPosition> NodeRenderable;
-
-void SystemRender::addedToEngine(aunteater::Engine &aEngine)
-{
-    mRenderables = & aEngine.getFamily<NodeRenderable>();
-}
-
 void SystemRender::update(double time)
 {
     streamPositions();
@@ -27,16 +20,16 @@ void SystemRender::update(double time)
 
 void SystemRender::streamPositions()
 {
-    if (mTransformBufferSize <= mRenderables->size()) // reassign a buffer
+    if (mTransformBufferSize <= mRenderables.size()) // reassign a buffer
     {
-        extendTransformBuffer(mRenderables->size());
+        extendTransformBuffer(mRenderables.size());
     }
 
     GLfloat *transforms = static_cast<GLfloat *>(glMapBufferRange(GL_ARRAY_BUFFER, 0,
                                                                   mTransformBufferSize*9*sizeof(GLfloat), GL_MAP_WRITE_BIT));
     std::size_t ballId = 0;
-    for (auto nodeIt = mRenderables->begin();
-         nodeIt != mRenderables->end();
+    for (auto nodeIt = mRenderables.begin();
+         nodeIt != mRenderables.end();
          ++nodeIt, ++ballId)
     {
         transforms[ballId*9 + 6] = (*nodeIt)->get<ComponentPosition>().x;

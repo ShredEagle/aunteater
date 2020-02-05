@@ -8,21 +8,23 @@
 #ifndef BenchingBall_SystemRender_h
 #define BenchingBall_SystemRender_h
 
+#include <aunteater/Archetype.h>
 #include <aunteater/System.h>
 
 struct GLFWwindow;
 
 namespace BenchingBall {
 
+typedef aunteater::Archetype<ComponentPosition> NodeRenderable;
+
 class SystemRender : public aunteater::System
 {
 public:
-    SystemRender(GLFWwindow *aWindow) :
+    SystemRender(aunteater::Engine &aEngine, GLFWwindow *aWindow) :
+            mRenderables(aEngine.getFamily<NodeRenderable>()),
             mWindow(aWindow)
     {}
 
-    /// \todo removedFromEngine, to be symetric
-    virtual void addedToEngine(aunteater::Engine &aEngine) override;
     virtual void update(double time) override;
 
 protected:
@@ -32,7 +34,7 @@ protected:
 
 private:
     /// \todo make it easier to get those nodelist
-    aunteater::Family * mRenderables;
+    aunteater::Family & mRenderables;
 
     GLFWwindow *mWindow;
     std::size_t mTransformBufferSize = 0;
