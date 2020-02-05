@@ -21,6 +21,10 @@ add_executable(${PROJECT_NAME}
     ${${PROJECT_NAME}_SOURCES}
     ${${PROJECT_NAME}_HEADERS})
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE GL_SILENCE_DEPRECATION)
+endif()
+
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         glfw
