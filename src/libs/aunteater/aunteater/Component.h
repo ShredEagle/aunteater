@@ -8,13 +8,13 @@
 namespace aunteater
 {
 
-    class Component
+    class ComponentBase
     {
         friend own_component<> clone(const own_component<> &aComponent);
 
     public:
         // Component class needs to be polymorphic to enable RTTI.
-        virtual ~Component()
+        virtual ~ComponentBase()
         {}
 
         /// \todo Rename to loosen the logical coupling to type_info (eg. getType())
@@ -29,11 +29,11 @@ namespace aunteater
 
 
     template <class T_derived>
-    class ComponentBase : public Component
+    class Component : public ComponentBase
     {
 
     private:
-        virtual own_component<> clone_impl() const final override
+        own_component<> clone_impl() const final
         {
             return std::make_unique<T_derived>(*static_cast<const T_derived*>(this));
         }

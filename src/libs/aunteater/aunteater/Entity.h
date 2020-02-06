@@ -65,7 +65,7 @@ namespace aunteater
             return mComponents.count(type<T_component>());
         }
 
-        Component & get(ComponentTypeId aId)
+        ComponentBase & get(ComponentTypeId aId)
         {
             return *mComponents.at(aId);
         }

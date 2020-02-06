@@ -4,7 +4,7 @@
 #include <aunteater/Archetype.h>
 #include <aunteater/Component.h>
 
-class ComponentA : public aunteater::Component
+class ComponentA : public aunteater::ComponentBase
 {
 public:
     ComponentA(int aInteger):
@@ -18,7 +18,7 @@ private:
     {   return std::make_unique<ComponentA>(*this);  }
 };
 
-class ComponentB : public aunteater::Component
+class ComponentB : public aunteater::ComponentBase
 {
 public:
     ComponentB(double aValue):

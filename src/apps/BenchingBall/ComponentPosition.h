@@ -14,7 +14,7 @@
 
 namespace BenchingBall {
 
-struct ComponentPosition : public aunteater::ComponentBase<ComponentPosition>, public Vec2
+struct ComponentPosition : public aunteater::Component<ComponentPosition>, public Vec2
 {
     ComponentPosition(double x, double y) : Vec2{x, y}
     {}

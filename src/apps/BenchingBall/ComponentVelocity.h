@@ -14,7 +14,7 @@
 
 namespace BenchingBall {
 
-struct ComponentVelocity : public aunteater::ComponentBase<ComponentVelocity>, public Vec2
+struct ComponentVelocity : public aunteater::Component<ComponentVelocity>, public Vec2
 {
     ComponentVelocity(double x, double y) : Vec2{x, y}
     {}

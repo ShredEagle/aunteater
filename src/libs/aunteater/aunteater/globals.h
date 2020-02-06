@@ -6,7 +6,7 @@
 
 namespace aunteater
 {
-    class Component;
+    class ComponentBase;
     class LiveEntity;
     class System;
 
@@ -15,7 +15,7 @@ namespace aunteater
 
     /// \brief Returns the ComponentTypeId for the provided Component type (T_component)
     template <class T_component>
-    static typename std::enable_if_t<std::is_base_of<Component, T_component>::value,
+    static typename std::enable_if_t<std::is_base_of<ComponentBase, T_component>::value,
                                      ComponentTypeId>
     type()
     {
@@ -24,7 +24,7 @@ namespace aunteater
 
     /// \todo We do not want to share ownership : Entity is semantically owning its components,
     /// other objects are refering to them.
-    template <class T_component = Component>
+    template <class T_component = ComponentBase>
     using own_component = std::unique_ptr<T_component>;
 
     typedef const std::type_info *  ArchetypeTypeId;
