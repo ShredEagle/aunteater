@@ -27,23 +27,36 @@ weak_entity Engine::addEntity(Entity aEntity)
     // Note: cannot emplace_back, before C++17 it returns void
     weak_entity lastEntity =
         entityRefFrom(*mEntities.emplace(mEntities.end(), std::move(aEntity), *this, EngineTag{}));
-    addedEntity(lastEntity);
+    notifyAdditionToFamilies(lastEntity);
     return lastEntity;
 }
 
-/// \todo revisit, it compares an EntityId to a weak_entity
-void Engine::removeEntity(weak_entity aEntity)
+/// TODO revisit, it compares an EntityId to a weak_entity, causing const-ness complications
+///   (low level const in entity_id prevents matching against keys that are not low level const)
+///   Take a look at "Transparent comparators"
+///   Should allow constness on the mEntitiesToRemove pointers
+void Engine::removeEntities()
 {
-    mNamedEntities.right.erase(aEntity);
-    removedEntity(aEntity);
-    mEntities.remove_if([aEntity](const LiveEntity &aElem)
+    /// TODO Measure if it is more efficient:
+    ///   * to iterate flagged entities and look them up one by one in the associative containers (current)
+    ///   * to iterate the associative containers entirely each time, and remove matching flagged entities
+    /// TODO more constness here
+    for(weak_entity entity : mEntitiesToRemove)
     {
-        return entityIdFrom(aElem) == aEntity;
+        mNamedEntities.right.erase(entity);
+        notifyRemovalToFamilies(entity);
+    }
+
+    /// TODO LiveEntity should be const here
+    mEntities.remove_if([this](LiveEntity &aElem)
+    {
+        return this->mEntitiesToRemove.count(&aElem); // contains() is C++20
     });
+    mEntitiesToRemove.clear();
 }
 
 
-void Engine::addedEntity(weak_entity aEntity)
+void Engine::notifyAdditionToFamilies(weak_entity aEntity)
 {
     for (auto & typedFamily : mTypedFamilies)
     {
@@ -51,7 +64,7 @@ void Engine::addedEntity(weak_entity aEntity)
     }
 }
 
-void Engine::removedEntity(weak_entity aEntity)
+void Engine::notifyRemovalToFamilies(entity_id aEntity)
 {
     for (auto & typedFamily : mTypedFamilies)
     {
@@ -70,4 +83,5 @@ void Engine::update(double time)
     {
         system->update(time);
     }
+    removeEntities();
 }

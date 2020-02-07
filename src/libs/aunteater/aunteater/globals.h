@@ -36,6 +36,7 @@ namespace aunteater
 
     typedef const LiveEntity* entity_id; // Could alternatively be a const void*: should never be used to invoke methods.
     typedef LiveEntity* weak_entity;
+    typedef const LiveEntity * const_weak_entity;
 
     inline entity_id entityIdFrom(const LiveEntity &aWrapper)
     {

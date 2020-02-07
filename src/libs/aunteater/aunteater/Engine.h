@@ -100,10 +100,13 @@ public:
     weak_entity addEntity(Entity aEntity);
     weak_entity addEntity(const std::string & aName, Entity aEntity);
 
-    void removeEntity(weak_entity aEntity);
-    void removeEntity(const std::string & aEntityName)
+    void markToRemove(weak_entity aEntity)
     {
-        removeEntity(getEntity(aEntityName));
+        mEntitiesToRemove.emplace(aEntity);
+    }
+    void markToRemove(const std::string & aEntityName)
+    {
+        markToRemove(getEntity(aEntityName));
     }
 
     weak_entity getEntity(const std::string & aEntityName)
@@ -142,8 +145,9 @@ public:
     }
 
 protected:
-    void addedEntity(weak_entity aEntity);
-    void removedEntity(weak_entity aEntity);
+    void removeEntities();
+    void notifyAdditionToFamilies(weak_entity aEntity);
+    void notifyRemovalToFamilies(entity_id aEntity);
 
 private:
     typedef boost::bimap<std::string, weak_entity > NameEntityMap;
@@ -151,6 +155,7 @@ private:
 
     std::list<LiveEntity> mEntities;
     NameEntityMap mNamedEntities;
+    std::set<weak_entity> mEntitiesToRemove;
     ArchetypeFamilyMap mTypedFamilies;
     std::vector<std::shared_ptr<System>> mSystems;
 };
