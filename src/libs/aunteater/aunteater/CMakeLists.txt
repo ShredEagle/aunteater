@@ -6,6 +6,7 @@ set(${PROJECT_NAME}_HEADERS
     Engine.h
     Entity.h
     Family.h
+    FamilyHelp.h
     System.h
 
     globals.h
