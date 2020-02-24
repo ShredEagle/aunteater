@@ -134,6 +134,9 @@ public:
     /*
      * Update
      */
+    template <class T_updater>
+    void update(double time, T_updater && aUpdater);
+
     void update(double aTime);
 
     void forEachFamily(std::function<void(Family &aFamily)> aFamilyFunctor)
@@ -157,6 +160,8 @@ private:
     NameEntityMap mNamedEntities;
     std::set<weak_entity> mEntitiesToRemove;
     ArchetypeFamilyMap mTypedFamilies;
+
+protected:
     std::vector<std::shared_ptr<System>> mSystems;
 };
 
@@ -211,6 +216,20 @@ Family & Engine::getFamily()
         }
     }
     return insertionResult.first->second;
+}
+
+template <class T_updater>
+void Engine::update(double time, T_updater && aUpdater)
+{
+    aUpdater.start();
+
+    for (auto & system : mSystems)
+    {
+        aUpdater(*system, time);
+    }
+    removeEntities();
+
+    aUpdater.finish();
 }
 
 } // namespace aunteater

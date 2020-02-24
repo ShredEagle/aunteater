@@ -77,11 +77,20 @@ void Engine::addSystem(std::shared_ptr<System> aSystem)
     mSystems.push_back(std::move(aSystem));
 }
 
+struct DefaultUpdater
+{
+    void start()
+    {}
+    void finish()
+    {}
+
+    void operator()(System & aSystem, double aTime)
+    {
+        aSystem.update(aTime);
+    }
+};
+
 void Engine::update(double time)
 {
-    for (auto & system : mSystems)
-    {
-        system->update(time);
-    }
-    removeEntities();
+    update(time, DefaultUpdater{});
 }

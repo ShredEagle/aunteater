@@ -9,7 +9,7 @@
 
 #include "globals.h"
 
-#include <aunteater/Engine.h>
+#include <aunteater/UpdateTiming.h>
 
 #include <string>
 #include <iomanip>
@@ -210,7 +210,11 @@ int main(int argc, char** argv)
         //render(window);
         double delta = glfwGetTime()-lastFrame;
         lastFrame = glfwGetTime();
-        engine.update(delta);
+
+        aunteater::UpdateTiming updater;
+        engine.update(delta, updater);
+
+        updater.outputTimings(std::cout);
 
         fps.tick(delta, window);
         glfwPollEvents();
