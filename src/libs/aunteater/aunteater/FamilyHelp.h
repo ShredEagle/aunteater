@@ -27,7 +27,12 @@ namespace aunteater {
 
     public:
 
-        weak_entity operator->()
+        weak_entity operator->() const
+        {
+            return *mEntity;
+        }
+
+        /*implicit*/ operator weak_entity() const
         {
             return *mEntity;
         }
