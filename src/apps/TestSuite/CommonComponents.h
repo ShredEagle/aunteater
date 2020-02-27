@@ -13,8 +13,18 @@ public:
 
     int a;
 
+    bool operator==(const ComponentA &aOther) const
+    {
+        return a == aOther.a;
+    }
+
+    bool operator!=(const ComponentA &aOther) const
+    {
+        return !(*this == aOther);
+    }
+
 private:
-    virtual aunteater::own_component<> clone_impl() const override
+    aunteater::own_component<> clone_impl() const override
     {   return std::make_unique<ComponentA>(*this);  }
 };
 
@@ -28,7 +38,7 @@ public:
     double b;
 
 private:
-    virtual aunteater::own_component<> clone_impl() const override
+    aunteater::own_component<> clone_impl() const override
     {   return std::make_unique<ComponentB>(*this);  }
 };
 
