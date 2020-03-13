@@ -94,3 +94,15 @@ void Engine::update(double time)
 {
     update(time, DefaultUpdater{});
 }
+
+bool Engine::isPaused()
+{
+    return mPaused;
+}
+
+bool Engine::pause(bool aPauseMode)
+{
+    bool result = isPaused();
+    mPaused = aPauseMode;
+    return result;
+}

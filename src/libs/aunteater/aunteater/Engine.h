@@ -139,6 +139,11 @@ public:
 
     void update(double aTime);
 
+    /// \return The pause state before the call
+    bool isPaused();
+    /// \return The pause state before the call
+    bool pause(bool aPauseMode);
+
     void forEachFamily(std::function<void(Family &aFamily)> aFamilyFunctor)
     {
         for (auto &typedFamily : mTypedFamilies)
@@ -160,6 +165,7 @@ private:
     NameEntityMap mNamedEntities;
     std::set<weak_entity> mEntitiesToRemove;
     ArchetypeFamilyMap mTypedFamilies;
+    bool mPaused{false};
 
 protected:
     std::vector<std::shared_ptr<System>> mSystems;
@@ -221,6 +227,11 @@ Family & Engine::getFamily()
 template <class T_updater>
 void Engine::update(double time, T_updater && aUpdater)
 {
+    if (isPaused())
+    {
+        return;
+    }
+
     aUpdater.start();
 
     for (auto & system : mSystems)
