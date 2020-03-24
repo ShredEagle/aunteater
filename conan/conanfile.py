@@ -52,8 +52,11 @@ class AunteaterConan(ConanFile):
 
     def requirements(self):
         if self.options.build_tests:
+           self.requires("glad/0.1.29@bincrafters/stable")
            self.requires("glfw/3.3@bincrafters/stable")
            self.requires("libjpeg/9c@bincrafters/stable")
+
+           self.options["glad"].api_version = "3.3"
 
 
     def _configure_cmake(self):

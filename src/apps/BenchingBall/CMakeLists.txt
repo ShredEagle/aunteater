@@ -14,8 +14,8 @@ set(${PROJECT_NAME}_SOURCES
     SystemRender.cpp
 )
 
-find_package(glfw3 3.3 REQUIRED)
-find_package(OpenGL REQUIRED)
+find_package(glad CONFIG REQUIRED)
+find_package(glfw3 3.3 CONFIG REQUIRED)
 
 add_executable(${PROJECT_NAME}
     main.cpp
@@ -29,8 +29,8 @@ endif()
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         ad::aunteater
+        glad::glad
         glfw
-        OpenGL::GL
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

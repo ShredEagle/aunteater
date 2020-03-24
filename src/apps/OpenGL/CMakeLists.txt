@@ -12,9 +12,9 @@ set(${PROJECT_NAME}_SOURCES
     ImageReader.cpp
 )
 
-find_package(glfw3 3.3 REQUIRED)
+find_package(glad CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
 find_package(JPEG REQUIRED)
-find_package(OpenGL REQUIRED)
 
 add_executable(${PROJECT_NAME}
     main.cpp
@@ -27,9 +27,9 @@ endif()
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
+        glad::glad
         glfw
         JPEG::JPEG
-        OpenGL::GL
 )
 
 file(GENERATE OUTPUT $<TARGET_FILE_DIR:${PROJECT_NAME}>/resources/halal_texture.jpg

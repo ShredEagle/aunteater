@@ -17,6 +17,9 @@ int main(int argc, char** argv)
 
     GLFWwindow* window = glfwCreateWindow(800, 600, "GLFW test", NULL, NULL);
     glfwMakeContextCurrent(window);
+    gladLoadGL();
+
+    glfwSwapInterval(1);
 
     std::unique_ptr<Section> section = std::make_unique<Textures>();
     section->init();
@@ -24,6 +27,7 @@ int main(int argc, char** argv)
     while (!glfwWindowShouldClose(window))
     {
         section->render(window);
+        glfwPollEvents();
     }
 
     glfwTerminate();

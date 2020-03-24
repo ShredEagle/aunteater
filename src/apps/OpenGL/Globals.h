@@ -8,8 +8,7 @@
 #ifndef tutorial_Globals_h
 #define tutorial_Globals_h
 
-#define GLFW_INCLUDE_GLCOREARB // will include the modern open gl header, exposing modern methods
-                               // that should otherwise be retrieved (a-la GLEW)
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <string>
@@ -31,9 +30,9 @@ inline GLuint compileShader(const std::string &aSource, GLenum aShaderType)
     {
         GLint logLength;
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
-        char logBuffer[logLength];
-        glGetShaderInfoLog(shader, logLength, NULL, logBuffer);
-        std::cerr << logBuffer;
+        std::unique_ptr<char[]> logBuffer{new char[logLength]};
+        glGetShaderInfoLog(shader, logLength, NULL, logBuffer.get());
+        std::cerr << logBuffer.get();
     }
 
     return shader;

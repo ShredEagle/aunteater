@@ -1,4 +1,4 @@
-#define GLFW_INCLUDE_GLCOREARB
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "ComponentPosition.h"
@@ -11,11 +11,13 @@
 
 #include <aunteater/UpdateTiming.h>
 
-#include <string>
+#include <array>
 #include <iomanip>
 #include <iostream>
-#include <cmath>
-#include <array>
+#include <string>
+#include <sstream>
+
+#define M_PI 3.14159265358979323846
 
 using namespace BenchingBall;
 
@@ -84,9 +86,9 @@ GLuint compileShader(const std::string &aSource, GLenum aShaderType)
     {
         GLint logLength;
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
-        char logBuffer[logLength];
-        glGetShaderInfoLog(shader, logLength, NULL, logBuffer);
-        std::cerr << logBuffer;
+        std::unique_ptr<char[]> logBuffer{new char[logLength]};
+        glGetShaderInfoLog(shader, logLength, NULL, logBuffer.get());
+        std::cerr << logBuffer.get();
     }
 
     return shader;
@@ -173,9 +175,16 @@ private:
     unsigned int mFrameCount = 0;
 };
 
+static void error_callback(int error, const char* description)
+{
+    std::cerr <<  "Error: " << description << "\n";
+}
+
 int main(int argc, char** argv)
 {
-    glfwInit();
+    glfwSetErrorCallback(error_callback);
+    if (!glfwInit())
+        exit(EXIT_FAILURE);
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -184,6 +193,7 @@ int main(int argc, char** argv)
 
     GLFWwindow* window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, "GLFW test", NULL, NULL);
     glfwMakeContextCurrent(window);
+    gladLoadGL();
 
     glfwSwapInterval(1);
 
@@ -217,6 +227,7 @@ int main(int argc, char** argv)
         updater.outputTimings(std::cout);
 
         fps.tick(delta, window);
+
         glfwPollEvents();
     }
 
