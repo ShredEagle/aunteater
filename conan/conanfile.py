@@ -34,7 +34,7 @@ class AunteaterConan(ConanFile):
         "build_tests": False,
     }
 
-    requires = ("boost/1.71.0@conan/stable",)
+    requires = ("boost/1.72.0",)
 
     build_requires = ("cmake_installer/[>=3.16]@conan/stable",)
 
@@ -43,7 +43,6 @@ class AunteaterConan(ConanFile):
 
     scm = {
         "type": "git",
-        "subfolder": "cloned_repo",
         "url": "auto",
         "revision": "auto",
         "submodule": "recursive",
@@ -62,9 +61,9 @@ class AunteaterConan(ConanFile):
     def _configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["CMAKE_PROJECT_Aunteater_INCLUDE"] = \
-            path.join(self.source_folder, "cloned_repo", "cmake", "conan", "customconan.cmake")
+            path.join(self.source_folder, "cmake", "conan", "customconan.cmake")
         cmake.definitions["BUILD_tests"] = self.options.build_tests
-        cmake.configure(source_folder="cloned_repo")
+        cmake.configure()
         return cmake
 
 

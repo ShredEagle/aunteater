@@ -2,6 +2,9 @@
 build/**
 build_*/
 
+# Conan
+/conan/test_package/build/
+
 #clang
 .clangd/
 compile_commands.json

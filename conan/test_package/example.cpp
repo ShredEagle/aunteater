@@ -3,5 +3,5 @@
 int main()
 {
     aunteater::Engine engine;
-    engine.addEntity("goodname", aunteater::Entity());
+    engine.addEntity("goodname", aunteater::Entity{});
 }
