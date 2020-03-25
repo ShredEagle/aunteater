@@ -3,6 +3,8 @@
 #include "globals.h"
 #include "make.h"
 
+#include "Component.h"
+
 #include <map>
 
 namespace aunteater
@@ -25,8 +27,7 @@ namespace aunteater
         Entity(Entity &&aOther);
         Entity & operator=(Entity aRhs);  //take the argument by value, following copy-and-swap idiom.
 
-        // To be default implemented in the .cpp because unique_ptr to incomplete type
-        ~Entity();
+        ~Entity() = default;
 
         void swap(Entity &aLhs, Entity &aRhs)
         {

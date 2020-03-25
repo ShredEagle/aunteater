@@ -1,6 +1,5 @@
 #include "Entity.h"
 
-#include "Component.h"
 #include "Engine.h"
 
 using namespace aunteater;
@@ -22,9 +21,6 @@ Entity & Entity::operator=(Entity aRhs)
     swap(*this, aRhs);
     return *this;
 }
-
-Entity::~Entity()
-{}
 
 bool Entity::addComponent(own_component<> aComponent)
 {
