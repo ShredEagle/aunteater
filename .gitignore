@@ -1,6 +1,7 @@
 #cmake
-build/**
-build_*/
+/build/**
+/build_*/
+/build-*/
 
 # Conan
 /conan/test_package/build/
