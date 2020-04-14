@@ -27,4 +27,7 @@ endif()
 ## Include components
 ##
 
+include(cmc-install)
+cmc_install_root_component_config()
+
 add_subdirectory(src)
