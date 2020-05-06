@@ -84,15 +84,15 @@ struct DefaultUpdater
     void finish()
     {}
 
-    void operator()(System & aSystem, double aTime)
+    void operator()(System & aSystem, const Timer aTime)
     {
         aSystem.update(aTime);
     }
 };
 
-void Engine::update(double time)
+void Engine::update(const Timer aTime)
 {
-    update(time, DefaultUpdater{});
+    update(aTime, DefaultUpdater{});
 }
 
 bool Engine::isPaused()

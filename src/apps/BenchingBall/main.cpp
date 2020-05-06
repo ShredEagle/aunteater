@@ -216,19 +216,18 @@ int main(int argc, char** argv)
                                         .add<ComponentVelocity>(.8, .8));
 
     FpsDisplay fps(.5);
-    double lastFrame = glfwGetTime();
+    aunteater::Timer timer{glfwGetTime()};
     while (!glfwWindowShouldClose(window))
     {
         //render(window);
-        double delta = glfwGetTime()-lastFrame;
-        lastFrame = glfwGetTime();
+        timer.mark(glfwGetTime());
 
         aunteater::UpdateTiming updater;
-        engine.update(delta, updater);
+        engine.update(timer, updater);
 
         updater.outputTimings(std::cout);
 
-        fps.tick(delta, window);
+        fps.tick(timer.delta(), window);
 
         glfwPollEvents();
     }

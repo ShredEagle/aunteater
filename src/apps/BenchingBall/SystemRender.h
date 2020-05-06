@@ -25,7 +25,7 @@ public:
             mWindow(aWindow)
     {}
 
-    virtual void update(double time) override;
+    virtual void update(const aunteater::Timer aTime) override;
 
 protected:
     void extendTransformBuffer(std::size_t aNewSize);

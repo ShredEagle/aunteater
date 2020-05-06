@@ -53,14 +53,14 @@ void move(double aTime, double &aPosition, double &aVelocity, double aRadius)
     }
 }
 
-void SystemMove::update(double time)
+void SystemMove::update(const Timer aTime)
 {
     for (auto nodeIt = mMoveables.begin();
          nodeIt != mMoveables.end();
          ++nodeIt)
     {
-        move(time, (*nodeIt)->get<ComponentPosition>().x, (*nodeIt)->get<ComponentVelocity>().x, RADIUS);
-        move(time, (*nodeIt)->get<ComponentPosition>().y, (*nodeIt)->get<ComponentVelocity>().y, RADIUS);
+        move(aTime.delta(), (*nodeIt)->get<ComponentPosition>().x, (*nodeIt)->get<ComponentVelocity>().x, RADIUS);
+        move(aTime.delta(), (*nodeIt)->get<ComponentPosition>().y, (*nodeIt)->get<ComponentVelocity>().y, RADIUS);
     }
 
 

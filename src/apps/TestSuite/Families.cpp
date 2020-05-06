@@ -32,11 +32,11 @@ SCENARIO("Family management on entities addition/removal")
             REQUIRE(1 == NodesOfArchetypeA.size());
 
             engine.markToRemove("entity_componentB");
-            engine.update(0);
+            engine.update(Timer{});
             REQUIRE(1 == NodesOfArchetypeA.size());
 
             engine.markToRemove("entity_componentA");
-            engine.update(0);
+            engine.update(Timer{});
             REQUIRE(0 == NodesOfArchetypeA.size());
         }
     }
@@ -127,7 +127,7 @@ SCENARIO("Family observation")
             THEN("Removing Entities triggers notifications")
             {
                 engine.markToRemove(firstEntity);
-                engine.update(0);
+                engine.update(Timer{});
                 REQUIRE(1 == observer.removeNotificationCount);
 
                 REQUIRE(2 == observer.addNotificationCount);

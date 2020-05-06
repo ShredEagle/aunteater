@@ -12,7 +12,7 @@
 using namespace BenchingBall;
 using namespace aunteater;
 
-void SystemRender::update(double time)
+void SystemRender::update(const Timer aTime)
 {
     streamPositions();
     render();

@@ -16,7 +16,7 @@ class SystemMove : public aunteater::System
 {
 public:
     SystemMove(aunteater::Engine &aEngine);
-    virtual void update(double time) override;
+    virtual void update(const aunteater::Timer aTime) override;
 
 private:
     /// \todo make it easier to get those nodelist

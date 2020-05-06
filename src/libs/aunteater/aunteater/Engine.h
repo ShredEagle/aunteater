@@ -2,6 +2,7 @@
 
 #include "Entity.h"
 #include "Family.h"
+#include "Timer.h"
 
 #include "globals.h"
 
@@ -135,9 +136,9 @@ public:
      * Update
      */
     template <class T_updater>
-    void update(double time, T_updater && aUpdater);
+    void update(const Timer aTime, T_updater && aUpdater);
 
-    void update(double aTime);
+    void update(const Timer aTime);
 
     /// \return The pause state before the call
     bool isPaused();
@@ -227,7 +228,7 @@ Family & Engine::getFamily()
 }
 
 template <class T_updater>
-void Engine::update(double time, T_updater && aUpdater)
+void Engine::update(const Timer aTime, T_updater && aUpdater)
 {
     if (isPaused())
     {
@@ -238,7 +239,7 @@ void Engine::update(double time, T_updater && aUpdater)
 
     for (auto & system : mSystems)
     {
-        aUpdater(*system, time);
+        aUpdater(*system, aTime);
     }
     removeEntities();
 

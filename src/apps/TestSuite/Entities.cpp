@@ -183,7 +183,7 @@ SCENARIO("Removing entities")
         WHEN("The Entity is removed")
         {
             engine.markToRemove(firstEntity);
-            engine.update(0);
+            engine.update(Timer{});
 
             THEN("The entity is not accessible in the Nodes anymore")
             {

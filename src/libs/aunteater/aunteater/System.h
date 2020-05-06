@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine.h"
+#include "Timer.h"
 
 namespace aunteater
 {
@@ -10,7 +11,7 @@ namespace aunteater
     class System
     {
     public:
-        virtual void update(double aTime)=0;
+        virtual void update(const Timer aTime)=0;
     };
 
 } // namespace aunteater
