@@ -50,7 +50,7 @@ public:
 
     /// \brief Removes the component of type T_component from this Entity.
     template <class T_component>
-    LiveEntity & removeComponent();
+    LiveEntity & remove();
 
     template <class T_component>
     bool has()
@@ -193,7 +193,7 @@ LiveEntity & LiveEntity::add(Args&&... aArgs)
 
 /// \brief Removes the component of type T_component from this Entity.
 template <class T_component>
-LiveEntity & LiveEntity::removeComponent()
+LiveEntity & LiveEntity::remove()
 {
     mEngine.forEachFamily([this](Family &family)
     {

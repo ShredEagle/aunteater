@@ -47,7 +47,7 @@ namespace aunteater
         Family(const Family & aOther) = delete;
         Family & operator=(Family & aOther) = delete;
 
-        /// \brief Inteded for downtream use, not used as an internal mechanism
+        /// \brief Inteded for client use, not used as an internal mechanism
         Family & registerObserver(FamilyObserver *aObserver);
         Family & cancelObserver(FamilyObserver *aObserver);
 

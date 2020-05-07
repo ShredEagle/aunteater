@@ -4,8 +4,6 @@
 #include "Engine.h"
 #include "Family.h"
 
-// TODO remove
-#include <iostream>
 
 namespace aunteater {
 
@@ -204,5 +202,6 @@ template <std::size_t I, class T_iterator, class T_archetype>
 class tuple_element<I, aunteater::EntityWrap<T_iterator, T_archetype>> :
     public aunteater::Archetype_element<I, T_archetype>
 {};
+
 
 } // namespace std

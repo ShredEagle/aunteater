@@ -61,7 +61,7 @@ SCENARIO("Family management on components update")
             REQUIRE(1 == NodesOfArchetypeA.size());
 
             auto entity = engine.getEntity("aunt");
-            entity->removeComponent<ComponentA>();
+            entity->remove<ComponentA>();
             REQUIRE(0 == NodesOfArchetypeA.size());
 
             entity->add<ComponentB>(51.);
@@ -70,7 +70,7 @@ SCENARIO("Family management on components update")
             entity->add<ComponentA>(51);
             REQUIRE(1 == NodesOfArchetypeA.size());
 
-            entity->removeComponent<ComponentB>();
+            entity->remove<ComponentB>();
             REQUIRE(1 == NodesOfArchetypeA.size());
         }
     }
@@ -117,10 +117,10 @@ SCENARIO("Family observation")
 
             THEN("Removing components from Entities triggers notifications")
             {
-                secondEntity->removeComponent<ComponentB>();
+                secondEntity->remove<ComponentB>();
                 REQUIRE(0 == observer.removeNotificationCount);
 
-                secondEntity->removeComponent<ComponentA>();
+                secondEntity->remove<ComponentA>();
                 REQUIRE(1 == observer.removeNotificationCount);
             }
 
