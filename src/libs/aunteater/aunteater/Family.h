@@ -61,6 +61,13 @@ namespace aunteater
         auto end() const noexcept;
         auto cend() const noexcept;
 
+        EntityList::iterator find(entity_id aEntityId);
+        EntityList::const_iterator find(entity_id aEntityId) const;
+
+        /// \brief Returns a weak_entity if it is part of this family, nullptr otherwise
+        /// \note This makes for an easy test in conditions
+        weak_entity contains(entity_id aEntityId);
+
     private:
         bool isPresent(entity_id aEntity) const;
         bool includesComponent(ComponentTypeId aComponent) const;
@@ -127,6 +134,27 @@ namespace aunteater
     inline auto Family::cend() const noexcept
     {
         return mEntities.cend();
+    }
+
+    inline EntityList::iterator Family::find(entity_id aEntityId)
+    {
+        auto found = mEntitiesPositions.find(aEntityId);
+        return (found != mEntitiesPositions.end()) ? found->second
+                                                   : end();
+    }
+
+    inline EntityList::const_iterator Family::find(entity_id aEntityId) const
+    {
+        auto found = mEntitiesPositions.find(aEntityId);
+        return (found != mEntitiesPositions.end()) ? found->second
+                                                   : end();
+    }
+
+    inline weak_entity Family::contains(entity_id aEntityId)
+    {
+        auto found = mEntitiesPositions.find(aEntityId);
+        return (found != mEntitiesPositions.end()) ? *(found->second)
+                                                   : nullptr;
     }
 
 } // namespace aunteater

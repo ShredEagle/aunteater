@@ -43,6 +43,11 @@ namespace aunteater
         return &aWrapper;
     }
 
+    inline entity_id entityIdFrom(weak_entity aWeakEntity)
+    {
+        return aWeakEntity;
+    }
+
     inline weak_entity entityRefFrom(LiveEntity &aWrapper)
     {
         return &aWrapper;

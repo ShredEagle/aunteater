@@ -134,3 +134,45 @@ SCENARIO("FamilyHelp usage")
 
     }
 }
+
+
+SCENARIO("FamilyHelp find element")
+{
+    GIVEN("An Engine with FamilyHelp for ArchetypeA")
+    {
+        Engine engine;
+        FamilyHelp<ArchetypeA> help{engine};
+        REQUIRE(help.size() == 0);
+
+        WHEN("Entites are added, some matching the archetype some not")
+        {
+            weak_entity entity1 = engine.addEntity(Entity().add<ComponentA>(10));
+            weak_entity entity2 = engine.addEntity(Entity().add<ComponentA>(11));
+
+            weak_entity entityOut = engine.addEntity(Entity().add<ComponentB>(10));
+
+            THEN("The matching entities can be found in FamilyHelp")
+            {
+                REQUIRE( help.find(entityIdFrom(entity1)) != help.end() );
+                REQUIRE( help.find(entityIdFrom(entity2)) != help.end() );
+            }
+
+            THEN("The NON-matching entity is not found in FamilyHelp")
+            {
+                REQUIRE( help.find(entityIdFrom(entityOut)) == help.end() );
+            }
+
+            GIVEN("A constant FamilyHelp for ArchetypeA")
+            {
+                const FamilyHelp<ArchetypeA> constHelp{engine};
+
+                THEN("The matching entities can be found in FamilyHelp")
+                {
+                    REQUIRE( constHelp.find(entityIdFrom(entity1)) != constHelp.end() );
+                    REQUIRE( constHelp.find(entityIdFrom(entity2)) != constHelp.end() );
+                }
+            }
+        }
+    }
+}
+

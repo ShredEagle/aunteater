@@ -35,6 +35,11 @@ namespace aunteater {
             return *mEntity;
         }
 
+        explicit operator LiveEntity & () const
+        {
+            return **mEntity;
+        }
+
         // Part of structured binding implementation
         template <std::size_t I>
         auto & get() &
@@ -126,6 +131,9 @@ namespace aunteater {
         const_Wrap end() const noexcept;
         const_Wrap cend() const noexcept;
 
+        Wrap find(entity_id aEntityId);
+        const_Wrap find(entity_id aEntityId) const;
+
     private:
         Family & mFamily;
     };
@@ -185,6 +193,19 @@ namespace aunteater {
         return mFamily.cend();
     }
 
+    template <class... VT_components>
+    auto FamilyHelp<Archetype<VT_components...>>::find(entity_id aEntityId) -> Wrap
+    {
+        return mFamily.find(aEntityId);
+    }
+
+    template <class... VT_components>
+    auto FamilyHelp<Archetype<VT_components...>>::find(entity_id aEntityId) const -> const_Wrap
+    {
+        // Top-level const on FamilyHelp does not become low-level const on referenced Family
+        // (i.e. same as for pointer data members, we would need propagate_const<>)
+        return static_cast<const Family &>(mFamily).find(aEntityId);
+    }
 
 } // namespace aunteater
 
