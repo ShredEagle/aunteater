@@ -70,6 +70,8 @@ public:
         return mEntity.get<T_component>();
     }
 
+    void markToRemove();
+
 private:
 
     /// \deprecated Currently required for Family inclusion test
@@ -113,6 +115,11 @@ public:
     weak_entity getEntity(const std::string & aEntityName)
     {
         return mNamedEntities.left.find(aEntityName)->second;
+    }
+
+    std::size_t countEntities() const
+    {
+        return mEntities.size();
     }
 
     /*
@@ -172,9 +179,15 @@ protected:
     std::vector<std::shared_ptr<System>> mSystems;
 };
 
+
 /*
  * Implementations
  */
+
+inline void LiveEntity::markToRemove()
+{
+    mEngine.markToRemove(this);
+}
 
 template <class T_component, class... Args>
 LiveEntity & LiveEntity::add(Args&&... aArgs)

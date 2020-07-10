@@ -41,18 +41,28 @@ void Engine::removeEntities()
     ///   * to iterate flagged entities and look them up one by one in the associative containers (current)
     ///   * to iterate the associative containers entirely each time, and remove matching flagged entities
     /// TODO more constness here
-    for(weak_entity entity : mEntitiesToRemove)
+
+    std::set<weak_entity> removedEntities;
+    // Note: this outer loop is required in case a family observer marks additional nodes for removal
+    // see Engine_tests.cpp "Nested entities removal" scenario
+    while(!mEntitiesToRemove.empty())
     {
-        mNamedEntities.right.erase(entity);
-        notifyRemovalToFamilies(entity);
+        for (auto entityIt = mEntitiesToRemove.begin();
+             entityIt != mEntitiesToRemove.end();
+             /* in body */)
+        {
+            mNamedEntities.right.erase(*entityIt);
+            notifyRemovalToFamilies(*entityIt);
+            // set::extract() invalidates the current iterator: use post-increment to return a copy
+            removedEntities.insert(mEntitiesToRemove.extract(entityIt++));
+        }
     }
 
     /// TODO LiveEntity should be const here
-    mEntities.remove_if([this](LiveEntity &aElem)
+    mEntities.remove_if([&removedEntities](LiveEntity &aElem)
     {
-        return this->mEntitiesToRemove.count(&aElem); // contains() is C++20
+        return removedEntities.count(&aElem); // contains() is C++20
     });
-    mEntitiesToRemove.clear();
 }
 
 

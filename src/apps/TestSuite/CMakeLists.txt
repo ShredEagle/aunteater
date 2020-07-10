@@ -7,6 +7,7 @@ set(${PROJECT_NAME}_HEADERS
 )
 
 set(${PROJECT_NAME}_SOURCES
+    Engine_tests.cpp
     Entities.cpp
     Families.cpp
     FamilyHelps.cpp
