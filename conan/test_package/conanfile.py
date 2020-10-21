@@ -7,7 +7,7 @@ class AunteaterTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake_paths", "cmake"
 
-    build_requires = "cmake_installer/[>=3.16]@conan/stable"
+    build_requires = "cmake/[>=3.16]"
 
     def build(self):
         cmake = CMake(self)
