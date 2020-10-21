@@ -138,6 +138,8 @@ public:
     std::shared_ptr<T_system> addSystem(VT_ctorArgs &&... aArgs);
 
     void addSystem(std::shared_ptr<System> aSystem);
+    // TODO
+    // removeSystem
 
     /*
      * Update

@@ -11,6 +11,7 @@
 
 namespace aunteater {
 
+// TODO SHOULD NOT INHERIT ENGINE!!! Can be just removed, makes no sense
 class UpdateTiming : public Engine
 {
     template <class T>

@@ -35,6 +35,7 @@ namespace aunteater {
             return *mEntity;
         }
 
+        /// TODO should it be implicit?
         explicit operator LiveEntity & () const
         {
             return **mEntity;

@@ -30,8 +30,10 @@ namespace aunteater
     // Review note: Should probably be non-copyable,
     class Family
     {
-        // Needs to call addIfMatch
+        // Needs to call:
+        // addIfMatch, removeIfPresent, componentAddedToEntity, componentRemovedFromEntity
         friend class Engine;
+        // TODO Might not be useful anymore
         // Needs to call componentAddedTo(RemovedFrom)Entity
         friend class LiveEntity;
 
@@ -45,6 +47,7 @@ namespace aunteater
         // see https://stackoverflow.com/q/22357887/1027706
         // Yes, C++ requires you to delete the right signature
         Family(const Family & aOther) = delete;
+        // TODO should not it be const too ??
         Family & operator=(Family & aOther) = delete;
 
         /// \brief Inteded for client use, not used as an internal mechanism
@@ -69,14 +72,14 @@ namespace aunteater
         weak_entity contains(entity_id aEntityId);
 
     private:
-        bool isPresent(entity_id aEntity) const;
-        bool includesComponent(ComponentTypeId aComponent) const;
-
         void addIfMatch(weak_entity aEntity);
         void removeIfPresent(entity_id aEntity);
 
         void componentAddedToEntity(weak_entity aEntity, ComponentTypeId aComponent);
         void componentRemovedFromEntity(entity_id aEntity, ComponentTypeId aComponent);
+
+        bool isPresent(entity_id aEntity) const;
+        bool includesComponent(ComponentTypeId aComponent) const;
 
         typedef void (FamilyObserver::*NotificationMethod)(LiveEntity &);
         void broadcastNotification(NotificationMethod aTargetMethod, LiveEntity & aEntity) const;
