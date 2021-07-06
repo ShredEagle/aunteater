@@ -55,7 +55,7 @@ class AunteaterConan(ConanFile):
            self.requires("glfw/3.3.4")
            self.requires("libjpeg/9d")
 
-           self.options["glad"].gl_version = "3.3"
+           self.options["glad"].gl_version = "4.1"
 
 
     def _configure_cmake(self):
