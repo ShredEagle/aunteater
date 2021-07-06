@@ -12,8 +12,8 @@ set(${PROJECT_NAME}_SOURCES
     ImageReader.cpp
 )
 
-find_package(glad CONFIG REQUIRED)
-find_package(glfw3 CONFIG REQUIRED)
+find_package(glad REQUIRED)
+find_package(glfw3 REQUIRED)
 find_package(JPEG REQUIRED)
 
 add_executable(${PROJECT_NAME}

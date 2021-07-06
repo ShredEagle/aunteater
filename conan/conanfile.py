@@ -34,12 +34,12 @@ class AunteaterConan(ConanFile):
         "build_tests": False,
     }
 
-    requires = ("boost/1.73.0",)
+    requires = ("boost/1.76.0",)
 
-    build_requires = ("cmake/[>=3.16]",)
+    build_requires = ("cmake/3.20.4",)
 
     build_policy = "missing"
-    generators = "cmake_paths", "cmake"
+    generators = "cmake_paths", "cmake", "cmake_find_package"
 
     scm = {
         "type": "git",
@@ -51,11 +51,11 @@ class AunteaterConan(ConanFile):
 
     def requirements(self):
         if self.options.build_tests:
-           self.requires("glad/0.1.29@bincrafters/stable")
-           self.requires("glfw/3.3@bincrafters/stable")
-           self.requires("libjpeg/9c@bincrafters/stable")
+           self.requires("glad/0.1.34")
+           self.requires("glfw/3.3.4")
+           self.requires("libjpeg/9d")
 
-           self.options["glad"].api_version = "3.3"
+           self.options["glad"].gl_version = "3.3"
 
 
     def _configure_cmake(self):

@@ -14,8 +14,8 @@ set(${PROJECT_NAME}_SOURCES
     SystemRender.cpp
 )
 
-find_package(glad CONFIG REQUIRED)
-find_package(glfw3 3.3 CONFIG REQUIRED)
+find_package(glad REQUIRED)
+find_package(glfw3 3.3 REQUIRED)
 
 add_executable(${PROJECT_NAME}
     main.cpp
