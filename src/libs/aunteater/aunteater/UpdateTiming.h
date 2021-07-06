@@ -7,6 +7,7 @@
 
 #include <chrono>
 #include <map>
+#include <ostream>
 #include <typeinfo>
 
 namespace aunteater {
