@@ -1,0 +1,74 @@
+name: build-test-deploy
+on: [push]
+env:
+  # Control Conan behaviour
+  CONAN_V2_MODE: 1
+  CONAN_SCM_TO_CONANDATA: 1
+  CONAN_SYSREQUIRES_MODE: enabled
+  # Custom variables used by the workflow
+  CONAN_DEV_USER_CHANNEL: adnn/develop
+#on:
+#  push:
+#    branches:
+#      - develop
+jobs:
+  build_test_deploy:
+    name: Build, test, deploy
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - cppstd: 17
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Prepare recipe info
+        id: recipe
+        run: |
+          # That is not the accurate recipe name, this is just by convention.
+          # see: https://github.com/conan-io/conan/issues/9264
+          recipe_name=${GITHUB_REPOSITORY#*/}
+          echo "::set-output name=name::${recipe_name}"
+          echo "::set-output name=reference::${recipe_name}/$(echo ${GITHUB_SHA} | cut -c1-10)"
+        shell: bash
+      - name: Get Conan
+        uses: turtlebrowser/get-conan@v1.0
+      - name: Configure Conan
+        run: conan remote add adnn ${{ secrets.CONAN_REMOTE_URL }}
+      - run: >
+          conan create
+          --build=missing
+          -o ${{ steps.recipe.outputs.name }}:build_tests=True
+          -s compiler.cppstd=${{ matrix.cppstd }}
+          conan/ ${{ steps.recipe.outputs.reference }}@
+      - name: Prepare virtual run env
+        run: >
+          conan install -g virtualrunenv
+          -o ${{ steps.recipe.outputs.name }}:build_tests=True
+          -s compiler.cppstd=${{ matrix.cppstd }}
+          ${{ steps.recipe.outputs.reference }}@
+      - name: Run tests (bash)
+        if: ${{ runner.os != 'Windows' }}
+        run: |
+          source activate_run.sh
+          tests
+          source deactivate_run.sh
+      - name: Run tests (cmd)
+        if: ${{ runner.os == 'Windows' }}
+        run: |
+          ./activate_run.bat
+          tests
+          ./deactivate_run.bat
+        # Powershell does not stop on first error
+        # see: https://github.community/t/multiline-commands-on-windows-do-not-fail-if-individual-commands-fail/16753
+        shell: cmd
+      - name: Deploy recipe (develop)
+        if: ${{ success() && contains('refs/heads/develop', github.ref) }}
+        run: |
+          conan user -p ${{ secrets.CONAN_USER_PASSWORD }} -r adnn ${{ secrets.CONAN_USER_NAME }}
+          conan copy --all ${{ steps.recipe.outputs.reference }} ${CONAN_DEV_USER_CHANNEL}
+          conan upload -r adnn --confirm ${{ steps.recipe.outputs.reference }}@${CONAN_DEV_USER_CHANNEL}
+        shell: bash
