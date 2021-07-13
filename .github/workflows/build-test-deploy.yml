@@ -2,7 +2,8 @@ name: build-test-deploy
 on: [push]
 env:
   # Control Conan behaviour
-  CONAN_V2_MODE: 1
+  # Apparently glfw/3.3.4 is not compatible with Conan v2
+  #CONAN_V2_MODE: 1
   CONAN_SCM_TO_CONANDATA: 1
   CONAN_SYSREQUIRES_MODE: enabled
   # Custom variables used by the workflow
