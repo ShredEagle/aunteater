@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.16)
 
 # Setting the VERSION on root project() will populate CMAKE_PROJECT_VERSION
 # see: https://cmake.org/cmake/help/v3.13/variable/CMAKE_PROJECT_VERSION.html
