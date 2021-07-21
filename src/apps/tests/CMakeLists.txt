@@ -1,4 +1,4 @@
-project(TestSuite VERSION "${CMAKE_PROJECT_VERSION}")
+project(tests VERSION "${CMAKE_PROJECT_VERSION}")
 
 set(${PROJECT_NAME}_HEADERS
     CommonComponents.h
