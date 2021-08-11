@@ -23,6 +23,7 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
+      - run: git config --global core.autocrlf input
       - uses: actions/checkout@v2
         with:
           submodules: recursive
@@ -55,13 +56,13 @@ jobs:
         if: ${{ runner.os != 'Windows' }}
         run: |
           source activate_run.sh
-          tests
+          ${{ steps.recipe.outputs.name }}_tests
           source deactivate_run.sh
       - name: Run tests (cmd)
         if: ${{ runner.os == 'Windows' }}
         run: |
           ./activate_run.bat
-          tests
+          ${{ steps.recipe.outputs.name }}_tests
           ./deactivate_run.bat
         # Powershell does not stop on first error
         # see: https://github.community/t/multiline-commands-on-windows-do-not-fail-if-individual-commands-fail/16753
