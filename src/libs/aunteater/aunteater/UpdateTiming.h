@@ -11,6 +11,7 @@
 
 namespace aunteater {
 
+template <class ... VT_inputState>
 class UpdateTiming
 {
     template <class T>
@@ -25,9 +26,9 @@ public:
         pre = initial = std::chrono::steady_clock::now();
     }
 
-    void operator()(System<> & aSystem, const Timer aTime)
+    void operator()(System<VT_inputState...> & aSystem, const Timer aTime, const VT_inputState & ... aInputState)
     {
-        aSystem.update(aTime);
+        aSystem.update(aTime, aInputState...);
         const std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
         mTimings.emplace(getTypeName(aSystem),
                          std::chrono::duration_cast<std::chrono::microseconds>(now - pre));
@@ -54,7 +55,8 @@ private:
 };
 
 
-inline void UpdateTiming::outputTimings(std::ostream &os) const
+template <class ... VT_inputState>
+void UpdateTiming<VT_inputState...>::outputTimings(std::ostream &os) const
 {
     for(auto timing : mTimings)
     {
