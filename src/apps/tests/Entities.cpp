@@ -3,6 +3,7 @@
 #include "catch.hpp"
 
 #include <aunteater/EntityManager.h>
+#include <aunteater/SystemManager.h>
 
 using namespace aunteater;
 
@@ -172,6 +173,7 @@ SCENARIO("Removing entities")
     GIVEN("A Manager with one Entity")
     {
         EntityManager entityManager;
+        SystemManager systemManager{entityManager};
 
         Entity entity;
         entity.add<ComponentA>(5);
@@ -183,7 +185,7 @@ SCENARIO("Removing entities")
         WHEN("The Entity is removed")
         {
             entityManager.markToRemove(firstEntity);
-            entityManager.update(Timer{});
+            systemManager.update(Timer{});
 
             THEN("The entity is not accessible in the Nodes anymore")
             {

@@ -12,7 +12,7 @@
 
 namespace BenchingBall {
 
-class SystemMove : public aunteater::System
+class SystemMove : public aunteater::System<>
 {
 public:
     SystemMove(aunteater::EntityManager &aEntityManager);

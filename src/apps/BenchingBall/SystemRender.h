@@ -17,7 +17,7 @@ namespace BenchingBall {
 
 typedef aunteater::Archetype<ComponentPosition> NodeRenderable;
 
-class SystemRender : public aunteater::System
+class SystemRender : public aunteater::System<>
 {
 public:
     SystemRender(aunteater::EntityManager &aEntityManager, GLFWwindow *aWindow) :

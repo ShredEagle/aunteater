@@ -25,7 +25,7 @@ public:
         pre = initial = std::chrono::steady_clock::now();
     }
 
-    void operator()(System & aSystem, const Timer aTime)
+    void operator()(System<> & aSystem, const Timer aTime)
     {
         aSystem.update(aTime);
         const std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();

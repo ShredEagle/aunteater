@@ -1,6 +1,7 @@
 #include "catch.hpp"
 
 #include <aunteater/EntityManager.h>
+#include <aunteater/SystemManager.h>
 
 using namespace aunteater;
 
@@ -47,6 +48,7 @@ SCENARIO("Nested entities removal")
     GIVEN("A Family of chained components and an observer recursively deleting entities")
     {
         EntityManager entityManager;
+        SystemManager<> systemManager{entityManager};
         Family & listFamily = entityManager.getFamily<Archetype<ComponentList>>();
 
         REQUIRE(entityManager.countEntities() == 0);
@@ -69,7 +71,7 @@ SCENARIO("Nested entities removal")
             min->get<ComponentList>().next = max;
 
             // Sanity check
-            entityManager.update(Timer{});
+            systemManager.update(Timer{});
             REQUIRE(listFamily.size() == 2);
 
             WHEN("The tail is removed")
@@ -78,7 +80,7 @@ SCENARIO("Nested entities removal")
                 // Sanity check
                 REQUIRE(listFamily.size() == 2);
 
-                entityManager.update(Timer{});
+                systemManager.update(Timer{});
 
                 THEN("The tail has been removed from the family")
                 {
@@ -93,7 +95,7 @@ SCENARIO("Nested entities removal")
             WHEN("The root is removed")
             {
                 entityManager.markToRemove(min);
-                entityManager.update(Timer{});
+                systemManager.update(Timer{});
 
                 THEN("Both head and tail have been removed from the family")
                 {
@@ -113,7 +115,7 @@ SCENARIO("Nested entities removal")
             WHEN("The tail is removed")
             {
                 entityManager.markToRemove(min);
-                entityManager.update(Timer{});
+                systemManager.update(Timer{});
 
                 THEN("The tail has been removed from the family")
                 {
@@ -128,7 +130,7 @@ SCENARIO("Nested entities removal")
             WHEN("The root is removed")
             {
                 entityManager.markToRemove(max);
-                entityManager.update(Timer{});
+                systemManager.update(Timer{});
 
                 THEN("Both head and tail have been removed from the family")
                 {

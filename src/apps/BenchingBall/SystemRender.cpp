@@ -7,7 +7,7 @@
 
 #include "globals.h"
 
-#include <aunteater/Engine.h>
+#include <aunteater/EntityManager.h>
 
 using namespace BenchingBall;
 using namespace aunteater;

@@ -3,6 +3,7 @@
 #include "catch.hpp"
 
 #include <aunteater/EntityManager.h>
+#include <aunteater/SystemManager.h>
 
 using namespace aunteater;
 
@@ -12,6 +13,8 @@ SCENARIO("Family management on entities addition/removal")
     GIVEN("An EntityManager and an Archetype")
     {
         EntityManager entityManager;
+        SystemManager systemManager{entityManager};
+
         Family & NodesOfArchetypeA = entityManager.getFamily<ArchetypeA>();
         REQUIRE(0 == NodesOfArchetypeA.size());
 
@@ -32,11 +35,11 @@ SCENARIO("Family management on entities addition/removal")
             REQUIRE(1 == NodesOfArchetypeA.size());
 
             entityManager.markToRemove("entity_componentB");
-            entityManager.update(Timer{});
+            systemManager.update(Timer{});
             REQUIRE(1 == NodesOfArchetypeA.size());
 
             entityManager.markToRemove("entity_componentA");
-            entityManager.update(Timer{});
+            systemManager.update(Timer{});
             REQUIRE(0 == NodesOfArchetypeA.size());
         }
     }
@@ -81,6 +84,7 @@ SCENARIO("Family observation")
     GIVEN("An EntityManager, an Observer and an Archetype")
     {
         EntityManager entityManager;
+        SystemManager systemManager{entityManager};
 
         struct TestObserver : public FamilyObserver
         {
@@ -127,7 +131,7 @@ SCENARIO("Family observation")
             THEN("Removing Entities triggers notifications")
             {
                 entityManager.markToRemove(firstEntity);
-                entityManager.update(Timer{});
+                systemManager.update(Timer{});
                 REQUIRE(1 == observer.removeNotificationCount);
 
                 REQUIRE(2 == observer.addNotificationCount);

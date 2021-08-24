@@ -10,6 +10,7 @@
 #include "globals.h"
 
 #include <aunteater/UpdateTiming.h>
+#include <aunteater/SystemManager.h>
 
 #include <array>
 #include <iomanip>
@@ -201,10 +202,11 @@ int main(int argc, char** argv)
 
     init();
     aunteater::EntityManager entityManager;
+    aunteater::SystemManager<> systemManager{entityManager};
     // System can be added already instantiated
-    entityManager.addSystem(std::make_shared<SystemMove>(entityManager));
+    systemManager.addSystem(std::make_shared<SystemMove>(entityManager));
     // Or can be instantiated by add(), implicitly providing entityManager as first argument to ctor
-    entityManager.addSystem<SystemRender>(window);
+    systemManager.addSystem<SystemRender>(window);
 
     entityManager.addEntity(aunteater::Entity().add<ComponentPosition>(.5, .5)
                                         .add<ComponentVelocity>(1., .1));
@@ -223,7 +225,7 @@ int main(int argc, char** argv)
         timer.mark(glfwGetTime());
 
         aunteater::UpdateTiming updater;
-        entityManager.update(timer, updater);
+        systemManager.update(timer, updater);
 
         updater.outputTimings(std::cout);
 
