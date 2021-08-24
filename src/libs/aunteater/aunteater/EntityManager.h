@@ -85,7 +85,7 @@ private:
 
 class EntityManager
 {
-    template <class>
+    template <class...>
     friend class SystemManager;
 
     // The entityManager register its address to the Entities added to it: it cannot have copy/move semantic.

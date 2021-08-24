@@ -204,9 +204,9 @@ int main(int argc, char** argv)
     aunteater::EntityManager entityManager;
     aunteater::SystemManager<> systemManager{entityManager};
     // System can be added already instantiated
-    systemManager.addSystem(std::make_shared<SystemMove>(entityManager));
+    systemManager.add(std::make_shared<SystemMove>(entityManager));
     // Or can be instantiated by add(), implicitly providing entityManager as first argument to ctor
-    systemManager.addSystem<SystemRender>(window);
+    systemManager.add<SystemRender>(window);
 
     entityManager.addEntity(aunteater::Entity().add<ComponentPosition>(.5, .5)
                                         .add<ComponentVelocity>(1., .1));

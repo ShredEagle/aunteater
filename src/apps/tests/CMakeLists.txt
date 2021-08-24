@@ -12,6 +12,7 @@ set(${TARGET_NAME}_SOURCES
     Entities.cpp
     Families.cpp
     FamilyHelps.cpp
+    SystemManager_tests.cpp
 )
 
 add_executable(${TARGET_NAME}
