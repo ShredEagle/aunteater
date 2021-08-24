@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Engine.h"
+#include "EntityManager.h"
 #include "Timer.h"
 
 namespace aunteater
 {
 
-    class Engine;
+    class EntityManager;
 
     class System
     {

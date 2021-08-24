@@ -200,19 +200,19 @@ int main(int argc, char** argv)
     glfwSwapInterval(1);
 
     init();
-    aunteater::Engine engine;
+    aunteater::EntityManager entityManager;
     // System can be added already instantiated
-    engine.addSystem(std::make_shared<SystemMove>(engine));
-    // Or can be instantiated by add(), implicitly providing engine as first argument to ctor
-    engine.addSystem<SystemRender>(window);
+    entityManager.addSystem(std::make_shared<SystemMove>(entityManager));
+    // Or can be instantiated by add(), implicitly providing entityManager as first argument to ctor
+    entityManager.addSystem<SystemRender>(window);
 
-    engine.addEntity(aunteater::Entity().add<ComponentPosition>(.5, .5)
+    entityManager.addEntity(aunteater::Entity().add<ComponentPosition>(.5, .5)
                                         .add<ComponentVelocity>(1., .1));
-    engine.addEntity(aunteater::Entity().add<ComponentPosition>(-.5, -.5)
+    entityManager.addEntity(aunteater::Entity().add<ComponentPosition>(-.5, -.5)
                                         .add<ComponentVelocity>(-.3, 2.));
-    engine.addEntity(aunteater::Entity().add<ComponentPosition>(-.5, .5)
+    entityManager.addEntity(aunteater::Entity().add<ComponentPosition>(-.5, .5)
                                         .add<ComponentVelocity>(.8, .8));
-    engine.addEntity(aunteater::Entity().add<ComponentPosition>(.5, -.5)
+    entityManager.addEntity(aunteater::Entity().add<ComponentPosition>(.5, -.5)
                                         .add<ComponentVelocity>(.8, .8));
 
     FpsDisplay fps(.5);
@@ -223,7 +223,7 @@ int main(int argc, char** argv)
         timer.mark(glfwGetTime());
 
         aunteater::UpdateTiming updater;
-        engine.update(timer, updater);
+        entityManager.update(timer, updater);
 
         updater.outputTimings(std::cout);
 

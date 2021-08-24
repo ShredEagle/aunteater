@@ -2,7 +2,7 @@
 
 #include "catch.hpp"
 
-#include <aunteater/Engine.h>
+#include <aunteater/EntityManager.h>
 
 using namespace aunteater;
 
@@ -140,20 +140,20 @@ SCENARIO("Adding entities")
 {
     GIVEN("A default constructed Manager and an Archetype")
     {
-        Engine engine;
+        EntityManager entityManager;
 
-        Family & nodesA_before = engine.getFamily<ArchetypeA>();
+        Family & nodesA_before = entityManager.getFamily<ArchetypeA>();
         REQUIRE(nodesA_before.size() == 0);
 
         WHEN("An Entity matching this Archetype is added to the Manager")
         {
             Entity entity;
             entity.add<ComponentA>(5);
-            engine.addEntity(entity);
+            entityManager.addEntity(entity);
 
             THEN("The Nodes for the Archetype grows by one")
             {
-                Family & nodesA_after = engine.getFamily<ArchetypeA>();
+                Family & nodesA_after = entityManager.getFamily<ArchetypeA>();
                 REQUIRE(nodesA_after.size() == 1);
 
                 THEN("Families have reference semantic")
@@ -171,19 +171,19 @@ SCENARIO("Removing entities")
 {
     GIVEN("A Manager with one Entity")
     {
-        Engine engine;
+        EntityManager entityManager;
 
         Entity entity;
         entity.add<ComponentA>(5);
-        weak_entity firstEntity = engine.addEntity(entity);
+        weak_entity firstEntity = entityManager.addEntity(entity);
 
-        Family & nodesA = engine.getFamily<ArchetypeA>();
+        Family & nodesA = entityManager.getFamily<ArchetypeA>();
         REQUIRE(nodesA.size() == 1);
 
         WHEN("The Entity is removed")
         {
-            engine.markToRemove(firstEntity);
-            engine.update(Timer{});
+            entityManager.markToRemove(firstEntity);
+            entityManager.update(Timer{});
 
             THEN("The entity is not accessible in the Nodes anymore")
             {

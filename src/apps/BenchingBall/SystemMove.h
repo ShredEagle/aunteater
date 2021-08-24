@@ -15,7 +15,7 @@ namespace BenchingBall {
 class SystemMove : public aunteater::System
 {
 public:
-    SystemMove(aunteater::Engine &aEngine);
+    SystemMove(aunteater::EntityManager &aEntityManager);
     virtual void update(const aunteater::Timer aTime) override;
 
 private:

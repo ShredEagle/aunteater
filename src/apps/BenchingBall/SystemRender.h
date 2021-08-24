@@ -20,8 +20,8 @@ typedef aunteater::Archetype<ComponentPosition> NodeRenderable;
 class SystemRender : public aunteater::System
 {
 public:
-    SystemRender(aunteater::Engine &aEngine, GLFWwindow *aWindow) :
-            mRenderables(aEngine.getFamily<NodeRenderable>()),
+    SystemRender(aunteater::EntityManager &aEntityManager, GLFWwindow *aWindow) :
+            mRenderables(aEntityManager.getFamily<NodeRenderable>()),
             mWindow(aWindow)
     {}
 

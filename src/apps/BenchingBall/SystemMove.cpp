@@ -5,7 +5,7 @@
 
 #include "globals.h"
 
-#include <aunteater/Engine.h>
+#include <aunteater/EntityManager.h>
 
 using namespace BenchingBall;
 using namespace aunteater;
@@ -16,8 +16,8 @@ typedef Archetype<ComponentPosition, ComponentVelocity> NodeMoveable;
 typedef ComponentPosition Position;
 typedef ComponentVelocity Velocity;
 
-SystemMove::SystemMove(aunteater::Engine &aEngine) :
-    mMoveables(aEngine.getFamily<NodeMoveable>())
+SystemMove::SystemMove(aunteater::EntityManager &aEntityManager) :
+    mMoveables(aEntityManager.getFamily<NodeMoveable>())
 {}
 
 double impulse(const Vec2 &aNormal, const Vec2 &aSpeedA, const Vec2 &aSpeedB, double aMass)

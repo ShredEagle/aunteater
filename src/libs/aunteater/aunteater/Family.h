@@ -11,7 +11,7 @@
 
 namespace aunteater
 {
-    class Engine;
+    class EntityManager;
 
     class FamilyObserver
     {
@@ -32,7 +32,7 @@ namespace aunteater
     {
         // Needs to call:
         // addIfMatch, removeIfPresent, componentAddedToEntity, componentRemovedFromEntity
-        friend class Engine;
+        friend class EntityManager;
         // TODO Might not be useful anymore
         // Needs to call componentAddedTo(RemovedFrom)Entity
         friend class LiveEntity;

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Engine.h"
 #include "System.h"
 
 #include <boost/core/demangle.hpp>
@@ -12,8 +11,7 @@
 
 namespace aunteater {
 
-// TODO SHOULD NOT INHERIT ENGINE!!! Can be just removed, makes no sense
-class UpdateTiming : public Engine
+class UpdateTiming
 {
     template <class T>
     std::string getTypeName(const T & aObject)
@@ -39,7 +37,7 @@ public:
     void finish()
     {
         const std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-        mTimings.emplace("Engine::removeEntities()",
+        mTimings.emplace("EntityManager::removeEntities()",
                          std::chrono::duration_cast<std::chrono::microseconds>(now - pre));
 
         mTimings.emplace("Update Total",

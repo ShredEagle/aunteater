@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Archetype.h"
-#include "Engine.h"
+#include "EntityManager.h"
 #include "Family.h"
 
 
@@ -115,8 +115,8 @@ namespace aunteater {
         using const_Wrap = EntityWrap<decltype(std::declval<Family>().cbegin()),
                                       Archetype<VT_components...>>;
 
-        FamilyHelp(Engine & aEngine) :
-            mFamily(aEngine.template getFamily<Archetype<VT_components...>>())
+        FamilyHelp(EntityManager & aEntityManager) :
+            mFamily(aEntityManager.template getFamily<Archetype<VT_components...>>())
         {}
 
         template <class T_functor>

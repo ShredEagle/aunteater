@@ -2,23 +2,23 @@
 
 #include "CommonComponents.h"
 
-#include <aunteater/Engine.h>
+#include <aunteater/EntityManager.h>
 #include <aunteater/FamilyHelp.h>
 
 using namespace aunteater;
 
 SCENARIO("FamilyHelp usage")
 {
-    GIVEN("An Engine with FamilyHelp for ArchetypeA")
+    GIVEN("An EntityManager with FamilyHelp for ArchetypeA")
     {
-        Engine engine;
-        FamilyHelp<ArchetypeA> help{engine};
+        EntityManager entityManager;
+        FamilyHelp<ArchetypeA> help{entityManager};
         REQUIRE(help.size() == 0);
 
         WHEN("Entites are added matching the archetype")
         {
-            weak_entity entity1 = engine.addEntity(Entity().add<ComponentA>(10));
-            weak_entity entity2 = engine.addEntity(Entity().add<ComponentA>(11));
+            weak_entity entity1 = entityManager.addEntity(Entity().add<ComponentA>(10));
+            weak_entity entity2 = entityManager.addEntity(Entity().add<ComponentA>(11));
 
             REQUIRE(entity1->get<ComponentA>().a == 10);
             REQUIRE(entity2->get<ComponentA>().a == 11);
@@ -106,7 +106,7 @@ SCENARIO("FamilyHelp usage")
 
             GIVEN("A constant FamilyHelp for ArchetypeA")
             {
-                const FamilyHelp<ArchetypeA> constHelp{engine};
+                const FamilyHelp<ArchetypeA> constHelp{entityManager};
 
                 THEN("The constant FamilyHelp has the correct size")
                 {
@@ -138,18 +138,18 @@ SCENARIO("FamilyHelp usage")
 
 SCENARIO("FamilyHelp find element")
 {
-    GIVEN("An Engine with FamilyHelp for ArchetypeA")
+    GIVEN("An EntityManager with FamilyHelp for ArchetypeA")
     {
-        Engine engine;
-        FamilyHelp<ArchetypeA> help{engine};
+        EntityManager entityManager;
+        FamilyHelp<ArchetypeA> help{entityManager};
         REQUIRE(help.size() == 0);
 
         WHEN("Entites are added, some matching the archetype some not")
         {
-            weak_entity entity1 = engine.addEntity(Entity().add<ComponentA>(10));
-            weak_entity entity2 = engine.addEntity(Entity().add<ComponentA>(11));
+            weak_entity entity1 = entityManager.addEntity(Entity().add<ComponentA>(10));
+            weak_entity entity2 = entityManager.addEntity(Entity().add<ComponentA>(11));
 
-            weak_entity entityOut = engine.addEntity(Entity().add<ComponentB>(10));
+            weak_entity entityOut = entityManager.addEntity(Entity().add<ComponentB>(10));
 
             THEN("The matching entities can be found in FamilyHelp")
             {
@@ -164,7 +164,7 @@ SCENARIO("FamilyHelp find element")
 
             GIVEN("A constant FamilyHelp for ArchetypeA")
             {
-                const FamilyHelp<ArchetypeA> constHelp{engine};
+                const FamilyHelp<ArchetypeA> constHelp{entityManager};
 
                 THEN("The matching entities can be found in FamilyHelp")
                 {
