@@ -1,6 +1,6 @@
 #include "Entity.h"
 
-#include "Engine.h"
+#include "EntityManager.h"
 
 using namespace aunteater;
 

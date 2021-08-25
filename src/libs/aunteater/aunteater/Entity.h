@@ -9,7 +9,7 @@
 
 namespace aunteater
 {
-    class Engine;
+    class EntityManager;
 
     /// \brief Entity class
     class Entity

@@ -3,11 +3,12 @@ set(TARGET_NAME aunteater)
 set(${TARGET_NAME}_HEADERS
     Archetype.h
     Component.h
-    Engine.h
     Entity.h
+    EntityManager.h
     Family.h
     FamilyHelp.h
     System.h
+    SystemManager.h
     Timer.h
     UpdateTiming.h
 
@@ -16,8 +17,8 @@ set(${TARGET_NAME}_HEADERS
 )
 
 set(${TARGET_NAME}_SOURCES
-    Engine.cpp
     Entity.cpp
+    EntityManager.cpp
     Family.cpp
 )
 

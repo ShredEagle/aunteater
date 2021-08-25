@@ -8,10 +8,11 @@ set(${TARGET_NAME}_HEADERS
 )
 
 set(${TARGET_NAME}_SOURCES
-    Engine_tests.cpp
+    EntityManager_tests.cpp
     Entities.cpp
     Families.cpp
     FamilyHelps.cpp
+    SystemManager_tests.cpp
 )
 
 add_executable(${TARGET_NAME}

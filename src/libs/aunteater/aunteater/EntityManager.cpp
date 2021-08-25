@@ -1,16 +1,16 @@
-#include "Engine.h"
+#include "EntityManager.h"
 #include "System.h"
 
 #include "Component.h"
 
 using namespace aunteater;
 
-weak_entity Engine::addEntity(const std::string & aName, Entity aEntity)
+weak_entity EntityManager::addEntity(const std::string & aName, Entity aEntity)
 {
     auto insertionResult = mNamedEntities.left.insert(std::make_pair(aName, nullptr));
     if (!insertionResult.second)
     {
-        throw std::invalid_argument("Named entity is already present in the engine"
+        throw std::invalid_argument("Named entity is already present in the entityManager"
                                     "with the same name.");
     }
 
@@ -22,11 +22,11 @@ weak_entity Engine::addEntity(const std::string & aName, Entity aEntity)
     return id;
 }
 
-weak_entity Engine::addEntity(Entity aEntity)
+weak_entity EntityManager::addEntity(Entity aEntity)
 {
     // Note: cannot emplace_back, before C++17 it returns void
     weak_entity lastEntity =
-        entityRefFrom(*mEntities.emplace(mEntities.end(), std::move(aEntity), *this, EngineTag{}));
+        entityRefFrom(*mEntities.emplace(mEntities.end(), std::move(aEntity), *this, EntityManagerTag{}));
     notifyAdditionToFamilies(lastEntity);
     return lastEntity;
 }
@@ -35,7 +35,7 @@ weak_entity Engine::addEntity(Entity aEntity)
 ///   (low level const in entity_id prevents matching against keys that are not low level const)
 ///   Take a look at "Transparent comparators"
 ///   Should allow constness on the mEntitiesToRemove pointers
-void Engine::removeEntities()
+void EntityManager::removeEntities()
 {
     /// TODO Measure if it is more efficient:
     ///   * to iterate flagged entities and look them up one by one in the associative containers (current)
@@ -44,7 +44,7 @@ void Engine::removeEntities()
 
     std::set<weak_entity> removedEntities;
     // Note: this outer loop is required in case a family observer marks additional nodes for removal
-    // see Engine_tests.cpp "Nested entities removal" scenario
+    // see EntityManager_tests.cpp "Nested entities removal" scenario
     while(!mEntitiesToRemove.empty())
     {
         for (auto entityIt = mEntitiesToRemove.begin();
@@ -66,7 +66,7 @@ void Engine::removeEntities()
 }
 
 
-void Engine::notifyAdditionToFamilies(weak_entity aEntity)
+void EntityManager::notifyAdditionToFamilies(weak_entity aEntity)
 {
     for (auto & typedFamily : mTypedFamilies)
     {
@@ -74,45 +74,10 @@ void Engine::notifyAdditionToFamilies(weak_entity aEntity)
     }
 }
 
-void Engine::notifyRemovalToFamilies(entity_id aEntity)
+void EntityManager::notifyRemovalToFamilies(entity_id aEntity)
 {
     for (auto & typedFamily : mTypedFamilies)
     {
         typedFamily.second.removeIfPresent(aEntity);
     }
-}
-
-void Engine::addSystem(std::shared_ptr<System> aSystem)
-{
-    mSystems.push_back(std::move(aSystem));
-}
-
-struct DefaultUpdater
-{
-    void start()
-    {}
-    void finish()
-    {}
-
-    void operator()(System & aSystem, const Timer aTime)
-    {
-        aSystem.update(aTime);
-    }
-};
-
-void Engine::update(const Timer aTime)
-{
-    update(aTime, DefaultUpdater{});
-}
-
-bool Engine::isPaused()
-{
-    return mPaused;
-}
-
-bool Engine::pause(bool aPauseMode)
-{
-    bool result = isPaused();
-    mPaused = aPauseMode;
-    return result;
 }

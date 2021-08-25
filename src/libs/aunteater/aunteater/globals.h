@@ -8,7 +8,6 @@ namespace aunteater
 {
     class ComponentBase;
     class LiveEntity;
-    class System;
 
     typedef const std::type_info * ComponentTypeId;
 

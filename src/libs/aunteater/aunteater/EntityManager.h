@@ -2,7 +2,6 @@
 
 #include "Entity.h"
 #include "Family.h"
-#include "Timer.h"
 
 #include "globals.h"
 
@@ -10,17 +9,16 @@
 
 #include <map>
 #include <string>
-#include <vector>
 
 namespace aunteater
 {
 
 
-struct EngineTag
+struct EntityManagerTag
 {
 private:
-    friend class Engine;
-    EngineTag() = default;
+    friend class EntityManager;
+    EntityManagerTag() = default;
 };
 
 /// \brief LiveEntity class
@@ -33,10 +31,10 @@ class LiveEntity
     LiveEntity & operator=(const LiveEntity&) = delete;
 
 public:
-    // Note: Only constructible by Engine
-    LiveEntity(Entity aEntity, Engine & aEngine, EngineTag) :
+    // Note: Only constructible by EntityManager
+    LiveEntity(Entity aEntity, EntityManager & aEntityManager, EntityManagerTag) :
         mEntity(std::move(aEntity)),
-        mEngine(aEngine)
+        mEntityManager(aEntityManager)
     {}
 
     /// \brief Return an Entity value by copying the wrapped entity
@@ -82,20 +80,23 @@ private:
 
 private:
     Entity mEntity;
-    Engine &mEngine;
+    EntityManager &mEntityManager;
 };
 
-class Engine
+class EntityManager
 {
-    // The engine register its address to the Entities added to it: it cannot have copy/move semantic.
-    Engine(const Engine&) = delete;
-    Engine & operator=(const Engine&) = delete;
+    template <class...>
+    friend class SystemManager;
+
+    // The entityManager register its address to the Entities added to it: it cannot have copy/move semantic.
+    EntityManager(const EntityManager&) = delete;
+    EntityManager & operator=(const EntityManager&) = delete;
 
 public:
     /*
      * Construction
      */
-    Engine() = default;
+    EntityManager() = default;
 
     /*
      * Entities manipulation
@@ -128,32 +129,6 @@ public:
     template <class T_archetype>
     Family & getFamily();
 
-    /*
-     * System
-     */
-    /// \brief Instantiate and add a system of class T_system.
-    ///
-    ///  Provides engine reference as 1st ctor argument, forwards aArgs as following arguments.
-    template <class T_system, class... VT_ctorArgs>
-    std::shared_ptr<T_system> addSystem(VT_ctorArgs &&... aArgs);
-
-    void addSystem(std::shared_ptr<System> aSystem);
-    // TODO
-    // removeSystem
-
-    /*
-     * Update
-     */
-    template <class T_updater>
-    void update(const Timer aTime, T_updater && aUpdater);
-
-    void update(const Timer aTime);
-
-    /// \return The pause state before the call
-    bool isPaused();
-    /// \return The pause state before the call
-    bool pause(bool aPauseMode);
-
     void forEachFamily(std::function<void(Family &aFamily)> aFamilyFunctor)
     {
         for (auto &typedFamily : mTypedFamilies)
@@ -175,10 +150,6 @@ private:
     NameEntityMap mNamedEntities;
     std::set<weak_entity> mEntitiesToRemove;
     ArchetypeFamilyMap mTypedFamilies;
-    bool mPaused{false};
-
-protected:
-    std::vector<std::shared_ptr<System>> mSystems;
 };
 
 
@@ -188,7 +159,7 @@ protected:
 
 inline void LiveEntity::markToRemove()
 {
-    mEngine.markToRemove(this);
+    mEntityManager.markToRemove(this);
 }
 
 template <class T_component, class... Args>
@@ -199,7 +170,7 @@ LiveEntity & LiveEntity::add(Args&&... aArgs)
     // Note: does not test if insertion actually took place (return value from addComponent())
     //       It is expected to be rare to replace a component this way, so avoid branching
     //       (i.e. always iterate all families, not necessary in the rare replace situation)
-    mEngine.forEachFamily([this](Family &family)
+    mEntityManager.forEachFamily([this](Family &family)
     {
        family.componentAddedToEntity(this, type<T_component>());
     });
@@ -210,7 +181,7 @@ LiveEntity & LiveEntity::add(Args&&... aArgs)
 template <class T_component>
 LiveEntity & LiveEntity::remove()
 {
-    mEngine.forEachFamily([this](Family &family)
+    mEntityManager.forEachFamily([this](Family &family)
     {
       family.componentRemovedFromEntity(entityIdFrom(*this), type<T_component>());
     });
@@ -218,16 +189,8 @@ LiveEntity & LiveEntity::remove()
     return *this;
 }
 
-template <class T_system, class... VT_ctorArgs>
-std::shared_ptr<T_system> Engine::addSystem(VT_ctorArgs &&... aArgs)
-{
-    auto result = std::make_shared<T_system>(*this, std::forward<VT_ctorArgs>(aArgs)...);
-    addSystem(result);
-    return result;
-}
-
 template <class T_archetype>
-Family & Engine::getFamily()
+Family & EntityManager::getFamily()
 {
     auto insertionResult = mTypedFamilies.emplace(archetypeTypeId<T_archetype>(),
                                                   T_archetype::TypeSet());
@@ -242,23 +205,5 @@ Family & Engine::getFamily()
     return insertionResult.first->second;
 }
 
-template <class T_updater>
-void Engine::update(const Timer aTime, T_updater && aUpdater)
-{
-    if (isPaused())
-    {
-        return;
-    }
-
-    aUpdater.start();
-
-    for (auto & system : mSystems)
-    {
-        aUpdater(*system, aTime);
-    }
-    removeEntities();
-
-    aUpdater.finish();
-}
 
 } // namespace aunteater

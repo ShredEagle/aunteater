@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Engine.h"
 #include "System.h"
 
 #include <boost/core/demangle.hpp>
@@ -12,8 +11,8 @@
 
 namespace aunteater {
 
-// TODO SHOULD NOT INHERIT ENGINE!!! Can be just removed, makes no sense
-class UpdateTiming : public Engine
+template <class ... VT_inputState>
+class UpdateTiming
 {
     template <class T>
     std::string getTypeName(const T & aObject)
@@ -27,9 +26,9 @@ public:
         pre = initial = std::chrono::steady_clock::now();
     }
 
-    void operator()(System & aSystem, const Timer aTime)
+    void operator()(System<VT_inputState...> & aSystem, const Timer aTime, const VT_inputState & ... aInputState)
     {
-        aSystem.update(aTime);
+        aSystem.update(aTime, aInputState...);
         const std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
         mTimings.emplace(getTypeName(aSystem),
                          std::chrono::duration_cast<std::chrono::microseconds>(now - pre));
@@ -39,7 +38,7 @@ public:
     void finish()
     {
         const std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-        mTimings.emplace("Engine::removeEntities()",
+        mTimings.emplace("EntityManager::removeEntities()",
                          std::chrono::duration_cast<std::chrono::microseconds>(now - pre));
 
         mTimings.emplace("Update Total",
@@ -56,7 +55,8 @@ private:
 };
 
 
-inline void UpdateTiming::outputTimings(std::ostream &os) const
+template <class ... VT_inputState>
+void UpdateTiming<VT_inputState...>::outputTimings(std::ostream &os) const
 {
     for(auto timing : mTimings)
     {

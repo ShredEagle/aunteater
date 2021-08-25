@@ -1,6 +1,7 @@
 #include "catch.hpp"
 
-#include <aunteater/Engine.h>
+#include <aunteater/EntityManager.h>
+#include <aunteater/SystemManager.h>
 
 using namespace aunteater;
 
@@ -21,8 +22,8 @@ public:
 class RecursiveRemover : public FamilyObserver
 {
 public:
-    RecursiveRemover(Engine & aEngine) :
-        engine(aEngine)
+    RecursiveRemover(EntityManager & aEntityManager) :
+        entityManager(aEntityManager)
     {}
 
     void addedEntity(LiveEntity &aEntity) override
@@ -34,11 +35,11 @@ public:
             next != nullptr;
             next = next->get<ComponentList>().next)
         {
-            engine.markToRemove(next);
+            entityManager.markToRemove(next);
         }
     }
 
-    Engine & engine;
+    EntityManager & entityManager;
 };
 
 
@@ -46,19 +47,20 @@ SCENARIO("Nested entities removal")
 {
     GIVEN("A Family of chained components and an observer recursively deleting entities")
     {
-        Engine engine;
-        Family & listFamily = engine.getFamily<Archetype<ComponentList>>();
+        EntityManager entityManager;
+        SystemManager<> systemManager{entityManager};
+        Family & listFamily = entityManager.getFamily<Archetype<ComponentList>>();
 
-        REQUIRE(engine.countEntities() == 0);
+        REQUIRE(entityManager.countEntities() == 0);
         REQUIRE(listFamily.size() == 0);
 
-        RecursiveRemover remover{engine};
+        RecursiveRemover remover{entityManager};
         listFamily.registerObserver(&remover);
 
-        weak_entity a = engine.addEntity(Entity{}.add<ComponentList>());
-        weak_entity b = engine.addEntity(Entity{}.add<ComponentList>());
+        weak_entity a = entityManager.addEntity(Entity{}.add<ComponentList>());
+        weak_entity b = entityManager.addEntity(Entity{}.add<ComponentList>());
 
-        REQUIRE(engine.countEntities() == 2);
+        REQUIRE(entityManager.countEntities() == 2);
         REQUIRE(listFamily.size() == 2);
 
         weak_entity min = std::min(a, b);
@@ -69,39 +71,39 @@ SCENARIO("Nested entities removal")
             min->get<ComponentList>().next = max;
 
             // Sanity check
-            engine.update(Timer{});
+            systemManager.update(Timer{});
             REQUIRE(listFamily.size() == 2);
 
             WHEN("The tail is removed")
             {
-                engine.markToRemove(max);
+                entityManager.markToRemove(max);
                 // Sanity check
                 REQUIRE(listFamily.size() == 2);
 
-                engine.update(Timer{});
+                systemManager.update(Timer{});
 
                 THEN("The tail has been removed from the family")
                 {
                     REQUIRE(listFamily.size() == 1);
                 }
-                THEN("The tail has been removed from the engine")
+                THEN("The tail has been removed from the entityManager")
                 {
-                    REQUIRE(engine.countEntities() == 1);
+                    REQUIRE(entityManager.countEntities() == 1);
                 }
             }
 
             WHEN("The root is removed")
             {
-                engine.markToRemove(min);
-                engine.update(Timer{});
+                entityManager.markToRemove(min);
+                systemManager.update(Timer{});
 
                 THEN("Both head and tail have been removed from the family")
                 {
                     REQUIRE(listFamily.size() == 0);
                 }
-                THEN("Both head and tail have been removed from the engine")
+                THEN("Both head and tail have been removed from the entityManager")
                 {
-                    REQUIRE(engine.countEntities() == 0);
+                    REQUIRE(entityManager.countEntities() == 0);
                 }
             }
         }
@@ -112,23 +114,23 @@ SCENARIO("Nested entities removal")
 
             WHEN("The tail is removed")
             {
-                engine.markToRemove(min);
-                engine.update(Timer{});
+                entityManager.markToRemove(min);
+                systemManager.update(Timer{});
 
                 THEN("The tail has been removed from the family")
                 {
                     REQUIRE(listFamily.size() == 1);
                 }
-                THEN("The tail has been removed from the engine")
+                THEN("The tail has been removed from the entityManager")
                 {
-                    REQUIRE(engine.countEntities() == 1);
+                    REQUIRE(entityManager.countEntities() == 1);
                 }
             }
 
             WHEN("The root is removed")
             {
-                engine.markToRemove(max);
-                engine.update(Timer{});
+                entityManager.markToRemove(max);
+                systemManager.update(Timer{});
 
                 THEN("Both head and tail have been removed from the family")
                 {
@@ -138,9 +140,9 @@ SCENARIO("Nested entities removal")
                     // (position of the currently removed entity vs the position of the entity it is recursively marking for removal)
                     REQUIRE(listFamily.size() == 0);
                 }
-                THEN("Both head and tail have been removed from the engine")
+                THEN("Both head and tail have been removed from the entityManager")
                 {
-                    REQUIRE(engine.countEntities() == 0);
+                    REQUIRE(entityManager.countEntities() == 0);
                 }
             }
         }
