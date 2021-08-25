@@ -1,11 +1,12 @@
-#include <aunteater/Engine.h>
+#include <aunteater/Entity.h>
+#include <aunteater/EntityManager.h>
 
 #include <cstdlib>
 
 
 int main()
 {
-    aunteater::Engine engine;
-    engine.addEntity("goodname", aunteater::Entity{});
+    aunteater::EntityManager entityManager;
+    entityManager.addEntity("goodname", aunteater::Entity{});
     return EXIT_SUCCESS;
 }
