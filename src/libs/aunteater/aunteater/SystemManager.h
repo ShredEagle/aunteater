@@ -139,6 +139,7 @@ void SystemManager<VT_inputState ...>::update(const Timer aTime,
     {
         aUpdater(*system, aTime, vaInputState...);
     }
+    mEntityManager.removeComponents();
     mEntityManager.removeEntities();
 
     aUpdater.finish();

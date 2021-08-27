@@ -51,6 +51,7 @@ SCENARIO("Family management on components update")
     GIVEN("An EntityManager and an Archetype")
     {
         EntityManager entityManager;
+        SystemManager systemManager{entityManager};
         Family & NodesOfArchetypeA = entityManager.getFamily<ArchetypeA>();
 
         THEN("Manipulating and Entity's Components updates the Family")
@@ -64,7 +65,10 @@ SCENARIO("Family management on components update")
             REQUIRE(1 == NodesOfArchetypeA.size());
 
             auto entity = entityManager.getEntity("aunt");
-            entity->remove<ComponentA>();
+            entity->markComponentToRemove<ComponentA>();
+            // The component is not removed before the update step completes.
+            REQUIRE(1 == NodesOfArchetypeA.size());
+            systemManager.update(Timer{});
             REQUIRE(0 == NodesOfArchetypeA.size());
 
             entity->add<ComponentB>(51.);
@@ -73,7 +77,8 @@ SCENARIO("Family management on components update")
             entity->add<ComponentA>(51);
             REQUIRE(1 == NodesOfArchetypeA.size());
 
-            entity->remove<ComponentB>();
+            entity->markComponentToRemove<ComponentB>();
+            systemManager.update(Timer{});
             REQUIRE(1 == NodesOfArchetypeA.size());
         }
     }
@@ -121,10 +126,12 @@ SCENARIO("Family observation")
 
             THEN("Removing components from Entities triggers notifications")
             {
-                secondEntity->remove<ComponentB>();
+                secondEntity->markComponentToRemove<ComponentB>();
+                systemManager.update(Timer{});
                 REQUIRE(0 == observer.removeNotificationCount);
 
-                secondEntity->remove<ComponentA>();
+                secondEntity->markComponentToRemove<ComponentA>();
+                systemManager.update(Timer{});
                 REQUIRE(1 == observer.removeNotificationCount);
             }
 
