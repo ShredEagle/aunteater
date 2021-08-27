@@ -77,6 +77,11 @@ namespace aunteater {
             return *this;
         }
 
+        const EntityWrap & operator*() const
+        {
+            return *this;
+        }
+
         auto operator==(const EntityWrap & aOther) const
         {
             return mEntity == aOther.mEntity;
