@@ -65,6 +65,24 @@ void EntityManager::removeEntities()
     });
 }
 
+void EntityManager::removeComponents()
+{
+    // Note: this outer loop is required in case a family observer marks additional components for removal
+    while(!mComponentsToRemove.empty())
+    {
+        for (auto componentIt = mComponentsToRemove.begin();
+             componentIt != mComponentsToRemove.end();
+             componentIt = mComponentsToRemove.erase(componentIt))
+        {
+            forEachFamily([componentIt](Family &family)
+            {
+              family.componentRemovedFromEntity(entityIdFrom(componentIt->first), componentIt->second);
+            });
+            componentIt->first->remove_impl(componentIt->second);
+        }
+    }
+}
+
 
 void EntityManager::notifyAdditionToFamilies(weak_entity aEntity)
 {

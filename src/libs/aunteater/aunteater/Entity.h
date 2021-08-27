@@ -50,8 +50,7 @@ namespace aunteater
         template <class T_component>
         Entity & remove()
         {
-            mComponents.erase(type<T_component>());
-            return *this;
+            return remove_impl(type<T_component>());
         }
 
         /// \return true if this Entity has Component of type T_component.
@@ -85,6 +84,12 @@ namespace aunteater
 
     private:
         bool addComponent(own_component<> aComponent);
+
+        Entity & remove_impl(ComponentTypeId aComponentId)
+        {
+            mComponents.erase(aComponentId);
+            return *this;
+        }
 
     private: // data members
         std::map<ComponentTypeId, own_component<> > mComponents;

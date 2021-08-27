@@ -25,6 +25,7 @@ private:
 class LiveEntity
 {
     friend class Family;
+    friend class EntityManager; // accesses remove_impl
 
     // Non-copiable, non-movable
     LiveEntity(const LiveEntity&) = delete;
@@ -48,7 +49,7 @@ public:
 
     /// \brief Removes the component of type T_component from this Entity.
     template <class T_component>
-    LiveEntity & remove();
+    LiveEntity & markComponentToRemove();
 
     template <class T_component>
     bool has()
@@ -71,6 +72,10 @@ public:
     void markToRemove();
 
 private:
+    void remove_impl(ComponentTypeId aId)
+    {
+        mEntity.remove_impl(aId);
+    }
 
     /// \deprecated Currently required for Family inclusion test
     bool has(ComponentTypeId aId)
@@ -108,9 +113,16 @@ public:
     {
         mEntitiesToRemove.emplace(aEntity);
     }
+
     void markToRemove(const std::string & aEntityName)
     {
         markToRemove(getEntity(aEntityName));
+    }
+
+    template <class T_component>
+    void markComponentToRemove(weak_entity aEntity)
+    {
+        mComponentsToRemove.emplace(aEntity, type<T_component>());
     }
 
     weak_entity getEntity(const std::string & aEntityName)
@@ -138,6 +150,7 @@ public:
     }
 
 protected:
+    void removeComponents();
     void removeEntities();
     void notifyAdditionToFamilies(weak_entity aEntity);
     void notifyRemovalToFamilies(entity_id aEntity);
@@ -149,6 +162,7 @@ private:
     std::list<LiveEntity> mEntities;
     NameEntityMap mNamedEntities;
     std::set<weak_entity> mEntitiesToRemove;
+    std::set<std::pair<weak_entity, ComponentTypeId>> mComponentsToRemove;
     ArchetypeFamilyMap mTypedFamilies;
 };
 
@@ -160,6 +174,13 @@ private:
 inline void LiveEntity::markToRemove()
 {
     mEntityManager.markToRemove(this);
+}
+
+template <class T_component>
+LiveEntity & LiveEntity::markComponentToRemove()
+{
+    mEntityManager.markComponentToRemove<T_component>(this);
+    return *this;
 }
 
 template <class T_component, class... Args>
@@ -174,18 +195,6 @@ LiveEntity & LiveEntity::add(Args&&... aArgs)
     {
        family.componentAddedToEntity(this, type<T_component>());
     });
-    return *this;
-}
-
-/// \brief Removes the component of type T_component from this Entity.
-template <class T_component>
-LiveEntity & LiveEntity::remove()
-{
-    mEntityManager.forEachFamily([this](Family &family)
-    {
-      family.componentRemovedFromEntity(entityIdFrom(*this), type<T_component>());
-    });
-    mEntity.remove<T_component>();
     return *this;
 }
 
