@@ -31,7 +31,6 @@ namespace aunteater
     template <class T_derived>
     class Component : public ComponentBase
     {
-
     private:
         own_component<> clone_impl() const final
         {
