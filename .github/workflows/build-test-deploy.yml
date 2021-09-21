@@ -23,10 +23,16 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
+      # Otherwise recipes uploaded from Windows vs. Linux/macos
+      # are considered different (the hash changes with line endings)
+      # see: https://github.com/conan-io/conan-package-tools/issues/192
+      # see: https://docs.conan.io/en/latest/faq/using.html?highlight=crlf#packages-got-outdated-when-uploading-an-unchanged-recipe-from-a-different-machine
       - run: git config --global core.autocrlf input
+
       - uses: actions/checkout@v2
         with:
           submodules: recursive
+
       - name: Prepare recipe info
         id: recipe
         run: |
@@ -36,28 +42,54 @@ jobs:
           echo "::set-output name=name::${recipe_name}"
           echo "::set-output name=reference::${recipe_name}/$(echo ${GITHUB_SHA} | cut -c1-10)"
         shell: bash
+
       - name: Get Conan
         uses: turtlebrowser/get-conan@v1.0
+
       - name: Configure Conan
-        run: conan remote add adnn ${{ secrets.CONAN_REMOTE_URL }}
+        # Remotes, profiles, and settings
+        run: conan config install https://${{ secrets.SHREDROBOT_GITHUB_TOKEN }}@github.com/ShredEagle/conan-config.git
+
+      - name: Cache Conan local data
+        uses: actions/cache@v2
+        env:
+          cache-name: conan-cache
+        with:
+          # Exclude opengl/system because its build is responsible to install opengl system-wide.
+          # (required on current Linux runner)
+          # Exclude all */system following the same reasoning.
+          #
+          # There is a bug with the exclude pattern.
+          # see workaround: https://github.com/actions/toolkit/issues/713#issuecomment-850321461
+          path: |
+            ~/.conan/data/*/*
+            !~/.conan/data/*/system
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('conan/conanfile.py') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}
+
       - run: >
           conan create
           --build=missing
           -o ${{ steps.recipe.outputs.name }}:build_tests=True
+          -pr game
           -s compiler.cppstd=${{ matrix.cppstd }}
           conan/ ${{ steps.recipe.outputs.reference }}@
+
       - name: Prepare virtual run env
         run: >
           conan install -g virtualrunenv
           -o ${{ steps.recipe.outputs.name }}:build_tests=True
           -s compiler.cppstd=${{ matrix.cppstd }}
           ${{ steps.recipe.outputs.reference }}@
+
       - name: Run tests (bash)
         if: ${{ runner.os != 'Windows' }}
         run: |
           source activate_run.sh
           ${{ steps.recipe.outputs.name }}_tests
           source deactivate_run.sh
+
       - name: Run tests (cmd)
         if: ${{ runner.os == 'Windows' }}
         run: |
@@ -67,6 +99,7 @@ jobs:
         # Powershell does not stop on first error
         # see: https://github.community/t/multiline-commands-on-windows-do-not-fail-if-individual-commands-fail/16753
         shell: cmd
+
       - name: Deploy recipe (develop)
         if: ${{ success() && contains('refs/heads/develop', github.ref) }}
         run: |
