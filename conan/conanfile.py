@@ -35,7 +35,7 @@ class AunteaterConan(ConanFile):
         "build_tests": False,
     }
 
-    requires = ("boost/1.76.0",)
+    requires = ("boost/1.77.0",)
 
     build_requires = ("cmake/3.20.4",)
 
