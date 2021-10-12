@@ -53,7 +53,7 @@ namespace detail {
 } // namespace detail
 
 
-template <class T_timer, class ... VT_inputState>
+template <class T_timer = Timer, class ... VT_inputState>
 class SystemManager
 {
     static_assert(sizeof...(VT_inputState) < 2, "Only 0 or 1 custom input state classes are allowed.");
