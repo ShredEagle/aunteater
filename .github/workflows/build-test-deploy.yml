@@ -5,7 +5,11 @@ env:
   # Apparently glfw/3.3.4 is not compatible with Conan v2
   #CONAN_V2_MODE: 1
   CONAN_SCM_TO_CONANDATA: 1
+  # Required at least for opengl/system on Linux runner, which must use the package manager.
   CONAN_SYSREQUIRES_MODE: enabled
+  # see: https://docs.conan.io/en/latest/reference/env_vars.html#conan-user-home-short
+  # Disable short paths on Windows, which otherwise ruins the cache@v2 actions.
+  CONAN_USER_HOME_SHORT: None
   # Custom variables used by the workflow
   CONAN_DEV_USER_CHANNEL: adnn/develop
 #on:
@@ -53,7 +57,8 @@ jobs:
       - name: Cache Conan local data
         uses: actions/cache@v2
         env:
-          cache-name: conan-cache
+          # The secret is used as a variable, to allow invalidating all caches at once.
+          cache-name: conan-${{ secrets.ACTION_CACHENAME }}
         with:
           # Exclude opengl/system because its build is responsible to install opengl system-wide.
           # (required on current Linux runner)
