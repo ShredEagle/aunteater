@@ -1,3 +1,4 @@
+#include "aunteater/Timer.h"
 #include "catch.hpp"
 
 #include <aunteater/EntityManager.h>
@@ -48,7 +49,7 @@ SCENARIO("Nested entities removal")
     GIVEN("A Family of chained components and an observer recursively deleting entities")
     {
         EntityManager entityManager;
-        SystemManager<> systemManager{entityManager};
+        SystemManager<Timer> systemManager{entityManager};
         Family & listFamily = entityManager.getFamily<Archetype<ComponentList>>();
 
         REQUIRE(entityManager.countEntities() == 0);
