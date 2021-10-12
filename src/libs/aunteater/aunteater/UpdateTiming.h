@@ -1,6 +1,7 @@
 #pragma once
 
 #include "System.h"
+#include "aunteater/Timer.h"
 
 #include <boost/core/demangle.hpp>
 
@@ -11,7 +12,7 @@
 
 namespace aunteater {
 
-template <class T_timer, class ... VT_inputState>
+template <class T_timer = Timer, class ... VT_inputState>
 class UpdateTiming
 {
     template <class T>

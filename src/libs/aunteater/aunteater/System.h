@@ -13,6 +13,7 @@ class System
 {
 public:
     virtual void update(const T_timer aTime, const T_inputState & aInputState) = 0;
+    virtual ~System() = default;
 };
 
 /// \brief Specialization when there are no input state provided for the update()
