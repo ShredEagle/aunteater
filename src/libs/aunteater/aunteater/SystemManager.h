@@ -36,7 +36,7 @@ namespace detail {
 
 
 
-    template <class ... VT_inputState>
+    template <class T_timer, class ... VT_inputState>
     struct DefaultUpdater
     {
         void start()
@@ -44,7 +44,7 @@ namespace detail {
         void finish()
         {}
 
-        void operator()(System<InputState_t<VT_inputState...>> & aSystem, const Timer aTime, const VT_inputState & ... vaInputState)
+        void operator()(System<T_timer, InputState_t<VT_inputState...>> & aSystem, const T_timer aTime, const VT_inputState & ... vaInputState)
         {
             aSystem.update(aTime, vaInputState...);
         }
@@ -53,12 +53,12 @@ namespace detail {
 } // namespace detail
 
 
-template <class ... VT_inputState>
+template <class T_timer, class ... VT_inputState>
 class SystemManager
 {
     static_assert(sizeof...(VT_inputState) < 2, "Only 0 or 1 custom input state classes are allowed.");
 
-    using System_t = System<detail::InputState_t<VT_inputState...>>;
+    using System_t = System<T_timer, detail::InputState_t<VT_inputState...>>;
 
 public:
     SystemManager(EntityManager & aEntityManager);
@@ -73,16 +73,16 @@ public:
     // TODO
     // removeSystem
 
-    template <class T_updater = detail::DefaultUpdater<VT_inputState...>>
-    void update(const Timer aTime,
+    template <class T_updater = detail::DefaultUpdater<T_timer, VT_inputState...>>
+    void update(const T_timer aTime,
                 const VT_inputState & ... vaInputState,
                 // Note: this is not accepted by MSVC, pretending there is no default constructor for the type
                 // so use an overload instead (where MSVC happily finds the default ctor, all of a sudden)
                 //T_updater && aUpdater = detail::DefaultUpdater<VT_inputState...>{});
                 T_updater && aUpdater);
 
-    void update(const Timer aTime, const VT_inputState & ... vaInputState)
-    { update(aTime, vaInputState..., detail::DefaultUpdater<VT_inputState...>{}); }
+    void update(const T_timer aTime, const VT_inputState & ... vaInputState)
+    { update(aTime, vaInputState..., detail::DefaultUpdater<T_timer, VT_inputState...>{}); }
 
     /// \return The pause state before the call
     bool isPaused();
@@ -99,15 +99,15 @@ private:
 //
 // Implementations
 //
-template <class ... VT_inputState>
-SystemManager<VT_inputState ...>::SystemManager(EntityManager & aEntityManager) :
+template <class T_timer, class ... VT_inputState>
+SystemManager<T_timer, VT_inputState ...>::SystemManager(EntityManager & aEntityManager) :
     mEntityManager{aEntityManager}
 {}
 
 
-template <class ... VT_inputState>
+template <class T_timer, class ... VT_inputState>
 template <class T_system, class... VT_ctorArgs>
-std::shared_ptr<T_system> SystemManager<VT_inputState ...>::add(VT_ctorArgs && ... aArgs)
+std::shared_ptr<T_system> SystemManager<T_timer, VT_inputState ...>::add(VT_ctorArgs && ... aArgs)
 {
     auto result = std::make_shared<T_system>(mEntityManager, std::forward<VT_ctorArgs>(aArgs)...);
     add(result);
@@ -115,16 +115,16 @@ std::shared_ptr<T_system> SystemManager<VT_inputState ...>::add(VT_ctorArgs && .
 }
 
 
-template <class ... VT_inputState>
-void SystemManager<VT_inputState ...>::add(std::shared_ptr<System_t> aSystem)
+template <class T_timer, class ... VT_inputState>
+void SystemManager<T_timer, VT_inputState ...>::add(std::shared_ptr<System_t> aSystem)
 {
     mSystems.push_back(std::move(aSystem));
 }
 
 
-template <class ... VT_inputState>
+template <class T_timer, class ... VT_inputState>
 template <class T_updater>
-void SystemManager<VT_inputState ...>::update(const Timer aTime,
+void SystemManager<T_timer, VT_inputState ...>::update(const T_timer aTime,
                                               const VT_inputState & ... vaInputState,
                                               T_updater && aUpdater)
 {
@@ -146,15 +146,15 @@ void SystemManager<VT_inputState ...>::update(const Timer aTime,
 }
 
 
-template <class ... VT_inputState>
-bool SystemManager<VT_inputState ...>::isPaused()
+template <class T_timer, class ... VT_inputState>
+bool SystemManager<T_timer, VT_inputState ...>::isPaused()
 {
     return mPaused;
 }
 
 
-template <class ... VT_inputState>
-bool SystemManager<VT_inputState ...>::pause(bool aPauseMode)
+template <class T_timer, class ... VT_inputState>
+bool SystemManager<T_timer, VT_inputState ...>::pause(bool aPauseMode)
 {
     bool result = isPaused();
     mPaused = aPauseMode;
