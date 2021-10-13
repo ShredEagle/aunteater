@@ -16,7 +16,7 @@ struct CustomInput
 
 using BaseEntity = Archetype<>;
 
-struct InputChecker : public System<CustomInput>
+struct InputChecker : public System<Timer, CustomInput>
 {
     InputChecker(EntityManager & aEntityManager) :
         mEntities{aEntityManager}
@@ -36,7 +36,7 @@ SCENARIO("Systems accepting a custom input state type.")
     GIVEN("Entity and System managers.")
     {
         EntityManager entityManager;
-        SystemManager<CustomInput> systemManager{entityManager};
+        SystemManager<Timer, CustomInput> systemManager{entityManager};
 
         entityManager.addEntity(Entity{});
         std::shared_ptr<InputChecker> system = systemManager.add<InputChecker>();
