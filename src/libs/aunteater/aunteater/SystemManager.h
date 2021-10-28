@@ -73,11 +73,20 @@ public:
     // TODO
     // removeSystem
 
+    /// \brief Unconditionnally advance the simulation, without considering if it is paused.
+    /// \note Clients should prefer `update()` for normal gameplay, but this might be usefull
+    /// to provide debugging interfaces.
+    template <class T_updater = detail::DefaultUpdater<T_timer, VT_inputState...>>
+    void step(const T_timer aTime,
+              const VT_inputState & ... vaInputState,
+              T_updater && aUpdater = detail::DefaultUpdater<VT_inputState...>{});
+
+    /// \brief High-level interface, advancing systems if the manager is not paused.
     template <class T_updater = detail::DefaultUpdater<T_timer, VT_inputState...>>
     void update(const T_timer aTime,
                 const VT_inputState & ... vaInputState,
                 // Note: this is not accepted by MSVC, pretending there is no default constructor for the type
-                // so use an overload instead (where MSVC happily finds the default ctor, all of a sudden)
+                // so use the overload below instead (where MSVC happily finds the default ctor, all of a sudden)
                 //T_updater && aUpdater = detail::DefaultUpdater<VT_inputState...>{});
                 T_updater && aUpdater);
 
@@ -86,8 +95,11 @@ public:
 
     /// \return The pause state before the call
     bool isPaused();
-    /// \return The pause state before the call
+    /// \return The pause state *before* the call
     bool pause(bool aPauseMode);
+    
+    /// \return The pause state *after* the call
+    bool togglePause();
 
 private:
     EntityManager & mEntityManager;
@@ -124,15 +136,10 @@ void SystemManager<T_timer, VT_inputState ...>::add(std::shared_ptr<System_t> aS
 
 template <class T_timer, class ... VT_inputState>
 template <class T_updater>
-void SystemManager<T_timer, VT_inputState ...>::update(const T_timer aTime,
-                                              const VT_inputState & ... vaInputState,
-                                              T_updater && aUpdater)
+void SystemManager<T_timer, VT_inputState ...>::step(const T_timer aTime,
+                                                     const VT_inputState & ... vaInputState,
+                                                     T_updater && aUpdater)
 {
-    if (isPaused())
-    {
-        return;
-    }
-
     aUpdater.start();
 
     for (auto & system : mSystems)
@@ -143,6 +150,19 @@ void SystemManager<T_timer, VT_inputState ...>::update(const T_timer aTime,
     mEntityManager.removeEntities();
 
     aUpdater.finish();
+}
+
+
+template <class T_timer, class ... VT_inputState>
+template <class T_updater>
+void SystemManager<T_timer, VT_inputState ...>::update(const T_timer aTime,
+                                              const VT_inputState & ... vaInputState,
+                                              T_updater && aUpdater)
+{
+    if (!isPaused())
+    {
+        step(aTime, vaInputState..., aUpdater);
+    }
 }
 
 
@@ -159,6 +179,13 @@ bool SystemManager<T_timer, VT_inputState ...>::pause(bool aPauseMode)
     bool result = isPaused();
     mPaused = aPauseMode;
     return result;
+}
+
+
+template <class T_timer, class ... VT_inputState>
+bool SystemManager<T_timer, VT_inputState ...>::togglePause()
+{
+    return (mPaused = !mPaused);
 }
 
 
