@@ -9,31 +9,33 @@ template <class T_representation>
 class Timer_base
 {
 public:
+    using Value_t = T_representation;
+
     Timer_base() = default;
 
-    explicit Timer_base(T_representation aInitialTime) :
+    explicit Timer_base(Value_t aInitialTime) :
         mTime{aInitialTime}
     {}
 
-    void mark(T_representation aMonotonic)
+    void mark(Value_t aMonotonic)
     {
         mDelta = aMonotonic - mTime;
         mTime = aMonotonic;
     }
 
-    T_representation simulationTime() const
+    Value_t simulationTime() const
     {
         return mTime;
     }
 
-    T_representation delta() const
+    Value_t delta() const
     {
         return mDelta;
     }
 
 private:
-    T_representation mTime{0};
-    T_representation mDelta{0};
+    Value_t mTime{0};
+    Value_t mDelta{0};
 };
 
 
