@@ -37,8 +37,6 @@ class AunteaterConan(ConanFile):
 
     requires = ("boost/1.77.0",)
 
-    build_requires = ("cmake/3.20.4",)
-
     build_policy = "missing"
     generators = "cmake_paths", "cmake_find_package", "CMakeToolchain"
 

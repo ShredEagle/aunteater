@@ -8,8 +8,6 @@ class AunteaterTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake_paths", "cmake_find_package", "CMakeToolchain"
 
-    build_requires = "cmake/3.20.4"
-
 
     def generate(self):
         tc = CMakeToolchain(self)
