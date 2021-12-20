@@ -22,8 +22,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-11]
+        cppstd: [20]
         include:
-          - cppstd: 20
           - os: ubuntu-latest
             gccversion: 10
       fail-fast: false
