@@ -149,7 +149,10 @@ namespace aunteater
     inline EntityList::const_iterator Family::find(entity_id aEntityId) const
     {
         auto found = mEntitiesPositions.find(aEntityId);
-        return (found != mEntitiesPositions.end()) ? found->second
+        // 2021/12/20 Note Ad: Without the cast, MSVC had a compilation error in C++20 mode.
+        // It complained that it could not convert a `const list::iterator` to a `list::const_iterator`.
+        // I suspect it tried to convert the second branch to the type of the first branch.
+        return (found != mEntitiesPositions.end()) ? static_cast<EntityList::const_iterator>(found->second)
                                                    : end();
     }
 

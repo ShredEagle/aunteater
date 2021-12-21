@@ -21,9 +21,11 @@ jobs:
     name: Build, test, deploy
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-11]
+        cppstd: [20]
         include:
-          - cppstd: 17
+          - os: ubuntu-latest
+            gccversion: 10
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
@@ -32,6 +34,12 @@ jobs:
       # see: https://github.com/conan-io/conan-package-tools/issues/192
       # see: https://docs.conan.io/en/latest/faq/using.html?highlight=crlf#packages-got-outdated-when-uploading-an-unchanged-recipe-from-a-different-machine
       - run: git config --global core.autocrlf input
+
+      - name: Select GCC version.
+        if: runner.os == 'Linux'
+        run: |
+          echo "CC=gcc-${{ matrix.gccversion }}" >> $GITHUB_ENV
+          echo "CXX=g++-${{ matrix.gccversion }}" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
         with:

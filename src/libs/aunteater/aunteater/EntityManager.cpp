@@ -61,7 +61,7 @@ void EntityManager::removeEntities()
     /// TODO LiveEntity should be const here
     mEntities.remove_if([&removedEntities](LiveEntity &aElem)
     {
-        return removedEntities.count(&aElem); // contains() is C++20
+        return removedEntities.contains(&aElem);
     });
 }
 
