@@ -55,7 +55,7 @@ class AunteaterConan(ConanFile):
     def requirements(self):
         if self.options.build_tests:
            self.requires("glad/0.1.34")
-           self.requires("glfw/3.3.4")
+           self.requires("glfw/3.3.6")
            self.requires("libjpeg/9d")
 
            self.options["glad"].gl_version = "4.1"
