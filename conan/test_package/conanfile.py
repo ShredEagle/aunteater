@@ -11,7 +11,6 @@ class AunteaterTestConan(ConanFile):
 
     def generate(self):
         tc = CMakeToolchain(self)
-        tc.variables["CMAKE_PROJECT_PackageTest_INCLUDE"] = "${CMAKE_BINARY_DIR}/conan_paths.cmake"
         tc.generate()
 
 
