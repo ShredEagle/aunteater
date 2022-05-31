@@ -1,0 +1,21 @@
+name: Topical build-test
+
+on:
+  push:
+    branches:
+      - topic/**
+      - fix/**
+
+jobs:
+  build-test:
+    uses: shredeagle/reusable-workflows/.github/workflows/main_build.yml@v2.0.1
+    with:
+      # Disable macos while spdlog crashes its compiler
+      # see: https://github.com/conan-io/conan-center-index/issues/8480
+      os: >-
+        ["ubuntu-20.04", "windows-2019"]
+    secrets:
+      SHREDROBOT_GITHUB_TOKEN: ${{ secrets.SHREDROBOT_GITHUB_TOKEN }}
+      ACTION_CACHENAME: ${{ secrets.ACTION_CACHENAME }}
+      CONAN_USER_NAME: ${{ secrets.CONAN_USER_NAME }}
+      CONAN_USER_PASSWORD: ${{ secrets.CONAN_USER_PASSWORD }}
