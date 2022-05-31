@@ -6,7 +6,7 @@ from conan.tools.cmake import CMake, CMakeToolchain
 
 class AunteaterTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    generators = "cmake_paths", "cmake_find_package", "CMakeToolchain"
+    generators = "CMakeDeps", "CMakeToolchain"
 
 
     def generate(self):
